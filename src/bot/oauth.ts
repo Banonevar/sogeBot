@@ -26,6 +26,9 @@ import { cleanViewersCache } from './helpers/permissions';
 import { tmiEmitter } from './helpers/tmi';
 import { getIdFromTwitch } from './microservices/getIdFromTwitch';
 
+let botTokenErrorSent = false;
+let broadcasterTokenErrorSent = false;
+
 class OAuth extends Core {
   private toWait = 10;
 
@@ -266,7 +269,6 @@ class OAuth extends Core {
     if (global.mocha) {
       return true;
     }
-    clearTimeout(this.timeouts[`validateOAuth-${type}`]);
 
     const url = 'https://id.twitch.tv/oauth2/validate';
     let status = true;
@@ -284,7 +286,7 @@ class OAuth extends Core {
         debug('oauth.validate', JSON.stringify(request.data));
       } catch (e) {
         if (e.isAxiosError) {
-          if ((typeof e.response === 'undefined' || e.response.status !== 401) && retry < 5) {
+          if ((typeof e.response === 'undefined' || (e.response.status !== 401 && e.response.status !== 403)) && retry < 5) {
             // retry validation if error is different than 401 Invalid Access Token
             await new Promise<void>((resolve) => {
               setTimeout(() => resolve(), 1000 + (retry ** 2));
@@ -313,9 +315,11 @@ class OAuth extends Core {
       if (type === 'bot') {
         this.botUsername = request.data.login;
         this.botCurrentScopes = request.data.scopes;
+        botTokenErrorSent = false;
       } else {
         this.broadcasterUsername = request.data.login;
         this.broadcasterCurrentScopes = request.data.scopes;
+        broadcasterTokenErrorSent = false;
       }
 
       const cache = this.cache[type];
@@ -329,7 +333,17 @@ class OAuth extends Core {
       this.toWait = 10;
       this.getChannelId();
     } catch (e) {
-      if (!e.message.includes('no access token')) {
+      if (e.message.includes('no access token for')) {
+        if ((type === 'bot' && !botTokenErrorSent) || (type === 'broadcaster' && !broadcasterTokenErrorSent)) {
+          warning(`Access token ${type} account not found. Please set it in UI.`);
+          if (type === 'broadcaster') {
+            broadcasterTokenErrorSent = true;
+          } else {
+            botTokenErrorSent = true;
+          }
+        }
+      } else {
+        error(e);
         error(e.stack);
       }
       status = false;
@@ -347,7 +361,6 @@ class OAuth extends Core {
         }
       }
     }
-    this.timeouts[`validateOAuth-${type}`] = global.setTimeout(() => this.validateOAuth(type), 60000);
     return status;
   }
 
@@ -371,13 +384,15 @@ class OAuth extends Core {
       }
 
       const request = await axios.post(url + encodeURIComponent(type === 'bot' ? this.botRefreshToken : this.broadcasterRefreshToken));
+      debug('oauth.validate', 'https://twitchtokengenerator.com/api/refresh/ =>');
+      debug('oauth.validate', JSON.stringify(request.data, null, 2));
       if (!request.data.success) {
         throw new Error(`Token refresh for ${type}: ${request.data.message}`);
       }
-      if (typeof request.data.token !== 'string') {
+      if (typeof request.data.token !== 'string' || request.data.token.length === 0) {
         throw new Error(`Access token for ${type} was not correctly fetched (not a string)`);
       }
-      if (typeof request.data.refresh !== 'string') {
+      if (typeof request.data.refresh !== 'string' || request.data.refresh.length === 0) {
         throw new Error(`Refresh token for ${type} was not correctly fetched (not a string)`);
       }
       if (type === 'bot') {
@@ -395,6 +410,7 @@ class OAuth extends Core {
 
       return request.data.token;
     } catch (e) {
+      error(e.stack);
       if (type === 'bot') {
         botId.value = '';
         this.botUsername = '';

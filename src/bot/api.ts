@@ -59,7 +59,6 @@ import eventlist from './overlays/eventlist';
 import alerts from './registries/alerts';
 import stats from './stats';
 import twitch from './twitch';
-import webhooks from './webhooks';
 import joinpart from './widgets/joinpart';
 
 let latestFollowedAtTimestamp = 0;
@@ -82,8 +81,7 @@ const updateFollowerState = async(users: Readonly<Required<UserInterface>>[], us
     for (const user of users.filter(o => !o.isFollower)) {
       const apiUser = usersFromAPI.find(userFromAPI => userFromAPI.from_id === user.userId) as typeof usersFromAPI[0];
       if (new Date().getTime() - new Date(apiUser.followed_at).getTime() < 2 * constants.HOUR) {
-        if (user.followedAt === 0 || new Date().getTime() - user.followedAt > 60000 * 60 && !webhooks.existsInCache('follows', user.userId)) {
-          webhooks.addIdToCache('follows', user.userId);
+        if (user.followedAt === 0 || new Date().getTime() - user.followedAt > 60000 * 60) {
           eventlist.add({
             event:     'follow',
             userId:    user.userId,
@@ -193,7 +191,12 @@ class API extends Core {
 
   @onStartup()
   async intervalCheck () {
+    let isBlocking: boolean | string = false;
     const check = async () => {
+      if (isBlocking) {
+        debug('api.interval', chalk.yellow(isBlocking + '() ') + 'still in progress.');
+        return;
+      }
       for (const fnc of intervals.keys()) {
         await setImmediateAwait();
         debug('api.interval', chalk.yellow(fnc + '() ') + 'check');
@@ -211,16 +214,27 @@ class API extends Core {
           continue;
         }
         if (Date.now() - interval.lastRunAt >= interval.interval) {
+          isBlocking = fnc;
+
+          // run validation before any requests
+          await oauth.validateOAuth('bot');
+          await oauth.validateOAuth('broadcaster');
+
           debug('api.interval', chalk.yellow(fnc + '() ') + 'start');
           const time = process.hrtime();
           const time2 = Date.now();
           try {
             const value = await Promise.race<Promise<any>>([
-              new Promise((resolve) => {
+              new Promise((resolve, reject) => {
                 if (fnc === 'updateChannelViewsAndBroadcasterType') {
-                  return updateChannelViewsAndBroadcasterType().then((data: any) => resolve(data));
+                  updateChannelViewsAndBroadcasterType()
+                    .then((data: any) => resolve(data))
+                    .catch((e) => reject(e));
+                } else {
+                  (this as any)[fnc](interval?.opts)
+                    .then((data: any) => resolve(data))
+                    .catch((e: any) => reject(e));
                 }
-                return (this as any)[fnc](interval?.opts).then((data: any) => resolve(data));
               }),
               new Promise((_resolve, reject) => setTimeout(() => reject(), 10 * constants.MINUTE)),
             ]);
@@ -260,7 +274,11 @@ class API extends Core {
             }
           } catch (e) {
             warning(`API call for ${fnc} is probably frozen (took more than 10minutes), forcefully unblocking`);
+            debug('api.interval', chalk.yellow(fnc + '() ') + e);
             continue;
+          } finally {
+            debug('api.interval', chalk.yellow(fnc + '() ') + 'unblocked.');
+            isBlocking = false;
           }
         } else {
           debug('api.interval', chalk.yellow(fnc + '() ') + `skip run, lastRunAt: ${interval.lastRunAt}`  );
@@ -453,30 +471,33 @@ class API extends Core {
       });
       const tags = request.data.data;
 
-      for(const tag of tags) {
-        const localizationNames = await getRepository(TwitchTagLocalizationName).find({ tagId: tag.tag_id });
-        const localizationDescriptions = await getRepository(TwitchTagLocalizationDescription).find({ tagId: tag.tag_id });
-        await getRepository(TwitchTag).save({
-          tag_id:             tag.tag_id,
-          is_auto:            tag.is_auto,
-          localization_names: Object.keys(tag.localization_names).map(key => {
-            return {
-              id:     localizationNames.find(o => o.locale === key && o.tagId === tag.tag_id)?.id,
-              locale: key,
-              value:  tag.localization_names[key],
-            };
-          }),
-          localization_descriptions: Object.keys(tag.localization_descriptions).map(key => {
-            return {
-              id:     localizationDescriptions.find(o => o.locale === key && o.tagId === tag.tag_id)?.id,
-              locale: key,
-              value:  tag.localization_descriptions[key],
-            };
-          }),
-        });
-      }
-      await getRepository(TwitchTagLocalizationDescription).delete({ tagId: IsNull() });
-      await getRepository(TwitchTagLocalizationName).delete({ tagId: IsNull() });
+      (async function updateTags() {
+        for(const tag of tags) {
+          await setImmediateAwait();
+          const localizationNames = await getRepository(TwitchTagLocalizationName).find({ tagId: tag.tag_id });
+          const localizationDescriptions = await getRepository(TwitchTagLocalizationDescription).find({ tagId: tag.tag_id });
+          await getRepository(TwitchTag).save({
+            tag_id:             tag.tag_id,
+            is_auto:            tag.is_auto,
+            localization_names: Object.keys(tag.localization_names).map(key => {
+              return {
+                id:     localizationNames.find(o => o.locale === key && o.tagId === tag.tag_id)?.id,
+                locale: key,
+                value:  tag.localization_names[key],
+              };
+            }),
+            localization_descriptions: Object.keys(tag.localization_descriptions).map(key => {
+              return {
+                id:     localizationDescriptions.find(o => o.locale === key && o.tagId === tag.tag_id)?.id,
+                locale: key,
+                value:  tag.localization_descriptions[key],
+              };
+            }),
+          });
+        }
+        await getRepository(TwitchTagLocalizationDescription).delete({ tagId: IsNull() });
+        await getRepository(TwitchTagLocalizationName).delete({ tagId: IsNull() });
+      })();
 
       ioServer?.emit('api.stats', {
         method: 'GET', data: tags, timestamp: Date.now(), call: 'getAllStreamTags', api: 'helix', endpoint: url, code: request.status, remaining: calls.bot,
@@ -485,7 +506,7 @@ class API extends Core {
       // save remaining api calls
       setRateLimit('bot', request.headers);
 
-      if (tags.length === 100) {
+      if (request.data.pagination.cursor) {
         // move to next page
         return this.getAllStreamTags({ cursor: request.data.pagination.cursor });
       }
@@ -551,7 +572,7 @@ class API extends Core {
       // save remaining api calls
       setRateLimit('broadcaster', request.headers);
 
-      if (subscribers.length === 100) {
+      if (request.data.pagination.cursor) {
         // move to next page
         return this.getChannelSubscribers({
           ...opts, cursor: request.data.pagination.cursor, subscribers: opts.subscribers,
@@ -760,7 +781,7 @@ class API extends Core {
     return { state: true };
   }
 
-  async getChannelFollowers (opts: any) {
+  async getChannelFollowers (opts: { cursor?: string }) {
     opts = opts || {};
 
     const cid = channelId.value;
@@ -814,11 +835,11 @@ class API extends Core {
             followed_at: f.followed_at,
           };
         }), true).then(async () => {
-          if (followers.length === 100) {
+          if (request.data.pagination.cursor) {
             // move to next page
             // we don't care about return
             setImmediateAwait().then(() => {
-              this.getChannelFollowers({ cursor: request.data.pagination.cursor });
+              this.getChannelFollowers({ cursor: request.data.pagination.cursor  });
             });
           }
         });
@@ -929,7 +950,7 @@ class API extends Core {
           streamStatusChangeSince.value = (new Date(streamData.started_at)).getTime();
         }
         if (!isStreamOnline.value || streamType.value !== streamData.type) {
-          if (!webhooks.enabled.streams && Number(streamId.value) !== Number(streamData.id)) {
+          if (Number(streamId.value) !== Number(streamData.id)) {
             debug('api.stream', 'API: ' + JSON.stringify(streamData));
 
             stream.end();

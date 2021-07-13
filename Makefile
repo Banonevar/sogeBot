@@ -14,12 +14,16 @@ info:
 dependencies:
 	@echo -ne "\n\t ----- Cleaning up dependencies\n"
 	@rm -rf node_modules
-	@echo -ne "\n\t ----- Installation of production dependencies\n"
-	@npm install --production
-	@echo -ne "\n\t ----- Installation of development dependencies\n"
-	@npm install --only=dev
-	@echo -ne "\n\t ----- Installation of husky\n"
-	npx husky install
+	@echo -ne "\n\t ----- Installation of dependencies\n"
+ifeq ($(ENV),production)
+	npm ci --also=dev
+else
+	npm cache clean --force
+	npm install --also=dev
+endif
+	@echo -ne "\n\t ----- Installation of simple-git-hooks\n"
+	git config core.hooksPath .git/hooks/
+	npx simple-git-hooks
 	@echo -ne "\n\t ----- Going through node_modules patches\n"
 	# How to create node_modules patch: https://opensource.christmas/2019/4
 	patch --forward node_modules/twitch-js/types/index.d.ts < patches/twitch-js-types-2.patch
