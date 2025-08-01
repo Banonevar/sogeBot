@@ -1,20 +1,20 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const assert = require('assert');
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import assert from 'assert';
+import { message } from '../../general.js';
 
-const { getManager } = require('typeorm');
-const { Quotes } = require('../../../dest/database/entity/quotes');
+import { AppDataSource } from '../../../dest/database.js';
+import { Quotes } from '../../../dest/database/entity/quotes.js';
 
-const quotes = (require('../../../dest/systems/quotes')).default;
+import quotes from '../../../dest/systems/quotes.js'
 
 // users
-const owner = { username: '__broadcaster__', userId: 1 };
+const owner = { userName: '__broadcaster__', userId: 1 };
 
 
 const tests = [
@@ -25,7 +25,7 @@ const tests = [
   { sender: owner, parameters: '-id $id', id: 1, shouldFail: false, exist: true },
 ];
 
-describe('Quotes - remove()', () => {
+describe('Quotes - remove() - @func3', () => {
   for (const test of tests) {
     let responses = [];
     describe(test.parameters, async () => {
@@ -49,7 +49,7 @@ describe('Quotes - remove()', () => {
           assert.strictEqual(responses[0].response, '$sender, quote ID is missing.');
         });
         it('Database should not be empty', async () => {
-          const items = await getManager()
+          const items = await AppDataSource
             .createQueryBuilder()
             .select('quotes')
             .from(Quotes, 'quotes')
@@ -62,7 +62,7 @@ describe('Quotes - remove()', () => {
             assert.strictEqual(responses[0].response, `$sender, quote ${id} was successfully deleted.`)
           });
           it('Database should be empty', async () => {
-            const items = await getManager()
+            const items = await AppDataSource
               .createQueryBuilder()
               .select('quotes')
               .from(Quotes, 'quotes')
@@ -74,7 +74,7 @@ describe('Quotes - remove()', () => {
             assert.strictEqual(responses[0].response, `$sender, quote ${test.id} was not found.`);
           });
           it('Database should not be empty', async () => {
-            const items = await getManager()
+            const items = await AppDataSource
               .createQueryBuilder()
               .select('quotes')
               .from(Quotes, 'quotes')

@@ -1,34 +1,35 @@
 /* global describe it beforeEach */
 
 
-const assert = require('assert');
-require('../../general.js');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const timers = (require('../../../dest/systems/timers')).default;
+import timers from '../../../dest/systems/timers.js';
 
-const { getRepository } = require('typeorm');
-const { Timer } = require('../../../dest/database/entity/timer');
+import { Timer } from '../../../dest/database/entity/timer.js';
 
-const { linesParsed } = require('../../../dest/helpers/parser');
+import { linesParsed } from '../../../dest/helpers/parser.js';
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Timers - unset()', () => {
+describe('Timers - unset() - @func2', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(Timer).save({
-      name: 'test',
-      triggerEveryMessage: 0,
-      triggerEverySecond: 60,
-      isEnabled: true,
-      triggeredAtTimestamp: Date.now(),
-      triggeredAtMessage: linesParsed,
-    });
+    const timer = new Timer();
+    timer.name = 'test';
+    timer.triggerEveryMessage = 0;
+    timer.triggerEverySecond = 60;
+    timer.tickOffline = true;
+    timer.isEnabled = true;
+    timer.triggeredAtTimestamp = Date.now();
+    timer.triggeredAtMessage = linesParsed;
+    await timer.save();
   });
 
   it('', async () => {
@@ -39,14 +40,14 @@ describe('Timers - unset()', () => {
     const r = await timers.unset({ sender: owner, parameters: '-name test' });
     assert.strictEqual(r[0].response, '$sender, timer test and its responses was deleted.');
 
-    const item = await getRepository(Timer).findOne({ name: 'test' });
-    assert(typeof item === 'undefined');
+    const item = await AppDataSource.getRepository(Timer).findOneBy({ name: 'test' });
+    assert(item === null);
   });
   it('-name nonexistent', async () => {
     const r = await timers.unset({ sender: owner, parameters: '-name nonexistent' });
     assert.strictEqual(r[0].response, '$sender, timer (name: nonexistent) was not found in database. Check timers with !timers list');
 
-    const item = await getRepository(Timer).findOne({ name: 'test' });
+    const item = await AppDataSource.getRepository(Timer).findOneBy({ name: 'test' });
     assert.strictEqual(item.triggerEverySecond, 60);
     assert.strictEqual(item.triggerEveryMessage, 0);
   });

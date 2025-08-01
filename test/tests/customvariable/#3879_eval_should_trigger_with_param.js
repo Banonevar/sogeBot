@@ -1,27 +1,27 @@
 /* global describe it before */
 
-const { defaultPermissions } = require('../../../dest/helpers/permissions/');
-const Parser = require('../../../dest/parser').default;
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
+import { Parser } from '../../../dest/parser.js';
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const customcommands = (require('../../../dest/systems/customcommands')).default;
-const user = require('../../general.js').user;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import customcommands from '../../../dest/systems/customcommands.js';
+import { user } from '../../general.js';
 
-const assert = require('assert');
-const _ = require('lodash');
+import assert from 'assert';
+import _ from 'lodash-es';
 
-const { getRepository } = require('typeorm');
-const { Variable } = require('../../../dest/database/entity/variable');
+import { Variable } from '../../../dest/database/entity/variable.js';
+import { AppDataSource } from '../../../dest/database.js'
 
 // stub
 _.set(global, 'widgets.custom_variables.io.emit', function () {
   return;
 });
 
-describe('Custom Variable - #3879 - Eval should trigger with param with proper permissions', () => {
+describe('Custom Variable - #3879 - Eval should trigger with param with proper permissions - @func1', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -34,16 +34,17 @@ describe('Custom Variable - #3879 - Eval should trigger with param with proper p
   });
 
   it(`Create eval $_variable to return param`, async () => {
-    await getRepository(Variable).save({
+    await Variable.create({
       variableName: '$_variable',
       readOnly: false,
       currentValue: '0',
       type: 'eval',
       responseType: 2,
+      runEvery: 0,
       permission: defaultPermissions.MODERATORS,
       evalValue: 'return param || "no param sent";',
       usableOptions: [],
-    });
+    }).save();
   });
 
   describe('!_test 4 by owner', () => {

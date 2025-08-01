@@ -1,35 +1,41 @@
 {
+  "artists": "Artists",
   "settings": {
     "enabled": "Статус",
-    "songRequests": "Song Requests",
+    "songRequests": "Запити на пісню",
     "fetchCurrentSongWhenOffline": {
-      "title": "Fetch current song when stream is offline",
-      "help": "It's advised to have this disabled to avoid reach API limits"
+      "title": "Завантажити поточну пісню, коли потік не в мережі",
+      "help": "Рекомендуємо відключити дану функцію для уникнення ліміту API"
+    },
+    "allowApprovedArtistsOnly": "Дозволити тільки затверджених виконавців",
+    "approvedArtists": {
+      "title": "Схвалені артисти",
+      "help": "Ім'я або SpotifyURI виконавця, один елемент у рядку"
     },
     "queueWhenOffline": {
-      "title": "Queue songs when stream is offline",
-      "help": "It's advised to have this disabled to avoid queueing when you are just listening music"
+      "title": "Черга пісень, коли трансляція не в мережі",
+      "help": "Рекомендується відключити цю функцію, щоб уникнути черги, коли ви просто слухаєте музику"
     },
     "clientId": "clientId",
     "clientSecret": "clientSecret",
     "manualDeviceId": {
-      "title": "Forced Device ID",
-      "help": "Empty = disabled, force spotify device ID to be used to queue songs. Check logs for current active device or use button when playing song for at least 10 seconds."
+      "title": "Примусовий ідентифікатор пристрою",
+      "help": "Empty = disabled, force Spotify device ID to be used to queue songs. Check logs for current active device or use button when playing song for at least 10 seconds."
     },
     "redirectURI": "redirectURI",
     "format": {
-      "title": "Format",
-      "help": "Available variables: $song, $artist, $artists"
+      "title": "Формат",
+      "help": "Доступні змінні: $song, $artist, $artists"
     },
-    "username": "Authorized user",
-    "revokeBtn": "Revoke user authorization",
-    "authorizeBtn": "Authorize user",
-    "scopes": "Scopes",
+    "username": "Авторизований користувач",
+    "revokeBtn": "Відкликати авторизацію користувача",
+    "authorizeBtn": "Авторизація користувача",
+    "scopes": "Дозвіл",
     "playlistToPlay": {
-      "title": "Spotify URI of main playlist",
-      "help": "If set, after request finished this playlist will continue"
+      "title": "URI Spotify з основного плейлісту",
+      "help": "Якщо призначено, то по завершенню замовлених пісень цей плейлист буде продовжено"
     },
-    "continueOnPlaylistAfterRequest": "Continue on playing of playlist after song request",
-    "notify": "Send message on song change"
+    "continueOnPlaylistAfterRequest": "Продовжити відтворення пісні після запиту пісні",
+    "notify": "Надсилати повідомлення про зміну пісні"
   }
 }

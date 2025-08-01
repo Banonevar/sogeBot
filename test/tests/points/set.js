@@ -1,20 +1,20 @@
 /* global describe it before */
 
-const assert = require('assert');
+import assert from 'assert';
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
+import _ from 'lodash-es';
+import { AppDataSource } from '../../../dest/database.js';
 
-require('../../general.js');
+import('../../general.js');
 
-const { User } = require('../../../dest/database/entity/user');
-const points = (require('../../../dest/systems/points')).default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { User } from '../../../dest/database/entity/user.js';
+import points from '../../../dest/systems/points.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const user = { username: 'oneuser', userId: String(_.random(999999, false)) };
+const user = { userName: 'oneuser', userId: String(_.random(999999, false)) };
 
-describe('Points - set()', () => {
+describe('Points - set() - @func1', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -22,7 +22,7 @@ describe('Points - set()', () => {
 
   describe('Points should be correctly set, not added', () => {
     it('create user', async () => {
-      await getRepository(User).save({ username: user.username, userId: user.userId });
+      await AppDataSource.getRepository(User).save({ userName: user.userName, userId: user.userId });
     });
 
     it('!points get should return 0', async () => {
@@ -31,7 +31,7 @@ describe('Points - set()', () => {
     });
 
     it('!points set should correctly set value 5', async () => {
-      const r = await points.set({ sender: user, parameters: user.username + ' 5' });
+      const r = await points.set({ sender: user, parameters: user.userName + ' 5' });
       assert.strictEqual(r[0].response, `@oneuser was set to 5 points`);
     });
 
@@ -41,7 +41,7 @@ describe('Points - set()', () => {
     });
 
     it('!points set should correctly set value 10', async () => {
-      const r = await points.set({ sender: user, parameters: user.username + ' 10' });
+      const r = await points.set({ sender: user, parameters: user.userName + ' 10' });
       assert.strictEqual(r[0].response, `@oneuser was set to 10 points`);
     });
 

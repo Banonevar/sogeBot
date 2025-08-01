@@ -4,8 +4,12 @@
 * Configuration
   * [Database](_master/configuration/database.md)
   * [Environment variables](_master/configuration/env.md)
+* Services
+  * [Twitch](_master/services/twitch.md)
+  * [Google](_master/services/google.md)
 * Systems
   * [Alias](_master/systems/alias.md)
+  * [Bets](_master/systems/bets.md)
   * [Commercial](_master/systems/commercial.md)
   * [Permissions](_master/systems/permissions.md)
   * [Custom Commands](_master/systems/custom-commands.md)
@@ -20,7 +24,6 @@
   * [Scrim](_master/systems/scrim.md)
   * [Songs](_master/systems/songs.md)
   * [Top](_master/systems/top.md)
-  * [Overlays](_master/systems/overlays.md)
   * [Ranks](_master/systems/ranks.md)
   * [Raffles](_master/systems/raffles.md)
   * [Queue](_master/systems/queue.md)
@@ -28,7 +31,6 @@
   * [Quotes](_master/systems/quotes.md)
   * [Miscellaneous](_master/systems/miscellaneous.md)
 * Games
-  * [Bets](_master/games/bets.md)
   * [Duel](_master/games/duel.md)
   * [FightMe](_master/games/fightme.md)
   * [Gamble](_master/games/gamble.md)
@@ -44,11 +46,9 @@
   * [Eventlist](_master/overlays/eventlist.md)
 * How To
   * [Connection to socket](_master/howto/connection-to-socket.md)
-  * [Phillips Hue](_master/howto/phillipshue.md)
   * [Eval snippets](_master/howto/eval.md)
   * [Run random command](_master/howto/run-random-command.md)
   * [Write own system](_master/howto/write-own-system.md)
 * Integrations
-  * [Twitter](_master/integrations/twitter.md)
   * [Last.fm](_master/integrations/lastfm.md)
   * [Spotify](_master/integrations/spotify.md)

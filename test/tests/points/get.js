@@ -1,25 +1,25 @@
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const assert = require('assert');
+import assert from 'assert';
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
+import _ from 'lodash-es';
+import { AppDataSource } from '../../../dest/database.js';
 
-const { User } = require('../../../dest/database/entity/user');
-const points = (require('../../../dest/systems/points')).default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { User } from '../../../dest/database/entity/user.js';
+import points from '../../../dest/systems/points.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
 const hugePointsUser = {
-  username: 'hugeuser', points: 99999999999999999999999999999999, userId: String(_.random(999999, false)),
+  userName: 'hugeuser', points: 99999999999999999999999999999999, userId: String(_.random(999999, false)),
 };
 const tinyPointsUser = {
-  username: 'tinyuser', points: 100, userId: String(_.random(999999, false)),
+  userName: 'tinyuser', points: 100, userId: String(_.random(999999, false)),
 };
 
-describe('Points - get()', () => {
+describe('Points - get() - @func1', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -27,8 +27,8 @@ describe('Points - get()', () => {
 
   describe('User with more than safe points should return safe points', () => {
     it('create user with huge amount of points', async () => {
-      await getRepository(User).save({
-        username: hugePointsUser.username, userId: hugePointsUser.userId, points: hugePointsUser.points,
+      await AppDataSource.getRepository(User).save({
+        userName: hugePointsUser.userName, userId: hugePointsUser.userId, points: hugePointsUser.points,
       });
     });
 
@@ -40,8 +40,8 @@ describe('Points - get()', () => {
 
   describe('User with less than safe points should return unchanged points', () => {
     it('create user with normal amount of points', async () => {
-      await getRepository(User).save({
-        username: tinyPointsUser.username, userId: tinyPointsUser.userId, points: tinyPointsUser.points,
+      await AppDataSource.getRepository(User).save({
+        userName: tinyPointsUser.userName, userId: tinyPointsUser.userId, points: tinyPointsUser.points,
       });
     });
 
@@ -59,15 +59,15 @@ describe('Points - get()', () => {
 
     for (let i = 1; i <= 10; i++) {
       it(`create user${i} with ${i*100} points`, async () => {
-        await getRepository(User).save({
-          username: `user${i}`, userId: String(i), points: i*100,
+        await AppDataSource.getRepository(User).save({
+          userName: `user${i}`, userId: String(i), points: i*100,
         });
       });
     }
 
     for (let i = 1; i <= 10; i++) {
       it(`user${i} should have correct order and position`, async () => {
-        const r = await points.get({ sender: { username: `user${i}`, userId: String(i) }, parameters: '' });
+        const r = await points.get({ sender: { userName: `user${i}`, userId: String(i) }, parameters: '' });
         assert.strictEqual(r[0].response, `@user${i} has currently ${i*100} points. Your position is ${11-i}/10.`);
       });
     }

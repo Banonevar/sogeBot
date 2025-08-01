@@ -1,50 +1,46 @@
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
+import { db, message, user } from '../../general.js';
 
-const assert = require('assert');
+import assert from 'assert';
 
-const customcommands = (require('../../../dest/systems/customcommands')).default;
-const Parser = require('../../../dest/parser').default;
+import customcommands from '../../../dest/systems/customcommands.js';
+import { Parser } from '../../../dest/parser.js';
 
-describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/708371785157967873 - permission of command with (!#) should be ignored', () => {
+describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/708371785157967873 - permission of command with (!#) should be ignored - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
-    await customcommands.add({ sender: user.owner, parameters: '-c !test -r (!alert type=video)' });
+    await customcommands.add({ sender: user.owner, parameters: '-c !test -r (!queue open)' });
   });
 
-  it('call !alert directly with regular viewer should send permission error', async () => {
-    const parse = new Parser({ sender: user.owner, message: '!alert type=video', skip: false, quiet: false });
+  it('call !queue open directly with regular viewer should send permission error', async () => {
+    const parse = new Parser({ sender: user.viewer, message: '!queue open', skip: false, quiet: false });
     const r = await parse.process();
-    assert.strictEqual(r[0].response, 'You don\'t have enough permissions for \'!alert type=video\'');
+    assert.strictEqual(r[0].response, 'You don\'t have enough permissions for \'!queue open\'');
   });
 
-  it('!test should properly trigger !alert', async () => {
+  it('!test should properly trigger !queue open', async () => {
     await customcommands.run({ sender: user.viewer, message: '!test' });
-    await message.debug('message.process', '!alert type=video');
-    await message.debug('alerts.emit', 'type=video');
+    await message.debug('message.process', '!queue open');
   });
 });
 
-describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/708371785157967873 - permission of command with (!!#) should be ignored', () => {
+describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/708371785157967873 - permission of command with (!!#) should be ignored - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
-    await customcommands.add({ sender: user.owner, parameters: '-c !test -r (!!alert type=video2)' });
+    await customcommands.add({ sender: user.owner, parameters: '-c !test -r (!!queue open)' });
   });
 
-  it('call !alert directly with regular viewer should send permission error', async () => {
-    const parse = new Parser({ sender: user.owner, message: '!alert type=video2', skip: false, quiet: false });
+  it('call !queue open directly with regular viewer should send permission error', async () => {
+    const parse = new Parser({ sender: user.viewer, message: '!queue open', skip: false, quiet: false });
     const r = await parse.process();
-    assert.strictEqual(r[0].response, 'You don\'t have enough permissions for \'!alert type=video2\'');
+    assert.strictEqual(r[0].response, 'You don\'t have enough permissions for \'!queue open\'');
   });
 
-  it('!test should properly trigger !alert', async () => {
+  it('!test should properly trigger !queue open', async () => {
     await customcommands.run({ sender: user.viewer, message: '!test' });
-    await message.debug('message.process', '!alert type=video2');
-    await message.debug('alerts.emit', 'type=video2');
+    await message.debug('message.process', '!queue open');
   });
 });

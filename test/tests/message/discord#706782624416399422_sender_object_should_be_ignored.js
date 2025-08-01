@@ -1,30 +1,30 @@
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const time = require('../../general.js').time;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import { time } from '../../general.js';
 
-const isStreamOnline = (require('../../../dest/helpers/api/isStreamOnline')).isStreamOnline;
-const alias = (require('../../../dest/systems/alias')).default;
-const customcommands = (require('../../../dest/systems/customcommands')).default;
-const timers = (require('../../../dest/systems/timers')).default;
-const check = (require('../../../dest/watchers')).check;
+import { isStreamOnline } from '../../../dest/helpers/api/isStreamOnline.js'
+import alias from '../../../dest/systems/alias.js';
+import customcommands from '../../../dest/systems/customcommands.js';
+import timers from '../../../dest/systems/timers.js';
+import {check} from '../../../dest/watchers.js'
 
-const { getRepository } = require('typeorm');
-const { Timer, TimerResponse } = require('../../../dest/database/entity/timer');
+import { AppDataSource } from '../../../dest/database.js';
+import { Timer, TimerResponse } from '../../../dest/database/entity/timer.js';
 
-const { linesParsed } = require('../../../dest/helpers/parser');
+import { linesParsed } from '../../../dest/helpers/parser.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/706782624416399422 - sender object should be owner on timers with (!#)', () => {
+describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/706782624416399422 - sender object should be owner on timers with (!#) - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
     await alias.add({ sender: owner, parameters: '-a !testAlias -c !me' });
     await customcommands.add({ sender: owner, parameters: '-c !testCmd -r Lorem Ipsum' });
-    const timer = await getRepository(Timer).save({
+    const timer = await AppDataSource.getRepository(Timer).save({
       name: 'test',
       triggerEveryMessage: 0,
       triggerEverySecond: 1,
@@ -32,7 +32,7 @@ describe('Message - https://discordapp.com/channels/317348946144002050/619437014
       triggeredAtTimestamp: Date.now(),
       triggeredAtMessage: linesParsed,
     });
-    await getRepository(TimerResponse).save({
+    await AppDataSource.getRepository(TimerResponse).save({
       response: '(!top time)',
       timestamp: Date.now(),
       isEnabled: true,
@@ -47,6 +47,6 @@ describe('Message - https://discordapp.com/channels/317348946144002050/619437014
   });
 
   it('!top time should be properly triggered', async () => {
-    await message.isSentRaw('Top 10 (watch time): no data available', 'bot', 20000);
+    await message.isSentRaw('Top 10 (watch time): no data available', '__bot__', 20000);
   });
 });

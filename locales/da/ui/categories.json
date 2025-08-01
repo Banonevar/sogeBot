@@ -1,10 +1,12 @@
 {
+  "announcements": "Announcements",
+  "keys": "Keys",
   "currency": "Currency",
   "general": "General",
   "settings": "Settings",
   "commands": "Commands",
   "bot": "Bot",
-  "broadcaster": "Broadcaster",
+  "channel": "Channel",
   "connection": "Connection",
   "chat": "Chat",
   "graceful_exit": "Graceful exit",
@@ -12,6 +14,9 @@
   "levels": "Levels",
   "notifications": "Notifications",
   "options": "Options",
+  "comboBreakMessages": "Combo Break Messages",
+  "hypeMessages": "Hype Messages",
+  "messages": "Messages",
   "results": "Results",
   "customization": "Customization",
   "status": "Status",
@@ -34,7 +39,7 @@
   "conversion": "Conversion",
   "xp": "XP",
   "caps_filter": "Caps filter",
-  "color_filter": "Color (/me) filter",
+  "color_filter": "Italic (/me) filter",
   "links_filter": "Links filter",
   "symbols_filter": "Symbols filter",
   "longMessage_filter": "Message length filter",
@@ -48,5 +53,9 @@
   "luck": "Luck",
   "lists": "Lists",
   "me": "Me",
-  "emotes_combo": "Emotes combo"
+  "emotes_combo": "Emotes combo",
+  "tmi": "tmi",
+  "oauth": "oauth",
+  "eventsub": "eventsub",
+  "rules": "rules"
 }

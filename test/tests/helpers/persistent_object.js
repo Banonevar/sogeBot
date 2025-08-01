@@ -1,25 +1,24 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js'
 
-const { getRepository } = require('typeorm');
-
-const { Settings } = require('../../../dest/database/entity/settings');
-require('../../general.js');
-const db = require('../../general.js').db;
-const time = require('../../general.js').time;
+import { Settings } from '../../../dest/database/entity/settings.js';
+import('../../general.js');
+import { db } from '../../general.js';
+import { time } from '../../general.js';
 
 let stats;
 let onChangeTriggered = 0;
 
-describe('Persistent object', () => {
+describe('Persistent object - @func1', () => {
   before(async () => {
     await db.cleanup();
-    const { persistent } =  require('../../../dest/helpers/core/persistent');
+    const { persistent } =  await import('../../../dest/helpers/core/persistent.js');
 
     // save incorrect value
-    await getRepository(Settings).save({
+    await AppDataSource.getRepository(Settings).save({
       name: 'stats', namespace: '/test', value: '{"language":"da","currentWatchedTime":140040000,"currentViewers":5,"maxViewers":8,"currentSubscribers":13,"currentBits":0,"currentTips":0,"currentFollowers":2286,"currentViews":87594,"currentGame":"World of Warcraft","currentTitle":"{ENG/DA}:teddy_bear: 9/10 HC Progression - Rygstopsforsøg dag 7 - !donogoal !nytskema !job !uddannelse:teddy_bear:","currentHosts":0,"newChatters":11,"value":{"language":"da","currentWatchedTime":0,"currentViewers":0,"maxViewers":0,"currentSubscribers":13,"currentBits":0,"currentTips":0,"currentFollowers":2288,"currentViews":87131,"currentGame":"World of Warcraft","currentTitle":"{ENG/DA}:teddy_bear:Late night wow hygge - Stadig høj over afsluttet uddannelse! - !RGB !uddannelse:teddy_bear:\n","currentHosts":0,"newChatters":0}}',
     });
 
@@ -78,7 +77,7 @@ describe('Persistent object', () => {
     });
     it('value should be changed in db', async () => {
       await time.waitMs(100);
-      const value = await getRepository(Settings).findOneOrFail({ name: 'stats', namespace: '/test' });
+      const value = await AppDataSource.getRepository(Settings).findOneByOrFail({ name: 'stats', namespace: '/test' });
       assert.notStrictEqual(JSON.parse(value.value),{
         language:           'fr',
         currentWatchedTime: 0,
@@ -107,7 +106,7 @@ describe('Persistent object', () => {
     });
     it('change of attributes should be properly saved', async () => {
       await time.waitMs(100);
-      const value = await getRepository(Settings).findOneOrFail({ name: 'stats', namespace: '/test' });
+      const value = await AppDataSource.getRepository(Settings).findOneByOrFail({ name: 'stats', namespace: '/test' });
       assert.notStrictEqual(JSON.parse(value.value),{
         language:           'cs',
         currentWatchedTime: 0,
@@ -134,7 +133,7 @@ describe('Persistent object', () => {
     });
     it('change of attributes should be properly saved', async () => {
       await time.waitMs(100);
-      const value = await getRepository(Settings).findOneOrFail({ name: 'stats', namespace: '/test' });
+      const value = await AppDataSource.getRepository(Settings).findOneByOrFail({ name: 'stats', namespace: '/test' });
       assert.notStrictEqual(JSON.parse(value.value),{
         language:           'cy',
         currentWatchedTime: 0,

@@ -1,21 +1,20 @@
 /* global describe it before */
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js'
 
-const { getRepository } = require('typeorm');
+import { User } from '../../../dest/database/entity/user.js';
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import eventlist from '../../../dest/overlays/eventlist.js';
+import twitch from '../../../dest/services/twitch.js';
+import { db } from '../../general.js';
+import { time } from '../../general.js';
+import { message } from '../../general.js';
+import { user } from '../../general.js';
 
-const { User } = require('../../../dest/database/entity/user');
-const { prepare } = require('../../../dest/helpers/commons/prepare');
-const eventlist = (require('../../../dest/overlays/eventlist')).default;
-const twitch = (require('../../../dest/twitch')).default;
-const db = require('../../general.js').db;
-const time = require('../../general.js').time;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
+import('../../general.js');
 
-require('../../general.js');
-
-describe('lib/twitch - subs()', () => {
+describe('lib/twitch - subs() - @func2', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -24,8 +23,8 @@ describe('lib/twitch - subs()', () => {
 
   it('Set viewer, viewer2, viewer3 as subs', async () => {
     for (const u of [user.viewer, user.viewer2, user.viewer3]) {
-      await getRepository(User).save({
-        userId: u.userId, username: u.username, isSubscriber: true,
+      await AppDataSource.getRepository(User).save({
+        userId: u.userId, userName: u.userName, isSubscriber: true,
       });
     }
   });
@@ -50,7 +49,7 @@ describe('lib/twitch - subs()', () => {
     const r = await twitch.subs({ sender: user.viewer });
     assert.strictEqual(r[0].response, prepare('subs', {
       lastSubAgo:      'a few seconds ago',
-      lastSubUsername: user.viewer2.username,
+      lastSubUsername: user.viewer2.userName,
       onlineSubCount:  0,
     }));
   });
@@ -67,20 +66,20 @@ describe('lib/twitch - subs()', () => {
     const r = await twitch.subs({ sender: user.viewer });
     assert.strictEqual(r[0].response, prepare('subs', {
       lastSubAgo:      'a few seconds ago',
-      lastSubUsername: user.viewer3.username,
+      lastSubUsername: user.viewer3.userName,
       onlineSubCount:  0,
     }));
   });
 
   it('Add user.viewer, user.viewer2, user.viewer3 to online users', async () => {
-    await getRepository(User).update({}, { isOnline: true });
+    await AppDataSource.getRepository(User).update({}, { isOnline: true });
   });
 
   it('!subs should return user.viewer3 and 3 online subs', async () => {
     const r = await twitch.subs({ sender: user.viewer });
     assert.strictEqual(r[0].response, prepare('subs', {
       lastSubAgo:      'a few seconds ago',
-      lastSubUsername: user.viewer3.username,
+      lastSubUsername: user.viewer3.userName,
       onlineSubCount:  3,
     }));
   });

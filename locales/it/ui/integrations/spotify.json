@@ -1,10 +1,16 @@
 {
+  "artists": "Artists",
   "settings": {
     "enabled": "Stato",
     "songRequests": "Richieste Brano",
     "fetchCurrentSongWhenOffline": {
       "title": "Recupera il brano corrente quando la diretta è offline",
       "help": "Si consiglia di avere questo disabilitato per evitare di raggiungere i limiti delle API"
+    },
+    "allowApprovedArtistsOnly": "Consenti solo artisti approvati",
+    "approvedArtists": {
+      "title": "Artisti approvati",
+      "help": "Nome o SpotifyURI dell'artista, un elemento per riga"
     },
     "queueWhenOffline": {
       "title": "Accoda i brani quando la diretta è offline",
@@ -13,8 +19,8 @@
     "clientId": "clientId",
     "clientSecret": "clientSecret",
     "manualDeviceId": {
-      "title": "Forced Device ID",
-      "help": "Empty = disabled, force spotify device ID to be used to queue songs. Check logs for current active device or use button when playing song for at least 10 seconds."
+      "title": "Id Dispositivo Forzato",
+      "help": "Empty = disabled, force Spotify device ID to be used to queue songs. Check logs for current active device or use button when playing song for at least 10 seconds."
     },
     "redirectURI": "redirectURI",
     "format": {

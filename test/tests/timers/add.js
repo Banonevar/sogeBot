@@ -1,34 +1,35 @@
 /* global describe it beforeEach */
 
 
-const assert = require('assert');
-require('../../general.js');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const timers = (require('../../../dest/systems/timers')).default;
+import timers from '../../../dest/systems/timers.js';
 
-const { getRepository } = require('typeorm');
-const { Timer, TimerResponse } = require('../../../dest/database/entity/timer');
+import { Timer, TimerResponse } from '../../../dest/database/entity/timer.js';
 
-const { linesParsed } = require('../../../dest/helpers/parser');
+import { linesParsed } from '../../../dest/helpers/parser.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Timers - add()', () => {
+describe('Timers - add() - @func2', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
-    await getRepository(Timer).save({
-      name: 'test',
-      triggerEveryMessage: 0,
-      triggerEverySecond: 60,
-      isEnabled: true,
-      triggeredAtTimestamp: Date.now(),
-      triggeredAtMessage: linesParsed,
-    });
+
+    const timer = new Timer();
+    timer.name = 'test';
+    timer.triggerEveryMessage = 0;
+    timer.triggerEverySecond = 60;
+    timer.isEnabled = true;
+    timer.triggeredAtTimestamp = Date.now();
+    timer.triggeredAtMessage = linesParsed;
+    await timer.save();
   });
 
   it('', async () => {
@@ -49,7 +50,7 @@ describe('Timers - add()', () => {
   it('-name test -response "Lorem Ipsum"', async () => {
     const r = await timers.add({ sender: owner, parameters: '-name test -response "Lorem Ipsum"' });
 
-    const item = await getRepository(TimerResponse).findOne({ response: 'Lorem Ipsum' });
+    const item = await AppDataSource.getRepository(TimerResponse).findOneBy({ response: 'Lorem Ipsum' });
     assert(typeof item !== 'undefined');
 
     assert.strictEqual(r[0].response, `$sender, response (id: ${item.id}) for timer (name: test) was added - 'Lorem Ipsum'`);

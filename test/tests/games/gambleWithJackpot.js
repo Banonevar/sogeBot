@@ -1,23 +1,23 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const assert = require('assert');
+import assert from 'assert';
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
+import _ from 'lodash-es';
+import { AppDataSource } from '../../../dest/database.js';
 
-const { User } = require('../../../dest/database/entity/user');
-const gamble = (require('../../../dest/games/gamble')).default;
-const { prepare } = require('../../../dest/helpers/commons/prepare');
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { User } from '../../../dest/database/entity/user.js';
+import gamble from '../../../dest/games/gamble.js';
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const user1 = { username: 'user1', userId: String(_.random(999999, false)) };
+const user1 = { userName: 'user1', userId: String(_.random(999999, false)) };
 const command = '!gamble';
 
-describe('Gambling - gamble with Jackpot', () => {
+describe('Gambling - gamble with Jackpot - @func1', () => {
   describe('User uses !gamble', () => {
     before(async () => {
       await db.cleanup();
@@ -36,21 +36,21 @@ describe('Gambling - gamble with Jackpot', () => {
     });
 
     it('add points for user', async () => {
-      await getRepository(User).save({
-        userId: user1.userId, username: user1.username, points: 1000, 
+      await AppDataSource.getRepository(User).save({
+        userId: user1.userId, userName: user1.userName, points: 1000,
       });
     });
 
     it('user should lose !gamble 125', async () => {
       const r = await gamble.main({
-        sender: user1, parameters: '125', command, 
+        sender: user1, parameters: '125', command,
       });
       assert.strictEqual(r[0].response, '$sender, you LOST! You now have 875 points. Jackpot increased to 13 points');
     });
 
     it('user should lose again !gamble 100', async () => {
       const r = await gamble.main({
-        sender: user1, parameters: '200', command, 
+        sender: user1, parameters: '200', command,
       });
       assert.strictEqual(r[0].response, '$sender, you LOST! You now have 675 points. Jackpot increased to 33 points');
     });
@@ -61,7 +61,7 @@ describe('Gambling - gamble with Jackpot', () => {
 
     it('user should lose again !gamble 100', async () => {
       const r = await gamble.main({
-        sender: user1, parameters: '100', command, 
+        sender: user1, parameters: '100', command,
       });
       assert.strictEqual(r[0].response, '$sender, you LOST! You now have 575 points. Jackpot increased to 133 points');
     });
@@ -77,7 +77,7 @@ describe('Gambling - gamble with Jackpot', () => {
 
     it('user should win jackpot !gamble 100', async () => {
       const r = await gamble.main({
-        sender: user1, parameters: '100', command, 
+        sender: user1, parameters: '100', command,
       });
       assert.strictEqual(r[0].response, '$sender, you hit JACKPOT! You won 133 points in addition to your bet. You now have 808 points');
     });

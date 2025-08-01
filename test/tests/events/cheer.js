@@ -1,22 +1,17 @@
-/* global describe it before */
+import assert from 'assert';
 
-require('../../general.js');
+import('../../general.js');
 
-const assert = require('assert');
+import events from '../../../dest/events.js';
+import { Event } from '../../../dest/database/entity/event.js';
+import { User } from '../../../dest/database/entity/user.js';
+import { AppDataSource } from '../../../dest/database.js';
+import * as changelog from '../../../dest/helpers/user/changelog.js';
+import { time } from '../../general.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
-const { v4: uuidv4 } = require('uuid');
-
-const { Event } = require('../../../dest/database/entity/event');
-const { User } = require('../../../dest/database/entity/user');
-const log = require('../../../dest/helpers/log');
-const tmi = (require('../../../dest/tmi')).default;
-const time = require('../../general.js').time;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-
-describe('Events - cheer event', () => {
+describe('Events - cheer event - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -24,49 +19,39 @@ describe('Events - cheer event', () => {
 
   describe('#1699 - Cheer event is not waiting for user to save id', function () {
     before(async function () {
-      await getRepository(Event).save({
-        id:          uuidv4(),
-        name:        'cheer',
-        givenName:   'Cheer alert',
-        triggered:   {},
+      const ev = new Event();
+      ev.event = {
         definitions: {},
-        filter:      '',
-        isEnabled:   true,
-        operations:  [{
-          name:        'run-command',
-          definitions: {
-            isCommandQuiet: true,
-            commandToRun:   '!points add $username (math.$bits*10)',
-          },
-        }],
-      });
+        triggered:{},
+        name: 'cheer',
+      };
+      ev.givenName = 'Cheer alert';
+      ev.filter = '';
+      ev.isEnabled = true;
+      ev.operations = [{
+        name:        'run-command',
+        definitions: {
+          isCommandQuiet: false,
+          commandToRun:   '!points add $username (math.$bits*10)',
+        },
+      }];
+      await ev.save();
     });
 
     for (const username of ['losslezos', 'rigneir', 'mikasa_hraje', 'foufhs']) {
       const userId = String(Math.floor(Math.random() * 10000));
       describe(username + ' cheer event', () => {
         it('trigger cheer event for 1 bit - ' + username, async () => {
-          await tmi.cheer({
-            tags: {
-              username,
-              userId,
-              bits: 1,
-            },
-            message: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
-          });
+          await events.fire('cheer', { userName: username, userId, bits: 1, message: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5) });
         });
 
-        it('wait 1s', async () => {
-          await time.waitMs(1000);
-        });
-
-        it('we are not expecting any messages to be sent - quiet mode', async () => {
-          assert.strict.equal(log.chatOut.callCount, 0);
+        it('we are expecting message to be sent', async () => {
+          await message.isSentRaw(`@${username} just received 10 points!`, username);
         });
 
         it('user should have 10 points', async () => {
-          const user = await getRepository(User).findOne({ userId });
-          assert.strict.equal(user.points, 10);
+          const points = (await import('../../../dest/systems/points.js')).default;
+          assert.strict.equal(await points.getPointsOf(userId), 10);
         });
       });
     }

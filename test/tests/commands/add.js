@@ -1,19 +1,18 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const assert = require('assert');
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import assert from 'assert';
+import { message } from '../../general.js';
 
-const { defaultPermissions } = require('../../../dest/helpers/permissions/');
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
+import { User } from '../../../dest/database/entity/user.js';
+import { AppDataSource } from '../../../dest/database.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-
-const customcommands = (require('../../../dest/systems/customcommands')).default;
+import customcommands from '../../../dest/systems/customcommands.js';
 
 // users
-const owner = { username: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
+const owner = { userName: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
 
 const failedTests = [
   { permission: null, command: null, response: null },
@@ -40,12 +39,12 @@ function generateCommand(opts) {
   return [p, c, r].join(' ');
 }
 
-describe('Custom Commands - add()', () => {
+describe('Custom Commands - @func1 - add()', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(User).save({ username: owner.username, userId: owner.userId });
+    await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId });
   });
 
   describe('Expected parsed fail', () => {

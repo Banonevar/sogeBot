@@ -1,16 +1,16 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const { defaultPermissions } = require('../../../dest/helpers/permissions/');
-const alias = (require('../../../dest/systems/alias')).default;
-const assert = require('assert');
-const { prepare } = (require('../../../dest/helpers/commons/prepare'));
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
+import alias from '../../../dest/systems/alias.js';
+import assert from 'assert';
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
 const failedTests = [
   { permission: null, alias: null, command: null },
@@ -40,7 +40,7 @@ function generateCommand(opts) {
   return [p, a, c].join(' ');
 }
 
-describe('Alias - add()', () => {
+describe('Alias - @func1 - add()', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();

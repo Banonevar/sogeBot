@@ -1,80 +1,105 @@
 /* global describe it beforeEach */
 
-const assert = require('assert');
+import assert from 'assert';
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const timers = (require('../../../dest/systems/timers')).default;
-const isStreamOnline = (require('../../../dest/helpers/api/isStreamOnline')).isStreamOnline;
+import timers from '../../../dest/systems/timers.js';
+import { isStreamOnline } from '../../../dest/helpers/api/isStreamOnline.js'
 
-const { getRepository } = require('typeorm');
-const { Timer, TimerResponse } = require('../../../dest/database/entity/timer');
+import { Timer, TimerResponse } from '../../../dest/database/entity/timer.js';
 
-const { linesParsed } = require('../../../dest/helpers/parser');
+import { linesParsed } from '../../../dest/helpers/parser.js';
 
-describe('Timers - tickOffline should send response into chat when stream is off - https://community.sogebot.xyz/t/timers-offline-mode/254', () => {
+describe('Timers - tickOffline should send response into chat when stream is off - https://community.sogebot.xyz/t/timers-offline-mode/254 - @func2', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(Timer).save({
-      name: 'test',
-      triggerEveryMessage: 0,
-      triggerEverySecond: 1,
-      tickOffline: true,
-      isEnabled: true,
-      triggeredAtTimestamp: Date.now(),
-      triggeredAtMessage: linesParsed,
-      messages: [
-        { isEnabled: true, response: '1' },
-        { isEnabled: false, response: '2' },
-        { isEnabled: true, response: '3' }
-      ]
-    });
+    const timer = new Timer();
+    timer.name = 'test';
+    timer.triggerEveryMessage = 0;
+    timer.triggerEverySecond = 1;
+    timer.tickOffline = true;
+    timer.isEnabled = true;
+    timer.triggeredAtTimestamp = Date.now();
+    timer.triggeredAtMessage = linesParsed;
+    await timer.save();
 
-    await getRepository(Timer).save({
-      name: 'test2',
-      triggerEveryMessage: 0,
-      triggerEverySecond: 1,
-      tickOffline: false,
-      isEnabled: true,
-      triggeredAtTimestamp: Date.now(),
-      triggeredAtMessage: linesParsed,
-      messages: [
-        { isEnabled: true, response: '4' },
-        { isEnabled: true, response: '5' },
-        { isEnabled: true, response: '6' }
-      ]
-    });
+    const timer2 = new Timer();
+    timer2.name = 'test';
+    timer2.triggerEveryMessage = 0;
+    timer2.triggerEverySecond = 1;
+    timer2.tickOffline = false;
+    timer2.isEnabled = true;
+    timer2.triggeredAtTimestamp = Date.now();
+    timer2.triggeredAtMessage = linesParsed;
+    await timer2.save();
+
+    const response1 = new TimerResponse()
+    response1.isEnabled = true;
+    response1.response = '1';
+    response1.timer = timer;
+    await response1.save();
+
+    const response2 = new TimerResponse()
+    response2.isEnabled = false;
+    response2.response = '2';
+    response2.timer = timer;
+    await response2.save();
+
+    const response3 = new TimerResponse()
+    response3.isEnabled = true;
+    response3.response = '3';
+    response3.timer = timer;
+    await response3.save();
+
+    const response4 = new TimerResponse()
+    response4.isEnabled = true;
+    response4.response = '4';
+    response4.timer = timer2;
+    await response4.save();
+
+    const response5 = new TimerResponse()
+    response5.isEnabled = true;
+    response5.response = '5';
+    response5.timer = timer2;
+    await response5.save();
+
+    const response6 = new TimerResponse()
+    response6.isEnabled = true;
+    response6.response = '6';
+    response6.timer = timer2;
+    await response6.save();
 
     isStreamOnline.value = false;
   });
 
-  it('We should have response 1 in chat in a while', async () => {
-    await message.isSentRaw('1', 'bot', 45000);
+  it('We should have response 1 in chat in a while', async () => {
+    await message.isSentRaw('1', '__bot__', 45000);
     // we need to wait little more as interval when offline is 30s
   }).timeout(60000);
 
-  it('We should NOT have response 2 in chat in a while', async () => {
-    await message.isNotSentRaw('2', 'bot', 5000);
+  it('We should NOT have response 2 in chat in a while', async () => {
+    await message.isNotSentRaw('2', '__bot__', 5000);
   })
 
-  it('We should have response 3 in chat in a while', async () => {
-    await message.isSentRaw('3', 'bot', 5000);
+  it('We should have response 3 in chat in a while', async () => {
+    await message.isSentRaw('3', '__bot__', 5000);
   })
 
-  it('We should NOT have response 4 in chat in a while', async () => {
-    await message.isNotSentRaw('4', 'bot', 5000);
+  it('We should NOT have response 4 in chat in a while', async () => {
+    await message.isNotSentRaw('4', '__bot__', 5000);
   })
 
-  it('We should NOT have response 5 in chat in a while', async () => {
-    await message.isNotSentRaw('5', 'bot', 5000);
+  it('We should NOT have response 5 in chat in a while', async () => {
+    await message.isNotSentRaw('5', '__bot__', 5000);
   })
 
-  it('We should NOT have response 5 in chat in a while', async () => {
-    await message.isNotSentRaw('5', 'bot', 5000);
+  it('We should NOT have response 5 in chat in a while', async () => {
+    await message.isNotSentRaw('5', '__bot__', 5000);
   })
 });

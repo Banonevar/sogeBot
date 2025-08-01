@@ -1,25 +1,25 @@
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const assert = require('assert');
+import assert from 'assert';
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
+import _ from 'lodash-es';
+import { AppDataSource } from '../../../dest/database.js';
 
-const { User } = require('../../../dest/database/entity/user');
-const points = (require('../../../dest/systems/points')).default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { User } from '../../../dest/database/entity/user.js';
+import points from '../../../dest/systems/points.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
 const user1 = {
-  username: 'user1', points: 100, userId: String(_.random(999999, false)), 
+  userName: 'user1', points: 100, userId: String(_.random(999999, false)),
 };
 const user2 = {
-  username: 'user2', points: 100, userId: String(_.random(999999, false)), 
+  userName: 'user2', points: 100, userId: String(_.random(999999, false)),
 };
 
-describe('Points - give()', () => {
+describe('Points - give() - @func1', () => {
   describe('user1 will give 50 points to user2', () => {
     before(async () => {
       await db.cleanup();
@@ -27,14 +27,14 @@ describe('Points - give()', () => {
     });
 
     it('create user1', async () => {
-      await getRepository(User).save({
-        username: user1.username, userId: user1.userId, points: user1.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user1.userName, userId: user1.userId, points: user1.points,
       });
     });
 
     it('create user2', async () => {
-      await getRepository(User).save({
-        username: user2.username, userId: user2.userId, points: user2.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user2.userName, userId: user2.userId, points: user2.points,
       });
     });
 
@@ -67,14 +67,14 @@ describe('Points - give()', () => {
     });
 
     it('create user1', async () => {
-      await getRepository(User).save({
-        username: user1.username, userId: user1.userId, points: user1.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user1.userName, userId: user1.userId, points: user1.points,
       });
     });
 
     it('create user2', async () => {
-      await getRepository(User).save({
-        username: user2.username, userId: user2.userId, points: user2.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user2.userName, userId: user2.userId, points: user2.points,
       });
     });
 
@@ -107,14 +107,14 @@ describe('Points - give()', () => {
     });
 
     it('create user1', async () => {
-      await getRepository(User).save({
-        username: user1.username, userId: user1.userId, points: user1.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user1.userName, userId: user1.userId, points: user1.points,
       });
     });
 
     it('create user2', async () => {
-      await getRepository(User).save({
-        username: user2.username, userId: user2.userId, points: user2.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user2.userName, userId: user2.userId, points: user2.points,
       });
     });
 
@@ -147,14 +147,14 @@ describe('Points - give()', () => {
     });
 
     it('create user1', async () => {
-      await getRepository(User).save({
-        username: user1.username, userId: user1.userId, points: user1.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user1.userName, userId: user1.userId, points: user1.points,
       });
     });
 
     it('create user2', async () => {
-      await getRepository(User).save({
-        username: user2.username, userId: user2.userId, points: user2.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user2.userName, userId: user2.userId, points: user2.points,
       });
     });
 
@@ -168,7 +168,7 @@ describe('Points - give()', () => {
 
     it('user1 send wrong command', async () => {
       const r = await points.give({
-        sender: user1, parameters: 'user2', command: '!points give', 
+        sender: user1, parameters: 'user2', command: '!points give',
       });
       assert.strictEqual(r[0].response, `Sorry, $sender, but this command is not correct, use !points give [username] [amount]`);
     });
@@ -189,14 +189,14 @@ describe('Points - give()', () => {
     });
 
     it('create user1', async () => {
-      await getRepository(User).save({
-        username: user1.username, userId: user1.userId, points: user1.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user1.userName, userId: user1.userId, points: user1.points,
       });
     });
 
     it('create user2', async () => {
-      await getRepository(User).save({
-        username: user2.username, userId: user2.userId, points: user2.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user2.userName, userId: user2.userId, points: user2.points,
       });
     });
 
@@ -210,7 +210,7 @@ describe('Points - give()', () => {
 
     it('user1 send wrong string points', async () => {
       const r = await points.give({
-        sender: user1, parameters: 'user2 something', command: '!points give', 
+        sender: user1, parameters: 'user2 something', command: '!points give',
       });
       assert.strictEqual(r[0].response, `Sorry, $sender, but this command is not correct, use !points give [username] [amount]`);
     });
@@ -231,14 +231,14 @@ describe('Points - give()', () => {
     });
 
     it('create user1', async () => {
-      await getRepository(User).save({
-        username: user1.username, userId: user1.userId, points: user1.points, 
+      await AppDataSource.getRepository(User).save({
+        userName: user1.userName, userId: user1.userId, points: user1.points,
       });
     });
 
     it('create user2', async () => {
-      await getRepository(User).save({
-        username: user2.username, userId: user2.userId, points: 0, 
+      await AppDataSource.getRepository(User).save({
+        userName: user2.userName, userId: user2.userId, points: 0,
       });
     });
 
@@ -252,14 +252,14 @@ describe('Points - give()', () => {
 
     it('user1 send 0 points', async () => {
       const r = await points.give({
-        sender: user1, parameters: 'user2 0', command: '!points give', 
+        sender: user1, parameters: 'user2 0', command: '!points give',
       });
       assert.strictEqual(r[0].response, `Sorry, $sender, you cannot give 0 points to @user2`);
     });
 
     it('user2 send all points', async () => {
       const r = await points.give({
-        sender: user2, parameters: 'user1 all', command: '!points give', 
+        sender: user2, parameters: 'user1 all', command: '!points give',
       });
       assert.strictEqual(r[0].response, `Sorry, $sender, you cannot give 0 points to @user1`);
     });

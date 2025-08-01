@@ -12,7 +12,8 @@
     "amountOfGifts": "Počet obdarovaných",
     "amountOfMonths": "Počet měsíců",
     "amountOfTips": "Spropitné",
-    "event": "Událost"
+    "event": "Událost",
+    "service": "Služba"
   },
   "empty": "Registr alertů je prázdný, vytvořte nový.",
   "emptyAfterSearch": "Registr alertů je prázdný při hledání \"<strong>$search</strong>\"",
@@ -23,6 +24,12 @@
   },
   "alertDelayInMs": {
     "name": "Zpoždění alertů"
+  },
+  "parryEnabled": {
+    "name": "Parírování alertů"
+  },
+  "parryDelay": {
+    "name": "Zpoždění parírování alertu"
   },
   "profanityFilterType": {
     "name": "Filtr vulgarit",
@@ -38,17 +45,17 @@
     "help": "Slova musí být oddělena čárkou."
   },
   "event": {
-    "follows": "Sledující",
-    "cheers": "Bity",
-    "subs": "Předplatitel",
-    "resubs": "Předplatitel (resub)",
-    "subgifts": "Darování subscribe",
-    "subcommunitygifts": "Darování subscribe komunitě",
-    "tips": "Spropitné",
-    "hosts": "Hostování",
-    "raids": "Raidy",
-    "cmdredeems": "Koupené příkazy",
-    "rewardredeems": "Odměna vyplacena"
+    "follow": "Follow",
+    "cheer": "Cheer",
+    "sub": "Sub",
+    "resub": "Resub",
+    "subgift": "Darování subscribe",
+    "subcommunitygift": "Darování subscribe komunitě",
+    "tip": "Spropitné",
+    "raid": "Raid",
+    "custom": "Vlastní",
+    "promo": "Promo",
+    "rewardredeem": "Vyplácení odměn"
   },
   "title": {
     "name": "Název varianty",
@@ -58,7 +65,7 @@
     "name": "Výskyt varianty"
   },
   "filter": {
-    "name": "Filtr výskytu",
+    "name": "Filtr",
     "operator": "Operátor",
     "rule": "Pravidlo",
     "addRule": "Přidat pravidlo",
@@ -71,6 +78,7 @@
     "lessThan": "menší než",
     "lessThanOrEqual": "menší nebo rovno",
     "contain": "obsahuje",
+    "contains": "obsahuje",
     "equal": "rovná se",
     "notEqual": "nerovná se",
     "present": "je přítomen",
@@ -106,10 +114,18 @@
   "messageTemplate": {
     "name": "Šablona zprávy",
     "placeholder": "Zadejte svou šablonu zprávy",
-    "help": "Dostupné proměnné: {name}, {amount} (bits, subs, tips, subgifts, sub community gifts, command redeems), {recipient} (subgifts, command redeems), {monthsName} (subs, subgifts), {currency} (tips)"
+    "help": "Available variables: {{name}}, {{amount}} (cheers, subs, tips, subgifts, sub community gifts, command redeems), {{recipient}} (subgifts, command redeems), {{monthsName}} (subs, subgifts), {{tier}} (subs), {{currency}} (tips), {{game}} (promo). If | is added (see promo) then it will show those values in sequence."
+  },
+  "ttsTemplate": {
+    "name": "TTS šablona",
+    "placeholder": "Nastavte si šablonu TTS",
+    "help": "Available variables: {{name}}, {{amount}} {{monthsName}} {{currency}} {{message}}"
   },
   "animationText": {
     "name": "Animace textu"
+  },
+  "animationType": {
+    "name": "Typ animace"
   },
   "animationIn": {
     "name": "Vstupní animace"
@@ -125,6 +141,9 @@
   },
   "layoutPicker": {
     "name": "Rozvržení"
+  },
+  "loop": {
+    "name": "Přehrát ve smyčce"
   },
   "scale": {
     "name": "Měřítko"

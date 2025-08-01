@@ -1,17 +1,17 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const assert = require('assert');
+import assert from 'assert';
 
-const customcommands = (require('../../../dest/systems/customcommands')).default;
+import customcommands from '../../../dest/systems/customcommands.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Custom Commands - list()', () => {
+describe('Custom Commands - @func1 - list()', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();

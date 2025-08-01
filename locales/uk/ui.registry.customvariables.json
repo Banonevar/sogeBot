@@ -24,7 +24,7 @@
     "help": "Variable name must be unique, e.g. $_wins, $_loses, $_top3",
     "placeholder": "Enter your unique variable name",
     "error": {
-      "isNotUnique": "Variable must have <strong>unique</strong> name.",
+      "isNotUnique": "Variable must have unique name.",
       "isEmpty": "Variable name must not be empty."
     }
   },
@@ -73,11 +73,7 @@
     "eval": "Script"
   },
   "runEvery": {
-    "isUsed": "When variable is used",
-    "seconds": "Seconds",
-    "minutes": "Minutes",
-    "hours": "Hours",
-    "days": "Days"
+    "isUsed": "When variable is used"
   }
 }
 

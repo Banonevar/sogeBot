@@ -1,18 +1,16 @@
-/* global describe it beforeEach */
+import('../../general.js');
 
-require('../../general.js');
+import assert from 'assert';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const assert = require('assert');
-const { prepare } = require('../../../dest/helpers/commons/prepare');
-
-const permissions = (require('../../../dest/permissions')).default;
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import permissions from '../../../dest/permissions.js'
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Permissions - list()', () => {
+describe('Permissions - list() - @func3', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
@@ -25,7 +23,6 @@ describe('Permissions - list()', () => {
     assert.strictEqual(r[2].response, '≥ | Moderators | b38c5adb-e912-47e3-937a-89fabd12393a', owner);
     assert.strictEqual(r[3].response, '≥ | Subscribers | e3b557e7-c26a-433c-a183-e56c11003ab7', owner);
     assert.strictEqual(r[4].response, '≥ | VIP | e8490e6e-81ea-400a-b93f-57f55aad8e31', owner);
-    assert.strictEqual(r[5].response, '≥ | Followers | c168a63b-aded-4a90-978f-ed357e95b0d2', owner);
-    assert.strictEqual(r[6].response, '≥ | Viewers | 0efd7b1c-e460-4167-8e06-8aaf2c170311', owner);
+    assert.strictEqual(r[5].response, '≥ | Viewers | 0efd7b1c-e460-4167-8e06-8aaf2c170311', owner);
   });
 });

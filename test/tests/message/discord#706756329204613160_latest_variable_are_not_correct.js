@@ -1,60 +1,62 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const assert = require('assert');
 
-require('../../general.js');
+import assert from 'assert';
 
-const { getRepository } = require('typeorm');
+import('../../general.js');
 
-const { EventList } = require('../../../dest/database/entity/eventList');
-const { User } = require('../../../dest/database/entity/user');
-const Message = require('../../../dest/message').default;
-const eventlist = require('../../../dest/overlays/eventlist.js').default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { setImmediateAwait } from '../../../dest//helpers/setImmediateAwait.js';
+import { AppDataSource } from '../../../dest/database.js';
+import { EventList } from '../../../dest/database/entity/eventList.js';
+import { User } from '../../../dest/database/entity/user.js';
+import {Message} from '../../../dest/message.js';
+import eventlist from '../../../dest/overlays/eventlist.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/706756329204613160 - latest global variables are not correct', () => {
+describe('Message - https://discordapp.com/channels/317348946144002050/619437014001123338/706756329204613160 - latest global variables are not correct - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
     for (let i = 10000000; i < 10000040; i++) {
-      await getRepository(User).save({ username: `user${i}`, userId: String(i) });
+      await AppDataSource.getRepository(User).save({ userName: `user${i}`, userId: String(i) });
     }
 
   });
 
   it ('Add 10 follow events', async () => {
     for (let i = 10000000; i < 10000010; i++) {
-      await getRepository(EventList).save({
+      await AppDataSource.getRepository(EventList).save({
         isTest:      false,
         event:       'follow',
-        timestamp:   1000 * i,
+        timestamp:   i,
         userId:      `${i}`,
         values_json: '{}',
       });
+      await setImmediateAwait();
     }
   });
 
   it ('Add 10 sub/resub/subgift events', async () => {
     for (let i = 10000010; i < 10000020; i++) {
-      await getRepository(EventList).save({
+      await AppDataSource.getRepository(EventList).save({
         isTest:      false,
         event:       ['sub', 'resub', 'subgift'][Math.floor(Math.random() * 3)],
-        timestamp:   2000 * i,
+        timestamp:   i,
         userId:      `${i}`,
         values_json: '{}',
       });
+      await setImmediateAwait();
     }
   });
 
   it ('Add 10 tips events', async () => {
     for (let i = 10000020; i < 10000030; i++) {
-      await getRepository(EventList).save({
+      await AppDataSource.getRepository(EventList).save({
         isTest:      false,
         event:       'tip',
-        timestamp:   3000 * i,
+        timestamp:   i,
         userId:      `${i}`,
         values_json: JSON.stringify({
           amount:   i,
@@ -62,18 +64,23 @@ describe('Message - https://discordapp.com/channels/317348946144002050/619437014
           message:  `message${i-20}`,
         }),
       });
+      await setImmediateAwait();
     }
   });
 
   it ('Add 10 cheer events', async () => {
     for (let i = 10000030; i < 10000040; i++) {
-      await eventlist.add({
-        event:     'cheer',
-        userId:    String(i),
-        bits:      i,
-        message:   `message${i-30}`,
-        timestamp: Date.now(),
+      await AppDataSource.getRepository(EventList).save({
+        isTest:      false,
+        event:       'cheer',
+        timestamp:   i,
+        userId:      `${i}`,
+        values_json: JSON.stringify({
+          bits:    i,
+          message: `message${i-30}`,
+        }),
       });
+      await setImmediateAwait();
     }
   });
 

@@ -1,28 +1,28 @@
 /* global describe it before */
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js'
 
-const { getRepository } = require('typeorm');
-const v4 = require('uuid').v4;
+import { randomUUID } from 'node:crypto';
 
-const { Variable, VariableURL } = require('../../../dest/database/entity/variable');
-const { defaultPermissions } = require('../../../dest/helpers/permissions');
-require('../../general.js');
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { Variable } from '../../../dest/database/entity/variable.js';
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
+import('../../general.js');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import {postURL} from '../../../dest/helpers/customvariables/postURL.js';
 
-describe('Custom Variable - helpers/customvariables/postURL', () => {
-  let urlId;
-  let urlIdWithoutPOST;
-  let urlIdWithResponse;
+describe('Custom Variable - helpers/customvariables/postURL - @func1', () => {
+  let urlId = randomUUID();
+  let urlIdWithoutPOST = randomUUID();
+  let urlIdWithResponse1 = randomUUID();
+  let urlIdWithResponse2 = randomUUID();
 
   before(async () => {
     await db.cleanup();
     await message.prepare();
 
-    postURL = require('../../../dest/helpers/customvariables/postURL').postURL;
-
-    const variable = await getRepository(Variable).save({
+    Variable.create({
       variableName: '$_variable',
       readOnly: false,
       currentValue: '0',
@@ -31,9 +31,13 @@ describe('Custom Variable - helpers/customvariables/postURL', () => {
       permission: defaultPermissions.VIEWERS,
       evalValue: '',
       usableOptions: [],
-    });
+      urls: [
+        { GET: false, POST: true, showResponse: false, id: urlId },
+        { GET: false, POST: false, showResponse: false, id: urlIdWithoutPOST }
+      ]
+    }).save();
 
-    const variable2 = await getRepository(Variable).save({
+    Variable.create({
       variableName: '$_variable2',
       readOnly: false,
       currentValue: '0',
@@ -42,9 +46,10 @@ describe('Custom Variable - helpers/customvariables/postURL', () => {
       permission: defaultPermissions.VIEWERS,
       evalValue: '',
       usableOptions: [],
-    });
+      urls: [{ GET: false, POST: true, showResponse: true, id: urlIdWithResponse1 }]
+    }).save();
 
-    const variable3 = await getRepository(Variable).save({
+    Variable.create({
       variableName: '$_variable3',
       readOnly: false,
       currentValue: '0',
@@ -54,11 +59,8 @@ describe('Custom Variable - helpers/customvariables/postURL', () => {
       permission: defaultPermissions.VIEWERS,
       evalValue: '',
       usableOptions: [],
-    });
-    urlId = (await getRepository(VariableURL).save({ GET: false, POST: true, showResponse: false, variableId: variable.id })).id;
-    urlIdWithoutPOST = (await getRepository(VariableURL).save({ GET: false, POST: false, showResponse: false, variableId: variable.id })).id;
-    urlIdWithResponse1 = (await getRepository(VariableURL).save({ GET: false, POST: true, showResponse: true, variableId: variable2.id })).id;
-    urlIdWithResponse2 = (await getRepository(VariableURL).save({ GET: false, POST: true, showResponse: true, variableId: variable3.id })).id;
+      urls: [{ GET: false, POST: true, showResponse: true, id: urlIdWithResponse2 }]
+    }).save();
   });
 
   it ('with enabled POST - correct value', async () => {
@@ -86,8 +88,8 @@ describe('Custom Variable - helpers/customvariables/postURL', () => {
     assert.strictEqual(res._toSend.value, '100');
     assert.strictEqual(res._toSend.code, undefined);
     assert.strictEqual(res._status, 200);
-    await message.isNotSentRaw('@bot, $_variable2 was set to 101.', 'bot');
-    await message.isNotSentRaw('This is custom update text: 101', 'bot');
+    await message.isNotSentRaw('@__bot__, $_variable2 was set to 101.', '__bot__');
+    await message.isNotSentRaw('This is custom update text: 101', '__bot__');
   });
 
   it ('with enabled POST and response type 0 - correct value', async () => {
@@ -115,7 +117,7 @@ describe('Custom Variable - helpers/customvariables/postURL', () => {
     assert.strictEqual(res._toSend.value, '101');
     assert.strictEqual(res._toSend.code, undefined);
     assert.strictEqual(res._status, 200);
-    await message.isSentRaw('@bot, $_variable2 was set to 101.', 'bot');
+    await message.isSentRaw('@__bot__, $_variable2 was set to 101.', '__bot__');
   });
 
   it ('with enabled POST and response type 1 - correct value', async () => {
@@ -143,7 +145,7 @@ describe('Custom Variable - helpers/customvariables/postURL', () => {
     assert.strictEqual(res._toSend.value, '101');
     assert.strictEqual(res._toSend.code, undefined);
     assert.strictEqual(res._status, 200);
-    await message.isSentRaw('This is custom update text: 101', 'bot');
+    await message.isSentRaw('This is custom update text: 101', '__bot__');
   });
 
   it ('with enabled POST - incorrect value', async () => {
@@ -212,7 +214,7 @@ describe('Custom Variable - helpers/customvariables/postURL', () => {
     };
     await postURL({
       params: {
-        id: v4(),
+        id: randomUUID(),
       },
     }, res);
 

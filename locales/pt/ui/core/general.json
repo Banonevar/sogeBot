@@ -1,6 +1,7 @@
 {
   "settings": {
     "lang": "Idioma do bot",
+    "numberFormat": "Formato de números no chat",
     "gracefulExitEachXHours": {
       "title": "Saída inteligente a cada X horas",
       "help": "0 - desativado"

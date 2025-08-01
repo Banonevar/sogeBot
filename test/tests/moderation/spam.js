@@ -1,15 +1,14 @@
 /* global describe it before */
 
-const assert = require('assert');
+import assert from 'assert';
 
-require('../../general.js');
-
-const moderation = (require('../../../dest/systems/moderation')).default;
-const db = require('../../general.js').db;
-const variable = require('../../general.js').variable;
-const message = require('../../general.js').message;
-const time = require('../../general.js').time;
-const user = require('../../general.js').user;
+import('../../general.js');
+import moderation from '../../../dest/systems/moderation.js';
+import { db } from '../../general.js';
+import { variable } from '../../general.js';
+import { message } from '../../general.js';
+import { time } from '../../general.js';
+import { user } from '../../general.js';
 
 const tests = {
   'timeout': [
@@ -22,7 +21,7 @@ const tests = {
   ],
 };
 
-describe('systems/moderation - Spam()', () => {
+describe('systems/moderation - Spam() - @func2', () => {
   describe('moderationSpam=false', async () => {
     before(async () => {
       await db.cleanup();
@@ -77,7 +76,7 @@ describe('systems/moderation - Spam()', () => {
     });
 
     it(`add user immunity`, async () => {
-      const r = await moderation.immune({ parameters: `${user.viewer.username} spam 5s` });
+      const r = await moderation.immune({ parameters: `${user.viewer.userName} spam 5s` });
       assert(r[0].response === '$sender, user @__viewer__ have spam immunity for 5 seconds');
     });
 

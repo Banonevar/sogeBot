@@ -1,22 +1,21 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js'
 
-const { getRepository } = require('typeorm');
-
-const { Settings } = require('../../../dest/database/entity/settings');
-require('../../general.js');
-const db = require('../../general.js').db;
-const time = require('../../general.js').time;
+import { Settings } from '../../../dest/database/entity/settings.js';
+import('../../general.js');
+import { db } from '../../general.js';
+import { time } from '../../general.js';
 
 let stats;
 let onChangeTriggered = 0;
 
-describe('Persistent string', () => {
+describe('Persistent string - @func1', () => {
   before(async () => {
     await db.cleanup();
-    const { persistent } =  require('../../../dest/helpers/core/persistent');
+    const { persistent } =  await import('../../../dest/helpers/core/persistent.js');
 
     stats = persistent({
       value:     '0',
@@ -44,7 +43,7 @@ describe('Persistent string', () => {
     });
     it('value should be changed in db', async () => {
       await time.waitMs(1000);
-      const value = await getRepository(Settings).findOneOrFail({ name: 'string', namespace: '/test' });
+      const value = await AppDataSource.getRepository(Settings).findOneByOrFail({ name: 'string', namespace: '/test' });
       assert(JSON.parse(value.value) === 'test');
     });
   });

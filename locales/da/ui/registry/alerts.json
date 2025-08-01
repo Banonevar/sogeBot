@@ -12,7 +12,8 @@
     "amountOfGifts": "Amount of gifts",
     "amountOfMonths": "Amount of months",
     "amountOfTips": "Tip",
-    "event": "Event"
+    "event": "Event",
+    "service": "Service"
   },
   "empty": "Alerts registry is empty, create new alerts.",
   "emptyAfterSearch": "Alerts registry is empty in searching for \"<strong>$search</strong>\"",
@@ -23,6 +24,12 @@
   },
   "alertDelayInMs": {
     "name": "Alert delay"
+  },
+  "parryEnabled": {
+    "name": "Alert parries"
+  },
+  "parryDelay": {
+    "name": "Alert parry delay"
   },
   "profanityFilterType": {
     "name": "Profanity filter",
@@ -38,17 +45,17 @@
     "help": "Words should be separated with comma."
   },
   "event": {
-    "follows": "Follows",
-    "cheers": "Cheers",
-    "subs": "Subs",
-    "resubs": "Resubs",
-    "subgifts": "Subgifts",
-    "subcommunitygifts": "Subgifts to community",
-    "tips": "Tips",
-    "hosts": "Hosts",
-    "raids": "Raids",
-    "cmdredeems": "Command Redeems",
-    "rewardredeems": "Reward Redeems"
+    "follow": "Follow",
+    "cheer": "Cheer",
+    "sub": "Sub",
+    "resub": "Resub",
+    "subgift": "Subgift",
+    "subcommunitygift": "Subgift to community",
+    "tip": "Tip",
+    "raid": "Raid",
+    "custom": "Custom",
+    "promo": "Promo",
+    "rewardredeem": "Reward Redeem"
   },
   "title": {
     "name": "Variant name",
@@ -58,7 +65,7 @@
     "name": "Variant occurence"
   },
   "filter": {
-    "name": "Occurence filter",
+    "name": "Filter",
     "operator": "Operator",
     "rule": "Rule",
     "addRule": "Add rule",
@@ -71,6 +78,7 @@
     "lessThan": "less than",
     "lessThanOrEqual": "less than or equal",
     "contain": "contains",
+    "contains": "contains",
     "equal": "equal",
     "notEqual": "not equal",
     "present": "is present",
@@ -106,10 +114,18 @@
   "messageTemplate": {
     "name": "Message template",
     "placeholder": "Set your message template",
-    "help": "Available variables: {name}, {amount} (cheers, subs, tips, subgifts, sub community gifts, command redeems), {recipient} (subgifts, command redeems), {monthsName} (subs, subgifts), {currency} (tips)"
+    "help": "Available variables: {{name}}, {{amount}} (cheers, subs, tips, subgifts, sub community gifts, command redeems), {{recipient}} (subgifts, command redeems), {{monthsName}} (subs, subgifts), {{tier}} (subs), {{currency}} (tips), {{game}} (promo). If | is added (see promo) then it will show those values in sequence."
+  },
+  "ttsTemplate": {
+    "name": "TTS template",
+    "placeholder": "Set your TTS template",
+    "help": "Available variables: {{name}}, {{amount}} {{monthsName}} {{currency}} {{message}}"
   },
   "animationText": {
     "name": "Animation text"
+  },
+  "animationType": {
+    "name": "Type of animation"
   },
   "animationIn": {
     "name": "Animation in"
@@ -125,6 +141,9 @@
   },
   "layoutPicker": {
     "name": "Layout"
+  },
+  "loop": {
+    "name": "Play on loop"
   },
   "scale": {
     "name": "Scale"

@@ -1,0 +1,30 @@
+{
+  "add": {
+    "ok": "$sender, sitat $id '$quote' ble lagt til. (etiketter: $tags)",
+    "error": "$sender, $command er ikke korrekt eller mangler -sitat parameter"
+  },
+  "remove": {
+    "ok": "$sender, sitat $id ble slettet.",
+    "error": "$sender, sitat ID mangler.",
+    "not-found": "$sender, sitat $id ble ikke funnet."
+  },
+  "show": {
+    "ok": "Sitat $id av $quotedBy '$quote'",
+    "error": {
+      "no-parameters": "$sender, $command mangler -id eller -etikett.",
+      "not-found-by-id": "$sender, sitat $id ble ikke funnet.",
+      "not-found-by-tag": "$sender, ingen sitat med etikett $tag ble funnet."
+    }
+  },
+  "set": {
+    "ok": "$sender, sitat $id etiketter ble angitt. (etiketter: $tags)",
+    "error": {
+      "no-parameters": "$sender, $command mangler -id eller -etikett.",
+      "not-found-by-id": "$sender, sitat $id ble ikke funnet."
+    }
+  },
+  "list": {
+    "ok": "$sender, Du finner sitatliste på http://$urlBase/public/#/quotes",
+    "is-localhost": "$sender, sitatliste url er ikke riktig angitt."
+  }
+}

@@ -1,12 +1,14 @@
 declare namespace EventList {
   export interface Event {
-    event: string;
+    event: 'follow' | 'rewardredeem' | 'cheer' | 'subgift' | 'subcommunitygift' |  'resub' | 'sub' | 'raid' | 'tip';
     timestamp: number;
     userId: string;
     fromId?: string;
     isTest?: boolean;
     message?: string;
     amount?: number;
+    titleOfReward?: string;
+    rewardId?: string;
     currency?: string;
     months?: number;
     bits?: number;
@@ -22,5 +24,6 @@ declare namespace EventList {
     subCumulativeMonthsName?: string;
     count?: number;
     monthsName?: string;
+    charityCampaignName?: string;
   }
 }

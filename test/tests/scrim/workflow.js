@@ -1,24 +1,26 @@
 /* global describe it before */
-const assert = require('assert');
+import assert from 'assert';
 
-const { getBot } = require('../../../dest/helpers/commons/getBot');
-const { getLocalizedName } = require('../../../dest/helpers/getLocalized');
-const { translate } = require('../../../dest/translate');
-require('../../general.js');
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { getLocalizedName } from '../../../dest/helpers/getLocalizedName.js';
 
+import getBotUserName from '../../../dest/helpers/user/getBotUserName.js'
+import { translate } from '../../../dest/translations.js';
+import('../../general.js');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-let scrim;
 describe('Scrim - full workflow', () => {
-  scrim = (require('../../../dest/systems/scrim')).default;
-  describe('cooldown only', () => {
+  let scrim;
+  before(async () => {
+   scrim = (await import('../../../dest/systems/scrim.js')).default
+  })
+
+  describe('cooldown only - @func1', () => {
     before(async () => {
       await db.cleanup();
       await message.prepare();
-
       scrim.waitForMatchIdsInSeconds = 10;
     });
 
@@ -27,7 +29,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 1 minute message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: 1,
         type: 'duo',
         unit: getLocalizedName(1, translate('core.minutes')),
@@ -37,23 +39,23 @@ describe('Scrim - full workflow', () => {
     it('Expecting 45 seconds message cooldown', async () => {
       await message.isSentRaw([
         'Snipe match (duo) starting in 45 seconds',
-      ], getBot(), 20000);
+      ], getBotUserName(), 20000);
     });
 
     it('Expecting 30 seconds message cooldown', async () => {
       await message.isSentRaw([
         'Snipe match (duo) starting in 30 seconds',
-      ], getBot(), 20000);
+      ], getBotUserName(), 20000);
     });
 
     it('Expecting 15 seconds message cooldown', async () => {
       await message.isSentRaw([
         'Snipe match (duo) starting in 15 seconds',
-      ], getBot(), 20000);
+      ], getBotUserName(), 20000);
     });
 
     it('Expecting 3 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '3.',
         type: 'duo',
         unit: '',
@@ -61,7 +63,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 2 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '2.',
         type: 'duo',
         unit: '',
@@ -69,7 +71,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 1 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '1.',
         type: 'duo',
         unit: '',
@@ -77,24 +79,24 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting go! message', async () => {
-      await message.isSent('systems.scrim.go', getBot(), {}, 3000);
+      await message.isSent('systems.scrim.go', getBotUserName(), {}, 3000);
     });
 
     it('NOT expecting put match id in chat message', async () => {
-      await message.isNotSent('systems.scrim.putMatchIdInChat', getBot(), { command: '!snipe match' }, 19000);
+      await message.isNotSent('systems.scrim.putMatchIdInChat', getBotUserName(), { command: '!snipe match' }, 19000);
     });
 
     it('NOT expecting empty message list', async () => {
-      await message.isNotSent('systems.scrim.currentMatches', getBot(), { matches: '<' + translate('core.empty') + '>' }, 19000);
+      await message.isNotSent('systems.scrim.currentMatches', getBotUserName(), { matches: '<' + translate('core.empty') + '>' }, 19000);
     });
 
     it('Check match list by command', async () => {
-      const r = await scrim.match({ sender: { username: 'test' }, parameters: '' });
+      const r = await scrim.match({ sender: { userName: 'test' }, parameters: '' });
       assert.strictEqual(r[0].response, 'Current Matches: <empty>');
     });
   });
 
-  describe('without matches', () => {
+  describe('without matches - @func2', () => {
     before(async () => {
       await db.cleanup();
       await message.prepare();
@@ -107,7 +109,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 1 minute message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: 1,
         type: 'duo',
         unit: getLocalizedName(1, translate('core.minutes')),
@@ -117,23 +119,23 @@ describe('Scrim - full workflow', () => {
     it('Expecting 45 seconds message cooldown', async () => {
       await message.isSentRaw([
         'Snipe match (duo) starting in 45 seconds',
-      ], getBot(), 20000);
+      ], getBotUserName(), 20000);
     });
 
     it('Expecting 30 seconds message cooldown', async () => {
       await message.isSentRaw([
         'Snipe match (duo) starting in 30 seconds',
-      ], getBot(), 20000);
+      ], getBotUserName(), 20000);
     });
 
     it('Expecting 15 seconds message cooldown', async () => {
       await message.isSentRaw([
         'Snipe match (duo) starting in 15 seconds',
-      ], getBot(), 20000);
+      ], getBotUserName(), 20000);
     });
 
     it('Expecting 3 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '3.',
         type: 'duo',
         unit: '',
@@ -141,7 +143,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 2 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '2.',
         type: 'duo',
         unit: '',
@@ -149,7 +151,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 1 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '1.',
         type: 'duo',
         unit: '',
@@ -157,24 +159,24 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting go! message', async () => {
-      await message.isSent('systems.scrim.go', getBot(), {}, 3000);
+      await message.isSent('systems.scrim.go', getBotUserName(), {}, 3000);
     });
 
     it('Expecting put match id in chat message', async () => {
-      await message.isSent('systems.scrim.putMatchIdInChat', getBot(), { command: '!snipe match' }, 19000);
+      await message.isSent('systems.scrim.putMatchIdInChat', getBotUserName(), { command: '!snipe match' }, 19000);
     });
 
     it('Expecting empty message list', async () => {
-      await message.isSent('systems.scrim.currentMatches', getBot(), { matches: '<' + translate('core.empty') + '>' }, 19000);
+      await message.isSent('systems.scrim.currentMatches', getBotUserName(), { matches: '<' + translate('core.empty') + '>' }, 19000);
     });
 
     it('Check match list by command', async () => {
-      const r = await scrim.match({ sender: { username: 'test' }, parameters: '' });
+      const r = await scrim.match({ sender: { userName: 'test' }, parameters: '' });
       assert.strictEqual(r[0].response, 'Current Matches: <empty>');
     });
   });
 
-  describe('with matches', () => {
+  describe('with matches - @func3', () => {
     before(async () => {
       await db.cleanup();
       await message.prepare();
@@ -187,7 +189,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 1 minute message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: 1,
         type: 'duo',
         unit: getLocalizedName(1, translate('core.minutes')),
@@ -195,7 +197,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 45 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: 45,
         type: 'duo',
         unit: getLocalizedName(45, translate('core.seconds')),
@@ -203,7 +205,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 30 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: 30,
         type: 'duo',
         unit: getLocalizedName(30, translate('core.seconds')),
@@ -211,7 +213,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 15 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: 15,
         type: 'duo',
         unit: getLocalizedName(15, translate('core.seconds')),
@@ -219,7 +221,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 3 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '3.',
         type: 'duo',
         unit: '',
@@ -227,7 +229,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 2 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '2.',
         type: 'duo',
         unit: '',
@@ -235,7 +237,7 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting 1 seconds message cooldown', async () => {
-      await message.isSent('systems.scrim.countdown', getBot(), {
+      await message.isSent('systems.scrim.countdown', getBotUserName(), {
         time: '1.',
         type: 'duo',
         unit: '',
@@ -243,11 +245,11 @@ describe('Scrim - full workflow', () => {
     });
 
     it('Expecting go! message', async () => {
-      await message.isSent('systems.scrim.go', getBot(), {}, 3000);
+      await message.isSent('systems.scrim.go', getBotUserName(), {}, 3000);
     });
 
     it('Expecting put match id in chat message', async () => {
-      await message.isSent('systems.scrim.putMatchIdInChat', getBot(), { command: '!snipe match' }, 19000);
+      await message.isSent('systems.scrim.putMatchIdInChat', getBotUserName(), { command: '!snipe match' }, 19000);
     });
 
     for (const user of ['user1', 'user2', 'user3']) {
@@ -255,7 +257,7 @@ describe('Scrim - full workflow', () => {
       it('Add ' + user + ' to match with id ' + matchId, async () => {
         scrim.match({
           parameters: matchId,
-          sender:     { username: user, userId: String(Math.floor(Math.random() * 100000)) },
+          sender:     { userName: user, userId: String(Math.floor(Math.random() * 100000)) },
         });
       });
     }
@@ -263,17 +265,17 @@ describe('Scrim - full workflow', () => {
     it('Add user4 to match with id ABD', async () => {
       scrim.match({
         parameters: 'ABD',
-        sender:     { username: 'user4' },
+        sender:     { userName: 'user4' },
       });
     });
 
     it('Expecting populated message list', async () => {
-      await message.isSent('systems.scrim.currentMatches', getBot(),
+      await message.isSent('systems.scrim.currentMatches', getBotUserName(),
         { matches: 'ABC - @user1, @user2, @user3 | ABD - @user4' }, 19000);
     });
 
     it('Check match list by command', async () => {
-      const r = await scrim.match({ sender: { username: 'test' }, parameters: '' });
+      const r = await scrim.match({ sender: { userName: 'test' }, parameters: '' });
       assert.strictEqual(r[0].response, 'Current Matches: ABC - @user1, @user2, @user3 | ABD - @user4');
     });
   });

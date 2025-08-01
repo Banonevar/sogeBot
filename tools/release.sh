@@ -1,6 +1,17 @@
 currentSnapshot=$(node tools/changelog.js nextSnapshot)
-nextTag=$(node tools/changelog.js nextTag)
 file=./package.json
+
+if [ "$1" = "major" ]
+  then
+    nextTag=$(node tools/changelog.js nextTagMajor)
+  else
+    nextTag=$(node tools/changelog.js nextTag)
+fi
+
+
+echo Current Snapshot: $currentSnapshot
+echo Next tag: $nextTag
+echo
 
 echo Switching to master branch
 git checkout master
@@ -9,7 +20,8 @@ echo Updating master branch
 git pull -r origin master
 
 echo Updating package.json version from $currentSnapshot to $nextTag
-sed -i "s/$currentSnapshot/$nextTag/" "$file"
+
+node ./tools/changePackageVersion.js $nextTag
 git add $file
 git commit -m "build: $nextTag"
 echo Pushing build commit $nextTag
@@ -23,7 +35,7 @@ echo Released $nextTag
 
 nextSnapshot=$(node tools/changelog.js nextSnapshot)
 echo Updating package.json version from with $nextTag to $nextSnapshot
-sed -i "s/$nextTag/$nextSnapshot/" "$file"
+node ./tools/changePackageVersion.js $nextSnapshot
 git add $file
 git commit -m "build: $nextSnapshot"
 echo Pushing snapshot commit $nextSnapshot

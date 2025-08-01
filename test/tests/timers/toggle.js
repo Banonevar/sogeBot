@@ -1,40 +1,39 @@
 /* global describe it beforeEach */
-require('../../general.js');
-const assert = require('assert');
+import('../../general.js');
+import assert from 'assert';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const { linesParsed } = require('../../../dest/helpers/parser');
+import { linesParsed } from '../../../dest/helpers/parser.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-const timers = (require('../../../dest/systems/timers')).default;
+import timers from '../../../dest/systems/timers.js';
 
-const { getRepository } = require('typeorm');
-const { Timer, TimerResponse } = require('../../../dest/database/entity/timer');
+import { Timer, TimerResponse } from '../../../dest/database/entity/timer.js';
 
-describe('Timers - toggle()', () => {
+describe('Timers - toggle() - @func2', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
 
-    const timer = await getRepository(Timer).save({
-      name: 'test',
-      triggerEveryMessage: 0,
-      triggerEverySecond: 60,
-      isEnabled: true,
-      triggeredAtTimestamp: Date.now(),
-      triggeredAtMessage: linesParsed,
-    });
+    const timer = new Timer();
+    timer.name = 'test';
+    timer.triggerEveryMessage = 0;
+    timer.triggerEverySecond = 60;
+    timer.tickOffline = true;
+    timer.isEnabled = true;
+    timer.triggeredAtTimestamp = Date.now();
+    timer.triggeredAtMessage = linesParsed;
+    await timer.save();
 
-    await getRepository(TimerResponse).save({
-      response: 'Lorem Ipsum',
-      timestamp: Date.now(),
-      isEnabled: true,
-      timer: timer,
-    });
+    const response1 = new TimerResponse()
+    response1.isEnabled = true;
+    response1.response = 'Lorem Ipsum';
+    response1.timer = timer;
+    await response1.save();
   });
 
   it('', async () => {
@@ -53,7 +52,7 @@ describe('Timers - toggle()', () => {
   });
 
   it('-id response_id', async () => {
-    const response = await getRepository(TimerResponse).findOne({ response: 'Lorem Ipsum' });
+    const response = await TimerResponse.findOneBy({ response: 'Lorem Ipsum' });
     const r1 = await timers.toggle({ sender: owner, parameters: '-id ' + response.id });
     assert.strictEqual(r1[0].response, `$sender, response (id: ${response.id}) was disabled`);
 

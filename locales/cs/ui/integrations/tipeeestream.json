@@ -1,13 +1,9 @@
 {
   "settings": {
     "enabled": "Status",
-    "username": {
-      "title": "Uživatelské jméno",
-      "help": "Vaše uživatelské jméno na tipeeestream"
-    },
     "apiKey": {
       "title": "API klíč",
-      "help": "Získejte socket token z tipeeestream dashboard -> API -> Your API key"
+      "help": "Get socket token from TipeeeStream dashboard -> API -> Your API Key"
     }
   }
 }

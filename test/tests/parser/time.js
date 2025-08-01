@@ -1,20 +1,20 @@
 /* global describe it before */
 
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const assert = require('assert');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-const Parser = require('../../../dest/parser').default;
+import { Parser } from '../../../dest/parser.js';
 
-const owner = { username: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
+const owner = { userName: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
+import { User } from '../../../dest/database/entity/user.js';
 
-describe('Parser - parse time check', async () => {
+describe('Parser - parse time check - @func2', async () => {
   const tests = [
     {
       test: '!me',
@@ -28,7 +28,7 @@ describe('Parser - parse time check', async () => {
         await db.cleanup();
         await message.prepare();
 
-        await getRepository(User).save({ username: owner.username, userId: owner.userId });
+        await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId });
       });
 
       let time;

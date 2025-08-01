@@ -34,12 +34,17 @@
     "empty": "tom",
     "isRegistered": "$sender, du kan ikke bruge !$keyword, fordi den allerede er i brug i en anden handling!"
   },
+  "clip": {
+    "notCreated": "Something went wrong and clip was not created.",
+    "offline": "Stream is currently offline and clip cannot be created."
+  },
   "uptime": {
     "online": "Stream har været online i (if $days>0|$daysd )(if $hours>0|$hoursh )(if $minutes>0|$minutesm )(if $seconds>0|$secondss)",
     "offline": "Stream har været OFFLINE i (if $days>0|$daysd )(if $hours>0|$hours )(if $minutes>0|$minutesm )(if $seconds>0|$secondss)"
   },
   "webpanel": {
     "this-system-is-disabled": "Dette system er deaktiveret",
+    "or": "or",
     "loading": "Indlæser",
     "this-may-take-a-while": "Dette <strong>kan</strong> tage et stykke tid",
     "display-as": "Vis som",
@@ -57,17 +62,6 @@
       "text-url-generator": "Indsæt din tekst eller html for at generere base64 nedenfor og URL ovenfor",
       "text-decode-base64": "Indsæt din base64 for at generere URL og tekst ovenfor",
       "creditsSpeed": "Set speed of credits rolling, lower = faster"
-    },
-    "custom-variables": {
-      "set-your-variables-to-watch-here": "Set your variables to watch here",
-      "type": "type",
-      "unwatch": "Stop overvågning",
-      "watch": "Overvåg",
-      "options": "valgmuligheder",
-      "number": "number",
-      "text": "tekst",
-      "options-placeholder": "valgmulighed1, valgmulighed, 2, valgmulighed, 3, her er mulighed 4",
-      "no-options-set": "Du har endnu ikke angivet dine valgmuligheder"
     },
     "timers": {
       "title": "Tidsur",
@@ -169,6 +163,9 @@
         "operations": "Opgaver"
       },
       "definitions": {
+        "taskId": {
+          "label": "Task ID"
+        },
         "filter": {
           "label": "Filter"
         },
@@ -237,14 +234,24 @@
           "label": "Kanal",
           "placeholder": "Kanalnavn eller ID"
         },
+        "timeout": {
+          "label": "Timeout",
+          "placeholder": "Set timeout in milliseconds"
+        },
+        "timeoutType": {
+          "label": "Type of timeout",
+          "placeholder": "Set type of timeout"
+        },
+        "command": {
+          "label": "Command",
+          "placeholder": "Set your !command"
+        },
         "commandToRun": {
           "label": "Kommando at kører",
           "placeholder": "Sæt din !KommandoTilKørsel"
         },
         "isCommandQuiet": {
-          "label": "Bør kommando være stille",
-          "true": "Kommando vil være stille",
-          "false": "Kommando vil ikke være stille"
+          "label": "Mute command output"
         },
         "urlOfSoundFile": {
           "label": "Url på din lydfil",
@@ -258,13 +265,18 @@
           "label": "Emotes Til Fyrværkeri",
           "placeholder": "List of emotes to firework, e.g. Kappa PurpleHeart"
         },
+        "replay": {
+          "label": "Replay clip in overlay",
+          "true": "Will play in as replay in overlay/alerts",
+          "false": "Replay won't be played"
+        },
         "announce": {
           "label": "Annoncer i chat",
           "true": "Vil blive annonceret",
           "false": "Vil ikke blive annonceret"
         },
         "hasDelay": {
-          "label": "Clip should have slight delay (to be closer what viewer see)",
+          "label": "Clip should have slight delay (to be closer what viewer sees)",
           "true": "Vil have forsinkelse",
           "false": "Vil ikke have forsinkelse"
         },
@@ -289,32 +301,60 @@
           "placeholder": ""
         },
         "": "",
-        "titleOfReward": {
-          "label": "Title of redeemed reward",
+        "reward": {
+          "label": "Reward",
           "placeholder": ""
         }
       }
     },
     "eventlist-events": {
-      "follow": "<strong>followed</strong> you",
-      "host": "<strong>hosted</strong> you with $viewers viewers",
-      "raid": "<strong>raided</strong> you with $viewers viewers",
-      "sub": "<strong>subbed</strong> you | $tier",
-      "subgift": "have <strong>gifted</strong> sub from $username",
-      "subcommunitygift": "have <strong>gifted</strong> subs for $count viewers",
-      "resub": "<strong>resubbed</strong> you for $subStreak $subStreakName | $tier",
-      "resubWithoutStreak": "<strong>resubbed</strong> | $tier | in total of $subCumulativeMonths $subCumulativeMonthsName",
-      "cheer": "<strong>cheered</strong> you for $bits bits",
-      "tip": "<strong>tipped</strong> you for $formatted_amount"
+      "follow": "<strong>Followed</strong> you",
+      "raid": "<strong>Raided</strong> you with <strong>$viewers</strong> raiders.",
+      "sub": "<strong>Subscribed</strong> to you with <strong>$subType</strong>. They've been subscribed for $subCumulativeMonths $subCumulativeMonthsName.",
+      "subgift": "has been <strong>gifted</strong> subscription from <strong>$username</strong>",
+      "subcommunitygift": "<strong>Gifted</strong> subscriptions for community",
+      "resub": "<strong>Resubscribed</strong> with <strong>$subType</strong>. They've been subscribed for $subCumulativeMonths $subCumulativeMonthsName.",
+      "cheer": "<strong>Cheered</strong> you",
+      "tip": "<strong>Tipped</strong> you",
+      "tipToCharity": "<strong>donated</strong> to <strong>$campaignName</strong>"
     },
     "responses": {
       "variable": {
+        "tags": "Tags",
+        "titleOfPrediction": "Twitch Prediction - Title",
+        "outcomes": "Twitch Prediction - Outcomes",
+        "locksAt": "Twitch Prediction - Locks At Date",
+        "winningOutcomeTitle": "Twitch Prediction - Winning outcome title",
+        "winningOutcomeTotalPoints": "Twitch Prediction - Winning outcome total points",
+        "winningOutcomePercentage": "Twitch Prediction - Winning outcome percentage",
+        "titleOfPoll": "Twitch Poll - Title",
+        "bitAmountPerVote": "Twitch Poll - Amount of bits to count as 1 vote",
+        "bitVotingEnabled": "Twitch Poll - Is bit voting enabled (boolean)",
+        "channelPointsAmountPerVote": "Twitch Poll - Amount of channel points to count as 1 vote",
+        "channelPointsVotingEnabled": "Twitch Poll - Is channel points voting enabled (boolean)",
+        "votes": "Twitch Poll - votes count",
+        "winnerChoice": "Twitch Poll - Winner choice",
+        "winnerPercentage": "Twitch Poll - Winner choice percentage",
+        "winnerVotes": "Twitch Poll - Winner choice votes",
+        "goal": "Goal",
+        "total": "Total",
+        "lastContributionTotal": "Last Contribution - Total",
+        "lastContributionType": "Last Contribution - Type",
+        "lastContributionUserId": "Last Contribution - User ID",
+        "lastContributionUsername": "Last Contribution - Username",
+        "level": "Level",
+        "topContributionsBitsTotal": "Top Bits Contribution - Total",
+        "topContributionsBitsUserId": "Top Bits Contribution - User ID",
+        "topContributionsBitsUsername": "Top Bits Contribution - Username",
+        "topContributionsSubsTotal": "Top Subs Contribution - Total",
+        "topContributionsSubsUserId": "Top Subs Contribution - User ID",
+        "topContributionsSubsUsername": "Top Subs Contribution - Username",
         "sender": "User who initiated",
         "title": "Nuværende titel",
-        "game": "Nuværende spil",
+        "game": "Current category",
         "language": "Current stream language",
         "viewers": "Antal aktuelle seere",
-        "views": "Antal aktuelle visninger",
+        "hostViewers": "Raid viewers count",
         "followers": "Current followers count",
         "subscribers": "Antal nuværende abonnenter",
         "arg": "Argument",
@@ -329,7 +369,6 @@
         "type": "Type",
         "days": "Dage",
         "hours": "Timer",
-        "minutesName": "Singular or Plural of word minute",
         "minutes": "Minutter",
         "seconds": "Sekunder",
         "description": "Beskrivelse",
@@ -387,7 +426,7 @@
         "tier": "Niveau",
         "months": "Måneder",
         "monthsName": "lokalt navn på måneden (1 måned, 2 måneder)",
-        "oldGame": "Spil før ændring",
+        "oldGame": "Category before change",
         "recipientObject": "Full recipient object",
         "recipient": "Modtager",
         "ytSong": "Nuværende sang på YouTube",
@@ -422,10 +461,13 @@
         "source": "Nuværende kilde (Twitch eller Discord)",
         "userInput": "User input during reward redeem",
         "isBotSubscriber": "Er bot sub? (bool)",
+        "isStreamOnline": "Is stream online (bool)",
+        "uptime": "Uptime of stream",
         "is": {
           "moderator": "Er bruger mod? (bool)",
           "subscriber": "Er bruger sub? (bool)",
           "vip": "Er bruger VIP? (bool)",
+          "newchatter": "Is user's first message? (bool)",
           "follower": "Er bruger følger? (bool)",
           "broadcaster": "Er bruger broadcaster? (bool)",
           "bot": "Er bruger bot? (bool)",
@@ -440,13 +482,9 @@
           "bot": "Er modtageren bot? (bool)",
           "owner": "Er modtageren ejer af bot? (bool)"
         },
-        "tweet": {
-          "text": "Tekst til tweet",
-          "username": "Brugernavn på Twitter",
-          "displayname": "Skærmnavn på Twitter",
-          "url": "Llink til Tweet"
-        },
-        "sceneName": "Navn på scene"
+        "sceneName": "Navn på scene",
+        "inputName": "Name of input",
+        "inputMuted": "Mute state (bool)"
       }
     },
     "page-settings": {
@@ -506,8 +544,8 @@
     "viewers-points-of-all-users": "Points of all users",
     "viewers-watchtime-of-all-users": "Watch time of all users",
     "viewers-messages-of-all-users": "Messages of all users",
-    "events-game-after-change": "game after change",
-    "events-game-before-change": "game before change",
+    "events-game-after-change": "category after change",
+    "events-game-before-change": "category before change",
     "events-user-triggered-event": "user triggered event",
     "events-method-used-to-subscribe": "method used to subscribe",
     "events-months-of-subscription": "måneder som abonnent",
@@ -517,12 +555,9 @@
     "events-reason-for-ban-timeout": "årsag til ban/timeout",
     "events-duration-of-timeout": "varighed af timeout",
     "events-duration-of-commercial": "varighed af reklame",
-    "events-target-of-your-hosting": "mål for dit host",
-    "events-viewers-of-hosting": "seere af host",
     "overlays-eventlist-resub": "gentegning af abonnement",
     "overlays-eventlist-subgift": "abonnements-gave",
     "overlays-eventlist-subcommunitygift": "fællesskabs-abonnements-gave",
-    "overlays-eventlist-host": "host",
     "overlays-eventlist-sub": "abonnent",
     "overlays-eventlist-follow": "følg",
     "overlays-eventlist-cheer": "bits",
@@ -546,7 +581,6 @@
     "in-seconds": "i sekunder",
     "songs": "Sange",
     "show-usernames-with-at": "Vis brugere med @",
-    "twitter-send-message": "Tweet",
     "send-message-as-a-bot": "Send besked som a bot",
     "chat-as-bot": "Chat (som bot)",
     "product": "Produkt",
@@ -564,6 +598,9 @@
     "dashboard": "Kontrolpanel",
     "carousel": "Billede Karrusel",
     "text": "Tekst",
+    "filter": "Filter",
+    "filters": "Filters",
+    "isUsed": "Is used",
     "permissions": "Tilladelser",
     "permission": "Tilladelse",
     "viewers": "Seere",
@@ -582,19 +619,17 @@
     "rank": "Rangering",
     "previous": "Forrige",
     "next": "Næste",
-    "or": "eller",
     "close": "Luk",
     "save-changes": "Gem ændringer",
     "saving": "Gemmer...",
     "deleting": "Sletter…",
     "done": "Færdig",
     "error": "Fejl",
-    "custom-title-empty-error": "Brugerdefineret titel er markeret, men er tom!",
     "title": "Titel",
     "change-title": "Skift titel",
-    "game": "spil",
+    "game": "category",
     "tags": "Tags",
-    "change-game": "Skift spil",
+    "change-game": "Change category",
     "click-to-change": "klik for at ændre",
     "uptime": "uptime",
     "not-affiliate-or-partner": "Ikke affiliate/partner",
@@ -602,7 +637,6 @@
     "max-viewers": "Max seere",
     "new-chatters": "Nye Chattere",
     "chat-messages": "Chatbeskeder",
-    "views": "Visninger",
     "followers": "Følgere",
     "subscribers": "Abonnenter",
     "bits": "Bits",
@@ -614,14 +648,8 @@
     "status": "Status",
     "add-widget": "Tilføj widget",
     "remove-dashboard": "Fjern kontrolpanel",
-    "for": "for",
     "close-bet-after": "Luk indsats efter",
-    "gain-every-option": "Få alle muligheder",
-    "reuse-bet": "genbrug indsats",
     "refund": "refundering",
-    "open-queue": "Åben kø",
-    "close-queue": "Luk kø",
-    "number-of-users": "Antal brugere",
     "roll-again": "Rul igen",
     "no-eligible-participants": "Ingen kvalificerede deltagere",
     "follower": "Følger",
@@ -630,14 +658,12 @@
     "seconds": "sekunder",
     "hours": "timer",
     "months": "måneder",
-    "eligible-to-enter": "Berettigelse til adgang:",
-    "followers-only": "Kun følgere",
-    "subscribers-only": "Kun abonnenter",
+    "eligible-to-enter": "Eligible to enter",
     "everyone": "Alle",
     "roll-a-winner": "Rul en vinder",
     "send-message": "Send Besked",
     "messages": "Beskeder",
-    "announce-every": "Annoncér hver",
+    "level": "Level",
     "create": "Opret",
     "cooldown": "Nedkøling",
     "confirm": "Bekræft",
@@ -647,18 +673,13 @@
     "enable": "Aktivér",
     "disable": "Deaktivér",
     "slug": "Slug",
-    "stream-title": "Stream-titel",
     "posted-by": "Indsendt af",
     "time": "Tidspunkt",
     "type": "Type",
     "response": "Svar",
-    "num-of-responses": "# Svar",
     "cost": "Pris",
     "name": "Navn",
     "playlist": "Spilleliste",
-    "public-link": "Offentligt link",
-    "banned-songs": "Forbudte sange",
-    "youtube-id": "YouTube ID",
     "length": "Længde",
     "volume": "Lydstyrke",
     "start-time": "Starttidspunkt",
@@ -677,76 +698,27 @@
     "date": "Dato",
     "points": "Points",
     "calendar": "Kalender",
-    "stream-events": "Stream Begivenheder",
-    "select-date-from-calendar": "Vælg dato fra kalender",
-    "select-stream-from-calendar-and-events": "Vælg stream fra kalender og begivenheder",
-    "there-is-no-events-on-selected-date": "Der er ingen begivenheder på den valgte dato",
     "string": "streng",
-    "points-name": "Point Navn",
-    "points-single-multi": "enkelt|multi",
-    "points-response": "Point Svar",
-    "points-interval": "Point Interval",
-    "points-per-interval": "Points per Interval",
-    "points-interval-offline": "Points Interval (offline)",
-    "points-per-interval-offline": "Points per Interval (offline)",
-    "points-per-message": "Point per Besked",
-    "points-per-message-interval": "Tilføj points hver X besked",
     "interval": "Interval",
     "number": "nummer",
     "minimal-messages-required": "Minimum Beskeder Nødvendige",
     "max-duration": "Maks. varighed",
     "shuffle": "Bland",
-    "song-requests": "Sang-Ønsker",
     "song-request": "Sang-Ønske",
-    "song-notify": "Notifikation ved begyndelsen af en sang",
     "format": "Format",
     "available": "Tilgængelig",
-    "links": "Links",
-    "symbols": "Symboler",
-    "long-messages": "Lange Beskeder",
-    "capitals": "Store bogstaver",
-    "spam": "Spam",
-    "colors": "Farver",
-    "emotes": "Emotes",
     "one-record-per-line": "én post pr. linje",
     "on": "til",
     "off": "fra",
     "search-by-username": "Søg på brugernavn",
-    "create-and-use-a-new-game": "Opret og brug et nyt spil",
-    "create-and-use-a-new-title": "Opret og brug en ny titel",
-    "search-tags": "Søg efter tilgængelige tags (nogle spil-tags mangler måske / twitch politik)",
-    "no-options-found-for-this-search": "Ingen valgmuligheder fundet for denne søgning.",
-    "followers-show-number": "Vis",
-    "followers-show": "følgere",
-    "eventlist-overflow-height": "Maks widget højde",
-    "eventlist-show-number": "Vis",
-    "eventlist-show": "begivenheder",
-    "subscribers-show": "abonnenter",
-    "followers-size": "Skriftstørrelse",
-    "followers-message-size": "Skriftstørrelse på beskeder",
-    "custom-message": "Brugerdefineret besked",
-    "custom-ban-message": "Brugerdefineret udelukkelses-besked",
-    "custom-ban-message-warning": "Brugerdefineret advarselses-besked",
-    "minimal-watched-time": "Minimal set tid:",
-    "widget-title-customvariables": "BRUGERDIFINERET VARIABLER",
-    "widget-title-randomizer": "RANDOMIZER",
+    "widget-title-custom": "CUSTOM",
     "widget-title-eventlist": "EVENTLISTE",
-    "widget-title-bets": "VÆDDEMÅL",
     "widget-title-chat": "CHAT",
-    "widget-title-clips": "SENESTE KLIPS",
     "widget-title-queue": "KØ",
     "widget-title-raffles": "RAFFLER",
-    "widget-title-soundboard": "SOUNDBOARD",
-    "widget-title-cmdboard": "COMMANDBOARD",
-    "widget-title-twitch": "TWITCH STREAM MONITOR",
-    "widget-title-ytplayer": "MUSIK AFSPILLER",
-    "widget-title-latest-followers": "SENESTE FØLGERE",
-    "widget-title-latest-subscribers": "SENESTE SUBSCRIBERS",
-    "widget-title-commercial": "REKLAMER",
-    "widget-title-spotify": "SPOTIFY",
-    "widget-title-join": "TILKOMMENDE",
-    "widget-title-part": "AFGÅENDE",
     "widget-title-social": "SOCIAL",
+    "widget-title-ytplayer": "MUSIC PLAYER",
+    "widget-title-monitor": "MONITOR",
     "event": "hændelse",
     "operation": "opgave",
     "tweet-post-with-hashtag": "Tweet sendt med hashtag",
@@ -755,7 +727,18 @@
     "follow": "ny følger",
     "tip": "nyt tip",
     "obs-scene-changed": "OBS-scene skiftet",
+    "obs-input-mute-state-changed": "OBS input source mute state changed",
     "unfollow": "stop med at følge",
+    "hypetrain-started": "Hype Train started",
+    "hypetrain-ended": "Hype Train ended",
+    "shoutout-created": "Twitch Shoutout - Created",
+    "shoutout-received": "Twitch Shoutout - Received",
+    "prediction-started": "Twitch Prediction started",
+    "prediction-locked": "Twitch Prediction locked",
+    "prediction-ended": "Twitch Prediction ended",
+    "poll-started": "Twitch Poll started",
+    "poll-ended": "Twitch Poll ended",
+    "hypetrain-level-reached": "Hype Train new level reached",
     "subscription": "ny abonnent",
     "subgift": "ny abonnements-gave",
     "subcommunitygift": "ny abonnements-gave givet til fællesskabet",
@@ -767,23 +750,22 @@
     "reward-redeemed": "belønning indløst",
     "stream-stopped": "stream afsluttet",
     "stream-is-running-x-minutes": "stream kører x minutter",
+    "chatter-first-message": "first message of chatter",
     "every-x-minutes-of-stream": "hvert x minutter af stream",
-    "game-changed": "spil ændret",
+    "game-changed": "category changed",
     "cheer": "bit modtaget",
     "clearchat": "chatten blev ryddet",
     "action": "bruger brugte /me",
     "ban": "bruger blev udelukket",
-    "hosting": "din kanal startede et host",
-    "hosted": "din kanal blev hosted",
     "raid": "din kanal blev raided",
     "mod": "bruger blev ny mod",
     "timeout": "bruger fik timeout",
     "create-a-new-event-listener": "Opret en ny begivenheds-lytter",
-    "send-twitter-message": "send en Twitter-besked",
     "send-discord-message": "send en Discord-besked",
     "send-chat-message": "send en Twitch-chatbesked",
     "send-whisper": "send en whisper",
     "run-command": "kør en kommando",
+    "run-obswebsocket-command": "run an OBS Websocket command",
     "do-nothing": "--- gør intet ---",
     "count": "tæller",
     "timestamp": "tidsstempel",
@@ -811,7 +793,6 @@
     "bot-will-join-channel": "bot vil tilslutte kanal",
     "bot-will-leave-channel": "bot vil forlade kanal",
     "create-a-clip": "opret et klip",
-    "create-a-clip-and-play-replay": "opret et klip og afspil som genafspilning (overlay/alerts)",
     "increment-custom-variable": "increment a custom variable",
     "set-custom-variable": "sæt en brugerdefineret variabel",
     "decrement-custom-variable": "decrement a custom variable",
@@ -967,6 +948,7 @@
     "youtube-is-not-responding-correctly": "Sorry, $sender, but YouTube is sending unexpected responses, please try again later.",
     "song-was-not-found": "Sorry, $sender, but this song was not found",
     "song-is-too-long": "Sorry, $sender, but this song is too long",
+    "this-song-is-not-in-playlist": "Sorry, $sender, but this song is not in current playlist",
     "incorrect-category": "Sorry, $sender, but this song must be music category",
     "song-was-added-to-queue": "$sender, song $name was added to queue",
     "song-was-added-to-playlist": "$sender, song $name was added to playlist",
@@ -1067,7 +1049,7 @@
     "user-is-warned-about-long-message": "Lange beskeder er ikke tilladt [$count advarsler tilbage]",
     "user-is-warned-about-caps": "Ingen overdreven brug af store bogstaver [$count advarsler tilbage]",
     "user-is-warned-about-spam": "Spamming er ikke tilladt [$count advarsler tilbage]",
-    "user-is-warned-about-color": "/me er ikke tilladt [$count advarsler tilbage]",
+    "user-is-warned-about-color": "Italic and /me is not allowed [$count warnings left]",
     "user-is-warned-about-emotes": "Ingen emotes spamming [$count advarsler tilbage]",
     "user-is-warned-about-forbidden-words": "Ingen forbudte ord [$count advarsler tilbage]",
     "user-have-timeout-for-links": "Links er ikke tilladt, spørg om tilladelse først (!permit)",
@@ -1075,7 +1057,7 @@
     "user-have-timeout-for-long-message": "Lange beskeder er ikke tilladt",
     "user-have-timeout-for-caps": "Ingen overdreven brug af store bogstaver",
     "user-have-timeout-for-spam": "Spamming er ikke tilladt",
-    "user-have-timeout-for-color": "/me er ikke tilladt",
+    "user-have-timeout-for-color": "Italic and /me is not allowed",
     "user-have-timeout-for-emotes": "Ingen emotes spamming",
     "user-have-timeout-for-forbidden-words": "Ingen forbudte ord"
   },
@@ -1098,6 +1080,7 @@
       "none": "No users were found in queue"
     }
   },
+  "marker": "Stream marker has been created at $time.",
   "title": {
     "current": "$sender, nuværende titel på stream er '$title'.",
     "change": {
@@ -1107,13 +1090,13 @@
   "game": {
     "current": "$sender, streamer spiller i øjeblikket $game.",
     "change": {
-      "success": "$sender, spil er nu ændret til: $game"
+      "success": "$sender, category was set to: $game"
     }
   },
   "cooldowns": {
     "cooldown-was-set": "$sender, $type cooldown for $command er nu sat til $secondss",
     "cooldown-was-unset": "$sender, cooldown for $command blev ikke sat",
-    "cooldown-triggered": "$sender, du kan ikke benytte $command, før om $secondss",
+    "cooldown-triggered": "$sender, '$command' is on cooldown, remaining $secondss",
     "cooldown-not-found": "$sender, cooldown for $command blev ikke fundet",
     "cooldown-was-enabled": "$sender, cooldown for $command blev slået til",
     "cooldown-was-disabled": "$sender, cooldown for $command blev slået fra",
@@ -1164,25 +1147,9 @@
       "trigger": "$sender is trying his luck and pulled a trigger",
       "alive": "$sender er i live! Intet skete.",
       "dead": "$sender's brain was splashed on the wall!",
-      "mod": "$sender is incompement and completely missed his head!",
+      "mod": "$sender is incompetent and completely missed his head!",
       "broadcaster": "$sender is using blanks, boo!",
       "timeout": "Roulette timeout set to $values"
-    },
-    "seppuku": {
-      "text": "$sender has committed seppuku.",
-      "mod": "$sender tried to commit seppuku, but broke a sword.",
-      "broadcaster": "$sender tried to commit seppuku, but lost a sword.",
-      "timeout": "Seppuku timeout set to $values"
-    },
-    "fightme": {
-      "cannotFightWithYourself": "$sender, you cannot fight with yourself!",
-      "cooldown": "$sender, you cannot use $command for $cooldown $minutesName.",
-      "challenge": "(ง'̀-'́)ง $sender wants to fight you $username! If you accept, send $command $sender",
-      "winner": "٩(^ᴗ^)۶ $winner is proud winner and $loser is sore loser! Who's next?",
-      "notEnoughOptions": "$sender, you need to select user to fight.",
-      "broadcaster": "ψ(｀∇´)ψ $winner is a god among you. Beware $loser! This fight was decided even before it started.",
-      "bothModerators": "$challenger (*-`ω´- )人(*-`ω´- ) $sender, this fight will take milleniums to decide!",
-      "oneModerator": "¯\\_(ツ)_/¯ $winner is under divine protection. Sorry, $loser."
     },
     "gamble": {
       "chanceToWin": "$sender, chance to win !gamble set to $value%",
@@ -1196,6 +1163,7 @@
       "loseWithJackpot": "$sender, you LOST! You now have $points $pointsName. Jackpot increased to $jackpot $jackpotName",
       "lose": "$sender, you LOST! You now have $points $pointsName",
       "currentJackpot": "$sender, current jackpot for $command is $points $pointsName",
+      "winJackpotCount": "$sender, you won $count jackpots",
       "jackpotIsDisabled": "$sender, jackpot is disabled for $command."
     }
   },
@@ -1210,8 +1178,8 @@
   "whisper": {
     "settings": {
       "disablePermissionWhispers": {
-        "true": "Bot won't send permissions insufficient errors",
-        "false": "Bot will send permissions insufficient errors through whispers"
+        "true": "Bot won't send errors on insufficient permissions",
+        "false": "Bot won't send errors on insufficient permissions through whispers"
       },
       "disableCooldownWhispers": {
         "true": "Bot sender ikke nedkølingsmeddelelser",
@@ -1219,12 +1187,9 @@
       }
     }
   },
-  "phillipsHue": {
-    "list": "$sender, Liste over Phillips Hue tilsluttede lys: "
-  },
-  "time": "Streamerens tid i dennes tidszone er $time",
+  "time": "Current time in streamer's timezone is $time",
   "subs": "$sender, der er i øjeblikket $onlineSubCount abonnenter online. Sidste abonnerende var $lastSubUsername $lastSubAgo",
-  "followers": "$sender, der er i øjeblikket $onlineFollowersCount følgere online. Sidste følger var $lastFollowUsername $lastFollowAgo",
+  "followers": "$sender, last follow was $lastFollowUsername $lastFollowAgo",
   "ignore": {
     "user": {
       "is": {

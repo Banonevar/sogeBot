@@ -1,3 +1,5 @@
+type ChatUser = import('@twurple/chat').ChatUser;
+
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 type UserStateTags = import('twitch-js').UserStateTags;
@@ -10,13 +12,17 @@ declare class Stringified<T> extends String {
   private ___stringified: T;
 }
 
+type Unpacked<T> =
+  T extends (infer U)[] ? U :
+    T extends (...args: any[]) => infer R ? R :
+      T extends Promise<infer E> ? E :
+        T;
+
 interface JSON {
   stringify<T>(value: T, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string & Stringified<T>;
   parse<T>(text: Stringified<T>, reviver?: (key: any, value: any) => any): T
   parse(text: string, reviver?: (key: any, value: any) => any): any
 }
-
-type currency = 'USD' | 'AUD' | 'BGN' | 'BRL' | 'CAD' | 'CHF' | 'CNY' | 'CZK' | 'DKK' | 'EUR' | 'GBP' | 'HKD' | 'HRK' | 'HUF' | 'IDR' | 'ILS' | 'INR' | 'ISK' | 'JPY' | 'KRW' | 'MXN' | 'MYR' | 'NOK' | 'NZD' | 'PHP' | 'PLN' | 'RON' | 'RUB' | 'SEK' | 'SGD' | 'THB' | 'TRY' | 'ZAR';
 
 type TimestampObject = {
   hours: number; minutes: number; seconds: number
@@ -25,6 +31,7 @@ type TimestampObject = {
 type UserStateTagsWithId = UserStateTags & { userId: string };
 
 interface Command {
+  id: string;
   name: string;
   command?: string;
   fnc?: string;
@@ -44,18 +51,18 @@ interface Parser {
 }
 
 type onEventSub = {
-  username: string;
+  userName: string;
   userId: string;
   subCumulativeMonths: number;
 };
 
 type onEventFollow = {
-  username: string;
+  userName: string;
   userId: string;
 };
 
 type onEventTip = {
-  username: string;
+  userName: string;
   amount: number;
   message: string;
   currency: currency;
@@ -63,14 +70,15 @@ type onEventTip = {
 };
 
 type onEventBit = {
-  username: string;
+  userName: string;
   amount: number;
   message: string;
   timestamp: number;
 };
 
 type onEventMessage = {
-  sender: Partial<UserStateTags> | null;
+  sender: ChatUser | null;
+  id: string,
   message: string;
   timestamp: number;
 };
@@ -98,7 +106,6 @@ declare namespace InterfaceSettings {
       [x: string]: string[];
     };
     partChannel?: () => void;
-    reconnectChannel?: () => void;
     joinChannel?: () => void;
   }
 
@@ -164,32 +171,22 @@ interface UIHighlightsUrlGenerator {
   if?: () => boolean;
 }
 
-interface CommandResponse {
-  response: string | Promise<string>;
-  sender: CommandOptions['sender'];
-  attr: CommandOptions['attr'];
-}
-
-interface CommandOptions {
-  sender: UserStateTags & { userId: string; msgId?: KnownNoticeMessageIds } & {
-    discord?: { author: DiscordJsUser; channel: DiscordJsTextChannel };
-  };
-  command: string;
-  parameters: string;
-  createdAt: number;
-  attr: {
-    skip?: boolean;
-    quiet?: boolean;
-    [attr: string]: any;
-  };
-}
-
+type CommandResponse = import('./src/parser').CommandResponse;
+type CommandOptions = import('./src/parser').CommandOptions;
 interface ParserOptions {
   id: string;
-  sender: CommandOptions['sender'];
+  sender: Omit<ChatUser, '_userName' | '_userData' | '_parseBadgesLike'> | null;
+  emotesOffsets: Map<string, string[]>
+  discord: { author: DiscordJsUser; channel: DiscordJsTextChannel } | undefined
+  isAction: boolean,
+  isHighlight: boolean,
+  isFirstTimeMessage: boolean,
   parameters: string;
   message: string;
   skip: boolean;
+  isParserOptions: boolean;
+  forbidReply?: boolean;
+  parser?: import('../src/parser.js').Parser;
 }
 
 interface Vote {

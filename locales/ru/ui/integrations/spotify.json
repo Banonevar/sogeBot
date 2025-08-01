@@ -1,10 +1,16 @@
 {
+  "artists": "Исполнители",
   "settings": {
     "enabled": "Статус",
     "songRequests": "Запросы песен",
     "fetchCurrentSongWhenOffline": {
       "title": "Получить текущую песню, когда стрим не в сети",
       "help": "Рекомендуется отключить это во избежание достижения лимитов API"
+    },
+    "allowApprovedArtistsOnly": "Разрешить только одобренные исполнители",
+    "approvedArtists": {
+      "title": "Одобренные исполнители",
+      "help": "Имя или SpotifyURI исполнителя, по одному элементу в строке"
     },
     "queueWhenOffline": {
       "title": "Очередь треков, когда стрим оффлайн",
@@ -13,8 +19,8 @@
     "clientId": "clientId",
     "clientSecret": "clientSecret",
     "manualDeviceId": {
-      "title": "Forced Device ID",
-      "help": "Empty = disabled, force spotify device ID to be used to queue songs. Check logs for current active device or use button when playing song for at least 10 seconds."
+      "title": "Идентификатор принудительного устройства",
+      "help": "Empty = disabled, force Spotify device ID to be used to queue songs. Check logs for current active device or use button when playing song for at least 10 seconds."
     },
     "redirectURI": "redirectURI",
     "format": {
@@ -23,13 +29,13 @@
     },
     "username": "Авторизованный пользователь",
     "revokeBtn": "Отменить авторизацию пользователя",
-    "authorizeBtn": "Авторизация пользователя",
+    "authorizeBtn": "Авторизовать пользователя",
     "scopes": "Разрешения",
     "playlistToPlay": {
       "title": "Spotify URI главного плейлиста",
       "help": "Если установлено, по завершении заказанных песен этот плейлист будет продолжаться"
     },
     "continueOnPlaylistAfterRequest": "Продолжить воспроизведение плейлиста после заказанных песен",
-    "notify": "Отправить сообщение при смене песни"
+    "notify": "Отправить сообщение в чат при смене песни"
   }
 }

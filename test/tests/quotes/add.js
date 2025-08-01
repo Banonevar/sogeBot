@@ -1,20 +1,20 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const assert = require('assert');
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import assert from 'assert';
+import { message } from '../../general.js';
 
-const { getManager } = require('typeorm');
-const { Quotes } = require('../../../dest/database/entity/quotes');
+import { AppDataSource } from '../../../dest/database.js';
+import { Quotes } from '../../../dest/database/entity/quotes.js';
 
-const quotes = (require('../../../dest/systems/quotes')).default;
+import quotes from '../../../dest/systems/quotes.js'
 
 // users
-const owner = { username: '__broadcaster__', userId: 1 };
+const owner = { userName: '__broadcaster__', userId: 1 };
 
 const tests = [
   { sender: owner, parameters: '', shouldFail: true },
@@ -30,7 +30,7 @@ const tests = [
   { sender: owner, parameters: ' -tags lorem ipsum, dolor sit -quote Lorem Ipsum Dolor', quote: 'Lorem Ipsum Dolor', tags: 'lorem ipsum, dolor sit', shouldFail: false },
 ];
 
-describe('Quotes - add()', () => {
+describe('Quotes - add() - @func3', () => {
   for (const test of tests) {
     describe(test.parameters, async () => {
       let id = null;
@@ -50,7 +50,7 @@ describe('Quotes - add()', () => {
           assert.strictEqual(response, '$sender, !quote add is not correct or missing -quote parameter');
         });
         it('Database should be empty', async () => {
-          const items = await getManager()
+          const items = await AppDataSource
             .createQueryBuilder()
             .select('quotes')
             .from(Quotes, 'quotes')
@@ -62,7 +62,7 @@ describe('Quotes - add()', () => {
           assert.strictEqual(response, `$sender, quote ${id} '${test.quote}' was added. (tags: ${test.tags})`);
         });
         it('Database should contain new quote', async () => {
-          const items = await getManager()
+          const items = await AppDataSource
             .createQueryBuilder()
             .select('quotes')
             .from(Quotes, 'quotes')

@@ -1,16 +1,16 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const alias = (require('../../../dest/systems/alias')).default;
-const assert = require('assert');
-const { prepare } = (require('../../../dest/helpers/commons/prepare'));
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import alias from '../../../dest/systems/alias.js';
+import assert from 'assert';
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Alias - toggleVisibility()', () => {
+describe('Alias - @func1 - toggleVisibility()', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();

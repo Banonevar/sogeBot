@@ -1,28 +1,30 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* global describe it before */
 
-require('../../general.js');
+/* global */
 
-const assert = require('assert');
+import('../../general.js');
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
+import assert from 'assert';
 
-const { User } = require('../../../dest/database/entity/user');
-const gamble = (require('../../../dest/games/gamble')).default;
-const { prepare } = require('../../../dest/helpers/commons/prepare');
-const { getPointsName } = require('../../../dest/helpers/points/getPointsName');
-const points = (require('../../../dest/systems/points')).default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import _ from 'lodash-es';
+import { AppDataSource } from '../../../dest/database.js';
 
-const user1 = { username: 'user1', userId: String(_.random(999999, false)) };
+import { User } from '../../../dest/database/entity/user.js';
+import gamble from '../../../dest/games/gamble.js';
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import { getPointsName } from '../../../dest/helpers/points/getPointsName.js';
+import points from '../../../dest/systems/points.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+
+const user1 = { userName: 'user1', userId: String(_.random(999999, false)) };
 const command = '!gamble';
 
-describe('Gambling - gamble', () => {
-  beforeEach(async () => {
-    await getRepository(User).save({
-      userId: user1.userId, username: user1.username, points: 100,
+describe('Gambling - gamble - @func3', () => {
+  beforeEach(async () => {
+    const changelog = await import('../../../dest/helpers/user/changelog.js');
+    await changelog.flush();
+    await AppDataSource.getRepository(User).save({
+      userId: user1.userId, userName: user1.userName, points: 100,
     });
   });
 
@@ -131,7 +133,7 @@ describe('Gambling - gamble', () => {
         assert(r[0].response === msg1 || r[0].response === msg2, JSON.stringify({
           r, msg1, msg2,
         }, null, 2));
-        assert(updatedPoints === 90 || updatedPoints === 110, { updatedPoints });
+        assert(updatedPoints === 90 || updatedPoints === 110, { updatedPoints });
       });
 
       it('user should successfully !gamble all', async () => {

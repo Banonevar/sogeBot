@@ -1,11 +1,11 @@
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const Message = require('../../../dest/message').default;
-const assert = require('assert');
-const owner = { userId: String(Math.floor(Math.random() * 100000)), username: '__broadcaster__' };
+import { db } from '../../general.js';
+import {Message} from '../../../dest/message.js';
+import assert from 'assert';
+const owner = { userId: String(Math.floor(Math.random() * 100000)), userName: '__broadcaster__' };
 
 const tests = [
   { text: `(toPercent|2|0.5)`, expect: '50.00' },
@@ -14,7 +14,7 @@ const tests = [
   { text: `(toPercent|2|0.43211123)`, expect: '43.21' },
 ];
 
-describe('Message - (toPercent|#) filter', async () => {
+describe('Message - (toPercent|#) filter - @func3', async () => {
   beforeEach(async () => {
     await db.cleanup();
   });

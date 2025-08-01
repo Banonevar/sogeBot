@@ -1,27 +1,27 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message, url } from '../../general.js';
 
-const cooldown = (require('../../../dest/systems/cooldown')).default;
+import cooldown from '../../../dest/systems/cooldown.js'
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
+import { User } from '../../../dest/database/entity/user.js';
 
 // users
-const owner = { userId: String(Math.floor(Math.random() * 100000)), badges: {}, username: '__broadcaster__' };
-const mod = { userId: String(Math.floor(Math.random() * 100000)), badges: {}, username: 'mod' };
+const owner = { userId: String(Math.floor(Math.random() * 100000)), badges: {}, userName: '__broadcaster__' };
+const mod = { userId: String(Math.floor(Math.random() * 100000)), badges: {}, userName: 'mod' };
 
-describe('Cooldowns - toggleModerators()', () => {
+describe('Cooldowns - toggleModerators() - @func3', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(User).save({ username: owner.username, userId: owner.userId });
-    await getRepository(User).save({ username: mod.username, userId: mod.userId, isModerator: true });
+    await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId });
+    await AppDataSource.getRepository(User).save({ userName: mod.userName, userId: mod.userId, isModerator: true });
   });
 
   it('incorrect toggle', async () => {
@@ -30,7 +30,7 @@ describe('Cooldowns - toggleModerators()', () => {
     const r2 = await cooldown.toggleModerators({ sender: owner, parameters: command });
 
     assert.strictEqual(r[0].response, '$sender, user cooldown for !me was set to 60s');
-    assert.strictEqual(r2[0].response, 'Usage => http://sogehige.github.io/sogeBot/#/_master/systems/cooldown');
+    assert.strictEqual(r2[0].response, 'Usage => ' + url + '/systems/cooldowns');
   });
 
   it('correct toggle', async () => {

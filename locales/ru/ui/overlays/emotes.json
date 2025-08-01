@@ -1,11 +1,14 @@
 {
 	"settings": {
 		"btnRemoveCache": "Очистить кэш",
-		"btnTestExplosion": "Взрыв смайликов",
-		"btnTestEmote": "Эмоция",
-		"btnTestFirework": "Фейерверк смайликов",
+		"hypeMessagesEnabled": "Show hype messages in chat",
+		"btnTestExplosion": "Test emote explosion",
+		"btnTestEmote": "Test emote",
+		"btnTestFirework": "Test emote firework",
 		"cEmotesSize": "Размер эмоций",
-		"cEmotesMaxEmotesPerMessage": "Максимум смайликов за сообщение",
+		"cEmotesMaxEmotesPerMessage": "Maximum of emotes per message",
+		"cEmotesMaxRotation": "Maximal rotation of emote",
+		"cEmotesOffsetX": "Maximal offset on X-axis",
 		"cEmotesAnimation": "Анимация",
 		"cEmotesAnimationTime": "Продолжительность анимации",
 		"cExplosionNumOfEmotes": "Количество эмоций",
@@ -15,7 +18,7 @@
 		"comboBreakMessages": "Combo break messages",
 		"threshold": "Threshold",
 		"noMessagesFound": "No messages found.",
-		"message": "Message",
+		"message": "Сообщение",
 		"showEmoteInOverlayThreshold": "Minimal message threshold to show emote in overlay",
 		"hideEmoteInOverlayAfter": {
 			"title": "Hide emote in overlay after inactivity",
@@ -30,6 +33,10 @@
 			"help": "Minimal message threshold to count emotes as combo (until then won't trigger cooldown)"
 		},
 		"comboMessages": "Combo messages"
+	},
+	"hype": {
+		"5": "Let's go! We got $amountx $emote combo so far! SeemsGood",
+		"15": "Keep it going! Can we get more than $amountx $emote? TriHard"
 	},
 	"message": {
 		"3": "$amountx $emote combo",

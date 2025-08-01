@@ -1,12 +1,13 @@
-/* global describe it beforeEach */
-require('../../general.js');
+/* global */
+import('../../general.js');
+import('../../mocks.js');
 
-const db = require('../../general.js').db;
-const msg = require('../../general.js').message;
-const Message = require('../../../dest/message').default;
-const assert = require('assert');
+import assert from 'assert';
 
-describe('Message - api filter', () => {
+import {Message} from '../../../dest/message.js';
+import { db, message as msg } from '../../general.js';
+
+describe('Message - api filter - @func3', () => {
   beforeEach(async () => {
     await db.cleanup();
     await msg.prepare();

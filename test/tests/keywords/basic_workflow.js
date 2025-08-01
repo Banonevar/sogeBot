@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* global describe it beforeEach */
-require('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const assert = require('assert');
+import('../../general.js');
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const { Keyword } = require('../../../dest/database/entity/keyword');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import assert from 'assert';
 
-const keywords = (require('../../../dest/systems/keywords')).default;
+import { User } from '../../../dest/database/entity/user.js';
+import { Keyword } from '../../../dest/database/entity/keyword.js';
+import { AppDataSource } from '../../../dest/database.js';
+
+import keywords from '../../../dest/systems/keywords.js';
 
 // users
-const owner = { userId: String(Math.floor(Math.random() * 100000)), username: '__broadcaster__' };
+const owner = { userId: String(Math.floor(Math.random() * 100000)), userName: '__broadcaster__' };
 
 function randomString() {
   return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
@@ -34,7 +33,7 @@ const failedTests = [
 
 const successTests = [
   {
-    keyword: 'test', response: '(!me)', actualResponse: '@__broadcaster__ | Level 0 | 0.0h | 0 points | 0 messages | €0.00 | 0 bits',
+    keyword: 'test', response: '(!me)', actualResponse: '@__broadcaster__ | Level 0 | 0 hours | 0 points | 0 messages | €0.00 | 0 bits | 0 months',
     tests: [
       { type: 'add' },
       { type: 'run', triggers: ['This line will be triggered test'], '-triggers': [] },
@@ -100,7 +99,7 @@ const successTests = [
 ];
 
 
-describe('Keywords - basic worflow (add, run, edit)', () => {
+describe('Keywords - basic workflow (add, run, edit) - @func2', () => {
   describe('Expected parsed fail', () => {
     before(async () => {
       await db.cleanup();
@@ -119,7 +118,7 @@ describe('Keywords - basic worflow (add, run, edit)', () => {
       describe(generateCommand(test), () => {
         before(async () => {
           await db.cleanup();
-          await getRepository(User).save(owner);
+          await AppDataSource.getRepository(User).save(owner);
         });
         beforeEach(async () => {
           await message.prepare();
@@ -129,13 +128,13 @@ describe('Keywords - basic worflow (add, run, edit)', () => {
             case 'add':
               it ('add()', async () => {
                 const r = await keywords.add({ sender: owner, parameters: generateCommand(test) });
-                const k = await getRepository(Keyword).findOne({ keyword: test.keyword });
+                const k = await Keyword.findOneBy({ keyword: test.keyword });
                 assert.strictEqual(r[0].response, `$sender, keyword ${test.keyword} (${k.id}) was added`);
               });
               break;
             case 'toggle':
               it ('toggle()', async () => {
-                const k = await getRepository(Keyword).findOne({ keyword: test.keyword });
+                const k = await Keyword.findOneBy({ keyword: test.keyword });
                 const r = await keywords.toggle({ sender: owner, parameters: generateCommand(test) });
                 if (k.enabled) {
                   assert.strictEqual(r[0].response, `$sender, keyword ${test.keyword} was disabled`);

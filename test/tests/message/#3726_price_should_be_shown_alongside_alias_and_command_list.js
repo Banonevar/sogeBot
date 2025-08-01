@@ -1,29 +1,27 @@
 /* global describe it */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
+import { db, message, user } from '../../general.js';
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-const Message = require('../../../dest/message').default;
-const alias = (require('../../../dest/systems/alias')).default;
-const customcommands = (require('../../../dest/systems/customcommands')).default;
-const price = (require('../../../dest/systems/price')).default;
-const owner = { username: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
+import {Message} from '../../../dest/message.js';
+import alias from '../../../dest/systems/alias.js';
+import customcommands from '../../../dest/systems/customcommands.js';
+import price from '../../../dest/systems/price.js';
+const owner = { userName: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
 
-const { getRepository } = require('typeorm');
-const { Price } = require('../../../dest/database/entity/price');
+import { Price } from '../../../dest/database/entity/price.js';
 
-describe('Message - #3726 - price should be shown alongside alias and command list', () => {
+describe('Message - #3726 - price should be shown alongside alias and command list - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
     await user.prepare();
-    await getRepository(Price).save({ command: '!a', price: 10 });
-    await getRepository(Price).save({ command: '!b', price: 0, priceBits: 10 });
-    await getRepository(Price).save({ command: '!c', price: 10, priceBits: 10 });
+    await AppDataSource.getRepository(Price).save({ command: '!a', price: 10 });
+    await AppDataSource.getRepository(Price).save({ command: '!b', price: 0, priceBits: 10 });
+    await AppDataSource.getRepository(Price).save({ command: '!c', price: 10, priceBits: 10 });
   });
   after(() => {
     price.enabled = true;

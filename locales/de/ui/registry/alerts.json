@@ -12,7 +12,8 @@
     "amountOfGifts": "Anzahl der Geschenke",
     "amountOfMonths": "Anzahl der Monate",
     "amountOfTips": "Trinkgeld",
-    "event": "Ereignis"
+    "event": "Ereignis",
+    "service": "Service"
   },
   "empty": "Die Alert-Registry ist leer, erstelle einen neuen Alert.",
   "emptyAfterSearch": "Alert Registry leer! Bei der Suche nach \"<strong>$search</strong>\" wurden keine Alerts gefunden",
@@ -23,6 +24,12 @@
   },
   "alertDelayInMs": {
     "name": "Alert Verzögerung"
+  },
+  "parryEnabled": {
+    "name": "Alert pariert"
+  },
+  "parryDelay": {
+    "name": "Verzögerung des Alert Textes"
   },
   "profanityFilterType": {
     "name": "Schimpfwort-Filter",
@@ -38,17 +45,17 @@
     "help": "Wörter müssen durch Kommas getrennt werden."
   },
   "event": {
-    "follows": "Follows",
-    "cheers": "Cheers",
-    "subs": "Subs",
-    "resubs": "Re-Subs",
-    "subgifts": "Verschenkte Subs",
-    "subcommunitygifts": "SubGifts an Community",
-    "tips": "Tips",
-    "hosts": "Hosts",
-    "raids": "Raids",
-    "cmdredeems": "Befehl wird eingelöst",
-    "rewardredeems": "Belohnungen einlösen"
+    "follow": "Folgen",
+    "cheer": "Cheer",
+    "sub": "Sub",
+    "resub": "Resub",
+    "subgift": "Subgift",
+    "subcommunitygift": "Verschenkte Community-Subs",
+    "tip": "Trinkgeld",
+    "raid": "Raid",
+    "custom": "Custom",
+    "promo": "Promo",
+    "rewardredeem": "Reward Redeem"
   },
   "title": {
     "name": "Variantenname",
@@ -58,12 +65,12 @@
     "name": "Variantenvorkommen"
   },
   "filter": {
-    "name": "Occurence filter",
+    "name": "Filter",
     "operator": "Operator",
     "rule": "Regel",
     "addRule": "Neue Regel",
     "addGroup": "Neue Gruppe",
-    "comparator": "Comparator",
+    "comparator": "Vergleicher",
     "value": "Wert",
     "valueSplitByComma": "Werte durch Komma getrennt (z.B. val1, val2)",
     "isEven": "ist gleich",
@@ -71,6 +78,7 @@
     "lessThan": "kleiner als",
     "lessThanOrEqual": "kleiner oder gleich",
     "contain": "enthält",
+    "contains": "contains",
     "equal": "ist gleich",
     "notEqual": "ungleich",
     "present": "ist vorhanden",
@@ -93,10 +101,10 @@
   "greater-than-or-equal-to-amount": "Größer als oder gleich dem Betrag",
   "tier-exact-amount": "Stufe ist",
   "tier-greater-than-or-equal-to-amount": "Stufe ist höher oder gleich",
-  "months-exact-amount": "Months amount is exactly",
-  "months-greater-than-or-equal-to-amount": "Months amount is higher or equal to",
-  "gifts-exact-amount": "Gifts amount is exactly",
-  "gifts-greater-than-or-equal-to-amount": "Gifts amount is higher or equal to",
+  "months-exact-amount": "Anzahl der Monate ist exakt",
+  "months-greater-than-or-equal-to-amount": "Anzahl der Monate ist höher oder gleich",
+  "gifts-exact-amount": "Gif Subs betrage ist gleich",
+  "gifts-greater-than-or-equal-to-amount": "Gif Subs betrage ist höher oder gleich",
   "very-rarely": "Sehr selten",
   "rarely": "Selten",
   "default": "Standard",
@@ -106,10 +114,18 @@
   "messageTemplate": {
     "name": "Nachrichtenvorlage",
     "placeholder": "Nachrichtenvorlage festlegen",
-    "help": "Available variables: {name}, {amount} (cheers, subs, tips, subgifts, sub community gifts, command redeems), {recipient} (subgifts, command redeems), {monthsName} (subs, subgifts), {currency} (tips)"
+    "help": "Available variables: {{name}}, {{amount}} (cheers, subs, tips, subgifts, sub community gifts, command redeems), {{recipient}} (subgifts, command redeems), {{monthsName}} (subs, subgifts), {{tier}} (subs), {{currency}} (tips), {{game}} (promo). If | is added (see promo) then it will show those values in sequence."
+  },
+  "ttsTemplate": {
+    "name": "TTS Vorlage",
+    "placeholder": "TTS-Vorlage festlegen",
+    "help": "Available variables: {{name}}, {{amount}} {{monthsName}} {{currency}} {{message}}"
   },
   "animationText": {
     "name": "Animationstext"
+  },
+  "animationType": {
+    "name": "Typ der Animation"
   },
   "animationIn": {
     "name": "Eingehende Animation"
@@ -126,22 +142,25 @@
   "layoutPicker": {
     "name": "Layout"
   },
+  "loop": {
+    "name": "In Schleife abspielen"
+  },
   "scale": {
     "name": "Skalieren"
   },
   "translateY": {
-    "name": "Move -Up / +Down"
+    "name": "Nach oben / +Runter"
   },
   "translateX": {
-    "name": "Move -Left / +Right"
+    "name": "Bewege -links / +Rechts"
   },
   "image": {
-    "name": "Image / Video(.webm)",
-    "setting": "Image / Video(.webm) settings"
+    "name": "Bild / Video(.webm)",
+    "setting": "Bild / Video(.webm) Einstellungen"
   },
   "sound": {
     "name": "Sound",
-    "setting": "Sound settings"
+    "setting": "Sound-Einstellungen"
   },
   "soundVolume": {
     "name": "Alert Lautstärke"
@@ -150,7 +169,7 @@
   "font": {
     "setting": "Schrifteinstellungen",
     "name": "Schriftartfamilie",
-    "overrideGlobal": "Override global font settings",
+    "overrideGlobal": "Globale Schriftarteinstellungen überschreiben",
     "align": {
       "name": "Ausrichtung",
       "left": "Links",

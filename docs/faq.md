@@ -6,7 +6,7 @@
 
 **Question:** Can you add this super new feature to a bot?
 
-**Answer:** Please [create new issue/feature request](https://github.com/sogehige/SogeBot/issues/new?labels=feature+request) and I'll look at it!
+**Answer:** Please [create new issue/feature request](https://github.com/sogebot/sogeBot/issues/new?labels=feature+request) and I'll look at it!
 
 ***
 
@@ -32,7 +32,7 @@
 
 ***
 
-**Question:** Bot on docker have issues with connection to twitch or streamlabs (Error: getaddrinfo EAI_AGAIN)?
+**Question:** Bot on docker have issues with connection to twitch or Streamlabs (Error: getaddrinfo EAI_AGAIN)?
 
 **Answer:** Check https://development.robinwinslow.uk/2016/06/23/fix-docker-networking-dns/ for steps to fix your issue
 

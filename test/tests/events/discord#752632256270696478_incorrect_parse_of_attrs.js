@@ -1,56 +1,57 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
-const { v4: uuidv4 } = require('uuid');
+import { randomUUID } from 'node:crypto';
 
-require('../../general.js');
-const log = require('../../../dest/helpers/log');
+import('../../general.js');
+import { Event } from '../../../dest/database/entity/event.js';
+import { User } from '../../../dest/database/entity/user.js';
+import events from '../../../dest/events.js';
+import * as log from '../../../dest/helpers/log.js';
 
-const assert = require('assert');
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const time = require('../../general.js').time;
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const { Event } = require('../../../dest/database/entity/event');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import { time } from '../../general.js';
 
-const events = (require('../../../dest/events')).default;
-const username = 'randomPerson';
+const userName = 'randomPerson';
 
-describe('discord#752632256270696478 - event attrs are not correctly parsed', () => {
+describe('discord#752632256270696478 - event attrs are not correctly parsed - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
-    await getRepository(Event).save({
-      id: uuidv4(),
-      name: 'tip',
-      givenName: 'Tip alert',
-      triggered: {},
-      definitions: {},
-      filter: '',
-      isEnabled: true,
-      operations: [{
-        name: 'send-chat-message',
+    await AppDataSource.getRepository(Event).save({
+      id:          randomUUID(),
+      event: {
+        name: 'tip',
+        triggered:   {},
+        definitions: {},
+      },
+      givenName:   'Tip alert',
+      filter:      '',
+      isEnabled:   true,
+      operations:  [{
+        name:        'send-chat-message',
         definitions: {
           messageToSend: '$username ; $amount ; $currency ; $message ; $amountInBotCurrency ; $currencyInBot',
         },
       }],
     });
 
-    await getRepository(User).save({ username, userId: String(Math.floor(Math.random() * 100000)) });
+    await AppDataSource.getRepository(User).save({ userName: userName, userId: String(Math.floor(Math.random() * 100000)) });
   });
 
-  it('trigger tip event for 10 EUR - ' + username, async () => {
-    log.tip(`${username}, amount: 10.00EUR, message: Ahoj jak je`);
+  it('trigger tip event for 10 EUR - ' + userName, async () => {
+    log.tip(`${userName}, amount: 10.00EUR, message: Ahoj jak je`);
     events.fire('tip', {
-      userId: String(Math.floor(Math.random * 100000)),
-      username: username,
-      amount: 10.00,
-      message: 'Ahoj jak je',
-      currency: 'EUR',
+      userName,
+      amount:              10.00,
+      message:             'Ahoj jak je',
+      currency:            'EUR',
       amountInBotCurrency: '100',
-      currencyInBot: 'CZK',
+      currencyInBot:       'CZK',
     });
   });
 

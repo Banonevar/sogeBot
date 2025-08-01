@@ -1,22 +1,20 @@
 /* global describe it beforeEach */
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
+import { db, message, user } from '../../general.js';
 
-const assert = require('assert');
-const userinfo = (require('../../../dest/systems/userinfo')).default;
+import assert from 'assert';
+import userinfo from '../../../dest/systems/userinfo.js'
 
-describe('Userinfo - stats()', () => {
+describe('Userinfo - stats() - @func3', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
     await user.prepare();
   });
 
-  const hours = '0.0';
+  const hours = '0';
   const points = '0';
   const messages = '0';
   const tips = '0.00';
@@ -24,12 +22,12 @@ describe('Userinfo - stats()', () => {
   const level = '0';
 
   it('!stats testuser should show testuser data', async () => {
-    const r = await userinfo.showStats({ parameters: user.viewer.username, sender: user.owner });
-    assert.strictEqual(r[0].response, `$touser | Level ${level} | ${hours}h | ${points} points | ${messages} messages | €${tips} | ${bits} bits`, user.owner, 1000);
+    const r = await userinfo.showStats({ parameters: user.viewer.userName, sender: user.owner });
+    assert.strictEqual(r[0].response, `$touser | Level ${level} | ${hours} hours | ${points} points | ${messages} messages | €${tips} | ${bits} bits | 0 months`, user.owner, 1000);
   });
 
   it('!stats should show owner data', async () => {
     const r = await userinfo.showStats({ parameters: '', sender: user.owner });
-    assert.strictEqual(r[0].response, `$sender | Level ${level} | ${hours}h | ${points} points | ${messages} messages | €${tips} | ${bits} bits`, user.owner, 1000);
+    assert.strictEqual(r[0].response, `$sender | Level ${level} | ${hours} hours | ${points} points | ${messages} messages | €${tips} | ${bits} bits | 0 months`, user.owner, 1000);
   });
 });

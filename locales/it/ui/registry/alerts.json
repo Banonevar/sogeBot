@@ -12,7 +12,8 @@
     "amountOfGifts": "Quantità di doni",
     "amountOfMonths": "Ammontare mesi",
     "amountOfTips": "Tip",
-    "event": "Evento"
+    "event": "Evento",
+    "service": "Service"
   },
   "empty": "Il registro degli avvisi è vuoto, crea nuovi avvisi.",
   "emptyAfterSearch": "Il registro degli avvisi è vuoto nella ricerca di \"<strong>$search</strong>\"",
@@ -23,6 +24,12 @@
   },
   "alertDelayInMs": {
     "name": "Ritardo di allarme"
+  },
+  "parryEnabled": {
+    "name": "Interrompi con nuovo alert"
+  },
+  "parryDelay": {
+    "name": "Ritardo interruzione nuovo alert"
   },
   "profanityFilterType": {
     "name": "Filtro profanità",
@@ -38,17 +45,17 @@
     "help": "Le parole dovrebbero essere separate da virgole."
   },
   "event": {
-    "follows": "Follows",
-    "cheers": "Cheers",
-    "subs": "Abbonati",
-    "resubs": "Riabbonati",
-    "subgifts": "Abbonamenti donati",
-    "subcommunitygifts": "Abbonamenti regalati alla comunità",
-    "tips": "Donazioni",
-    "hosts": "Host",
-    "raids": "Raid",
-    "cmdredeems": "Riscatta Comando",
-    "rewardredeems": "Riscatta Ricompensa"
+    "follow": "Follow",
+    "cheer": "Cheer",
+    "sub": "Sub",
+    "resub": "Resub",
+    "subgift": "Subgift",
+    "subcommunitygift": "Subgift to community",
+    "tip": "Tip",
+    "raid": "Raid",
+    "custom": "Custom",
+    "promo": "Promo",
+    "rewardredeem": "Reward Redeem"
   },
   "title": {
     "name": "Nome variante",
@@ -58,7 +65,7 @@
     "name": "Variante di occorrenza"
   },
   "filter": {
-    "name": "Filtro occorrenza",
+    "name": "Filter",
     "operator": "Operatore",
     "rule": "Regola",
     "addRule": "Aggiungi regola",
@@ -71,6 +78,7 @@
     "lessThan": "meno di",
     "lessThanOrEqual": "minore o uguale a",
     "contain": "contiene",
+    "contains": "contains",
     "equal": "uguale",
     "notEqual": "non uguale",
     "present": "è presente",
@@ -106,10 +114,18 @@
   "messageTemplate": {
     "name": "Modello messaggio",
     "placeholder": "Imposta il tuo modello di messaggi",
-    "help": "Variabili disponibili: {name}, {amount} (cheers, subs, tips, subgifts, sub community gifts, command redeems), {recipient} (subgifts, command redeems), {monthsName} (subs, subgifts), {currency} (tips)"
+    "help": "Available variables: {{name}}, {{amount}} (cheers, subs, tips, subgifts, sub community gifts, command redeems), {{recipient}} (subgifts, command redeems), {{monthsName}} (subs, subgifts), {{tier}} (subs), {{currency}} (tips), {{game}} (promo). If | is added (see promo) then it will show those values in sequence."
+  },
+  "ttsTemplate": {
+    "name": "TTS template",
+    "placeholder": "Set your TTS template",
+    "help": "Available variables: {{name}}, {{amount}} {{monthsName}} {{currency}} {{message}}"
   },
   "animationText": {
     "name": "Testo animazione"
+  },
+  "animationType": {
+    "name": "Type of animation"
   },
   "animationIn": {
     "name": "Animazione in entrata"
@@ -125,6 +141,9 @@
   },
   "layoutPicker": {
     "name": "Disposizione"
+  },
+  "loop": {
+    "name": "Play on loop"
   },
   "scale": {
     "name": "Scala"

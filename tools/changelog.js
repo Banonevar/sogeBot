@@ -1,107 +1,109 @@
-const { spawnSync } = require('child_process');
+import {spawnSync} from 'child_process';
 
-const gitSemverTags = require('git-semver-tags');
-const argv = require('yargs') // eslint-disable-line
-  .usage('node tools/changelog.js <cmd> [args]')
-  .option('escape', {
-    description: 'Escapes outpu (useful for github action)',
-    type:        'boolean',
+import gitSemverTags from 'git-semver-tags';
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
+
+yargs(hideBin(process.argv))
+  .command('cli <commit>', 'create changelog between commits/tags', (yargs) => {
+    return yargs
+      .positional('commit', {
+        describe: 'commit(preferred) or tag interval e.g. 9.0.3 or 9.0.2..9.0.3',
+        type: 'string',
+      })
+    }, (argv) => {
+      const changesSpawn = spawnSync('git', ['log', argv.commit, '--oneline']);
+      for (const output of changes(changesSpawn.stdout.toString().split('\n'))) {
+        process.stdout.write(output);
+      }
   })
-  .command('generate', 'generate changelog')
-  .command('nextTag', 'get next tag')
-  .command('cli [commit]', 'create changelog between commits/tags', (yargs) => {
-    yargs.demandOption(['commit'], 'Please provide commit or tag argument to work with this tool');
-    yargs.positional('commit', {
-      type:     'string',
-      describe: 'commit(preferred) or tag interval e.g. 9.0.3 or 9.0.2..9.0.3',
+  .command('nextTagMajor', 'get next major tag', () => {}, (argv) => {
+    gitSemverTags().then((tags) => {
+      const latestTag = tags[0];
+
+      const changesList = [];
+      const changesSpawn = spawnSync('git', ['log', `${latestTag}...HEAD`, '--oneline']);
+      changesList.push(...changes(changesSpawn.stdout.toString().split('\n')));
+
+      const [ latestMajorVersion, latestMinorVersion, latestPatchVersion ] = tags[0].split('.');
+      process.stdout.write(`${Number(latestMajorVersion)+1}.0.0`);
     });
   })
-  .demandCommand()
-  .help()
-  .argv;
+  .command('nextTag', 'get next tag', () => {}, (argv) => {
+      gitSemverTags().then((tags) => {
+        const latestTag = tags[0];
 
-if (argv._[0] === 'nextTag') {
-  gitSemverTags(function(err, tags) {
-    const latestTag = tags[0];
+        const changesList = [];
+        const changesSpawn = spawnSync('git', ['log', `${latestTag}...HEAD`, '--oneline']);
+        changesList.push(...changes(changesSpawn.stdout.toString().split('\n')));
 
-    const changesList = [];
-    const changesSpawn = spawnSync('git', ['log', `${latestTag}...HEAD`, '--oneline']);
-    changesList.push(...changes(changesSpawn.stdout.toString().split('\n')));
+        const [ latestMajorVersion, latestMinorVersion, latestPatchVersion ] = tags[0].split('.');
 
-    const [ latestMajorVersion, latestMinorVersion, latestPatchVersion ] = tags[0].split('.');
+        if (changesList.includes('### BREAKING CHANGES\n')) {
+          process.stdout.write(`${Number(latestMajorVersion)+1}.0.0`);
+        } else if (changesList.join().includes('feat:') || changesList.join().includes('feat(')) {
+          // new tag
+          process.stdout.write(`${latestMajorVersion}.${Number(latestMinorVersion)+1}.0`);
+        } else {
+          process.stdout.write(`${latestMajorVersion}.${latestMinorVersion}.${Number(latestPatchVersion)+1}`);
+        }
+        });
+  })
+  .command('nextSnapshot', 'get next tag', () => {}, (argv) => {
+    gitSemverTags().then((tags) => {
+      const [ latestMajorVersion, latestMinorVersion ] = tags[0].split('.');
+      process.stdout.write(`${latestMajorVersion}.${Number(latestMinorVersion)+1}.0-SNAPSHOT`);
+    });
+  })
+  .command('generate', 'generate changelog', () => {}, (argv) => {
+    gitSemverTags().then((tags) => {
+      const tagsToGenerate = [];
+      const [ latestMajorVersion, latestMinorVersion, latestPatchVersion ] = tags[0].split('.');
 
-    if (changesList.includes('### BREAKING CHANGES\n')) {
-      process.stdout.write(`${Number(latestMajorVersion)+1}.0.0`);
-    } else if (changesList.includes('### Features\n')) {
-      // new tag
-      process.stdout.write(`${latestMajorVersion}.${Number(latestMinorVersion)+1}.0`);
-    } else {
-      process.stdout.write(`${latestMajorVersion}.${latestMinorVersion}.${Number(latestPatchVersion)+1}`);
-    }
-  });
-}
+      for (let i = latestPatchVersion; i >= 0; i--) {
+        tagsToGenerate.push(`${latestMajorVersion}.${latestMinorVersion}.${i}`);
+      }
 
-if (argv._[0] === 'nextSnapshot') {
-  gitSemverTags(function(err, tags) {
-    const [ latestMajorVersion, latestMinorVersion ] = tags[0].split('.');
-    process.stdout.write(`${latestMajorVersion}.${Number(latestMinorVersion)+1}.0-SNAPSHOT`);
-  });
-}
+      // we need last release before
+      const beforeTag = tags[tags.findIndex((val) => val === tagsToGenerate[tagsToGenerate.length - 1]) + 1];
+      const majorTagRelease = tagsToGenerate[tagsToGenerate.length - 1];
+      const changesList = [];
 
-if (argv._[0] === 'generate') {
-  gitSemverTags(function(err, tags) {
-    const tagsToGenerate = [];
-    const [ latestMajorVersion, latestMinorVersion, latestPatchVersion ] = tags[0].split('.');
+      // we have minor patches
+      if (tagsToGenerate.length > 1) {
+        const latestMinorTag = tagsToGenerate[0];
 
-    for (let i = latestPatchVersion; i >= 0; i--) {
-      tagsToGenerate.push(`${latestMajorVersion}.${latestMinorVersion}.${i}`);
-    }
+        // get change between new and last versions
+        changesList.push(`## ${latestMinorTag}\n\n`);
+        let changesSpawn;
+        if (tagsToGenerate[tagsToGenerate.length - 2] === latestMinorTag) {
+          changesSpawn = spawnSync('git', ['log', `${majorTagRelease}...${latestMinorTag}`, '--oneline']);
+        } else {
+          changesSpawn = spawnSync('git', ['log', `${tagsToGenerate[1]}...${latestMinorTag}`, '--oneline']);
+        }
+        changesList.push(...changes(changesSpawn.stdout.toString().split('\n')));
+      }
 
-    // we need last release before
-    const beforeTag = tags[tags.findIndex((val) => val === tagsToGenerate[tagsToGenerate.length - 1]) + 1];
-    const majorTagRelease = tagsToGenerate[tagsToGenerate.length - 1];
-    const changesList = [];
-
-    // we have minor patches
-    if (tagsToGenerate.length > 1) {
-      const latestMinorTag = tagsToGenerate[0];
-
-      // get change between new and last versions
-      changesList.push(`## ${latestMinorTag}\n\n`);
+      // major patch changelog
       let changesSpawn;
-      if (tagsToGenerate[tagsToGenerate.length - 2] === latestMinorTag) {
-        changesSpawn = spawnSync('git', ['log', `${majorTagRelease}...${latestMinorTag}`, '--oneline']);
+      if (tagsToGenerate.length > 1 && tagsToGenerate[1] !== majorTagRelease) {
+        changesList.push(`## ${latestMajorVersion}.${latestMinorVersion}.0 - ${tagsToGenerate[1]}\n\n`);
+        changesSpawn = spawnSync('git', ['log', `${beforeTag}...${tagsToGenerate[1]}`, '--oneline']);
       } else {
-        changesSpawn = spawnSync('git', ['log', `${tagsToGenerate[1]}...${latestMinorTag}`, '--oneline']);
+        changesList.push(`## ${latestMajorVersion}.${latestMinorVersion}.0\n\n`);
+        changesSpawn = spawnSync('git', ['log', `${beforeTag}...${majorTagRelease}`, '--oneline']);
       }
       changesList.push(...changes(changesSpawn.stdout.toString().split('\n')));
-    }
 
-    // major patch changelog
-    let changesSpawn;
-    if (tagsToGenerate.length > 1 && tagsToGenerate[1] !== majorTagRelease) {
-      changesList.push(`## ${latestMajorVersion}.${latestMinorVersion}.0 - ${tagsToGenerate[1]}\n\n`);
-      changesSpawn = spawnSync('git', ['log', `${beforeTag}...${tagsToGenerate[1]}`, '--oneline']);
-    } else {
-      changesList.push(`## ${latestMajorVersion}.${latestMinorVersion}.0\n\n`);
-      changesSpawn = spawnSync('git', ['log', `${beforeTag}...${majorTagRelease}`, '--oneline']);
-    }
-    changesList.push(...changes(changesSpawn.stdout.toString().split('\n')));
-
-    for (const output of changesList) {
-      for (const line of output) {
-        process.stdout.write(sanitizeLine(line));
+      for (const output of changesList) {
+        for (const line of output) {
+          process.stdout.write(line);
+        }
       }
-    }
-  });
-}
-
-if (argv._[0] === 'cli') {
-  const changesSpawn = spawnSync('git', ['log', argv.commit, '--oneline']);
-  for (const output of changes(changesSpawn.stdout.toString().split('\n'))) {
-    process.stdout.write(sanitizeLine(output));
-  }
-}
+    })
+  })
+  .demandCommand()
+  .parse()
 
 function changes(changesList) {
   // sort alphabetically
@@ -193,48 +195,29 @@ function changes(changesList) {
 
   // filter to have only fix and feat
   changesList = changesList.filter(o => {
-    return o.message.startsWith('fix') || o.message.startsWith('feat');
+    return !o.message.startsWith('build');
   });
 
-  if (changesList.filter(o => o.message.startsWith('fix')).length > 0) {
-    // print out bugfixes
-    output.push('### Bug Fixes\n');
-    for (const change of changesList.filter(o => o.message.startsWith('fix'))) {
-      output.push(prepareMessage(change));
-    }
-    output.push('\n');
-  }
-
-  if (changesList.filter(o => o.message.startsWith('feat')).length > 0) {
-    // print out bugfixes
-    output.push('### Features\n');
-    for (const change of changesList.filter(o => o.message.startsWith('feat'))) {
-      output.push(prepareMessage(change));
-    }
-    output.push('\n');
+  for (const change of changesList) {
+    output.push(prepareMessage(change));
   }
 
   return output;
 }
 
-function prepareMessage(change) {
-  const regexp = /(fix|feat)\((?<type>\w*)\)\: (?<message>.*)/;
-  const match = regexp.exec(change.message);
-  try {
-    return `* **${match.groups.type}** - ${match.groups.message}${change.fixes.length > 0 ? ', ' + change.fixes.join(', ') : ''} ([${change.commit}](https://github.com/sogehige/sogeBot/commit/${change.commit}))\n`;
-  } catch (e) {
-    return `* ${change.message} [${change.commit}](https://github.com/sogehige/sogeBot/commit/${change.commit}))\n`;
-  }
+function isFix (msg) {
+  return msg.startsWith('fix');
 }
 
-function sanitizeLine(line) {
-  if (argv.escape) {
-    const sanitized = line
-      .replace(/\%/g, '%25')
-      .replace(/\n/g, '%0A')
-      .replace(/\r/g, '%0D');
-    return sanitized;
-  } else {
-    return line;
+function prepareMessage(change) {
+  if (change.commit.length === 0) {
+    return ''
+  }
+  const regexp = /(.*?):\((?<type>\w*)\)\: (?<message>.*)/;
+  const match = regexp.exec(change.message);
+  try {
+    return `- ${change.commit} ${change.message}${change.fixes.length > 0 ? ', ' + change.fixes.join(', ') : ''}\n`;
+  } catch (e) {
+    return `- ${change.commit} ${change.message}\n`;
   }
 }

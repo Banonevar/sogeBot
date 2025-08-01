@@ -1,25 +1,24 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const time = require('../../general.js').time;
-const assert = require('assert');
-const message = require('../../general.js').message;
+import { db, time } from '../../general.js';
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
+import { message } from '../../general.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
+import { User } from '../../../dest/database/entity/user.js';
 
-const customcommands = (require('../../../dest/systems/customcommands')).default;
+import customcommands from '../../../dest/systems/customcommands.js';
 
 // users
-const owner = { username: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
+const owner = { userName: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
 
-describe('Custom Commands - https://discordapp.com/channels/317348946144002050/619437014001123338/715206737908465775 - Custom command can be called from custom command', () => {
+describe('Custom Commands - @func1 - https://discordapp.com/channels/317348946144002050/619437014001123338/715206737908465775 - Custom command can be called from custom command', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(User).save({ username: owner.username, userId: owner.userId });
+    await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId });
   });
 
   describe('Custom command should correctly run second custom command', () => {
@@ -41,7 +40,7 @@ describe('Custom Commands - https://discordapp.com/channels/317348946144002050/6
   });
 
   describe('Custom command should warn if we have infinite loop between commands', () => {
-    it('Add custom command infinite loop test3 -> test4 -> test5 -> test3', async () => {
+    it('Add custom command infinite loop test3 -> test4 -> test5 -> test3', async () => {
       const r = await customcommands.add({ sender: owner, parameters: '-c !test3 -r (!test4)' });
       const r2 = await customcommands.add({ sender: owner, parameters: '-c !test4 -r (!test5)' });
       const r3 = await customcommands.add({ sender: owner, parameters: '-c !test5 -r (!test3)' });

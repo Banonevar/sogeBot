@@ -1,28 +1,28 @@
 /* global describe it before */
 
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const assert = require('assert');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-const Parser = require('../../../dest/parser').default;
+import { Parser } from '../../../dest/parser.js';
 
-const owner = { username: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
+const owner = { userName: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
+import { User } from '../../../dest/database/entity/user.js';
 
-describe('Parser - case sensitive commands', async () => {
+describe('Parser - case sensitive commands - @func2', async () => {
   const tests = [
     {
       test: '!me',
-      expected: '@__broadcaster__ | 0.0h | 0 points | 0 messages | 0.00€ | 0 bits',
+      expected: '@__broadcaster__ | 0 hours | 0 points | 0 messages | 0.00€ | 0 bits',
     },
     {
       test: '!ME',
-      expected: '@__broadcaster__ | 0.0h | 0 points | 0 messages | 0.00€ | 0 bits',
+      expected: '@__broadcaster__ | 0 hours | 0 points | 0 messages | 0.00€ | 0 bits',
     },
   ];
 
@@ -33,7 +33,7 @@ describe('Parser - case sensitive commands', async () => {
         await db.cleanup();
         await message.prepare();
 
-        await getRepository(User).save({ username: owner.username, userId: owner.userId });
+        await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId });
       });
 
       it(`Run command '${test.test}'`, async () => {

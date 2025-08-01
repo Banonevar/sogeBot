@@ -1,55 +1,112 @@
-/* global describe it before */
-const assert = require('assert');
+import assert from 'assert';
 
-require('../../general.js');
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
-const { translate } = require('../../../dest/translate');
-const { getLocalizedName } = require('../../../dest/helpers/getLocalized');
+import { getLocalizedName } from '../../../dest/helpers/getLocalizedName.js';
 
-let emotes;
+import { translate } from '../../../dest/translations.js';
+import { db, message, user } from '../../general.js';
 
-describe('Emotes - combo', () => {
+
+const emotesOffsetsKappa = new Map();
+emotesOffsetsKappa.set('25', ['0-4']);
+
+const emotesOffsetsHeyGuys = new Map();
+emotesOffsetsHeyGuys.set('30259', ['0-6']);
+
+
+describe('Emotes - combo - @func2', () => {
+  let emotes = null;
+  beforeEach(async () => {
+    await db.cleanup();
+    emotes = (await import('../../../dest/systems/emotescombo.js')).default
+  });
   describe('Emotes combo should send proper message after 3 emotes', () => {
     let comboLastBreak = 0;
     before(async () => {
       await db.cleanup();
       await message.prepare();
       await user.prepare();
-      emotes = (require('../../../dest/overlays/emotes')).default;
-      emotes.enableEmotesCombo = true;
-    });
-    after(() => {
-      emotes.enableEmotesCombo = false;
     });
 
     // we run it twice as to test without cooldown
     for (let j = 0; j < 2; j++) {
       for (let i = 0; i < 3; i++) {
         it('Send a message with Kappa emote', async () => {
-          await emotes.containsEmotes({ sender: {...user.owner, emotes: [
-            {
-              id: '25',
-              start: 0,
-              end: 4,
-            },
-          ]}, parameters: 'Kappa', message: 'Kappa' });
+          await emotes.containsEmotes({
+            emotesOffsets: emotesOffsetsKappa,
+            sender:        user.owner,
+            parameters:    'Kappa',
+            message:       'Kappa',
+          });
         });
       }
 
       it ('Send a message with HeyGuys emote', async () => {
-        await emotes.containsEmotes({ sender: {...user.owner, emotes: [
-          {
-            id: '30259',
-            start: 0,
-            end: 6,
-          },
-        ]}, parameters: 'HeyGuys', message: 'HeyGuys' });
+        await emotes.containsEmotes({
+          emotesOffsets: emotesOffsetsHeyGuys,
+          sender:        user.owner,
+          parameters:    'HeyGuys',
+          message:       'HeyGuys',
+        });
       });
 
-      it ('We are expecting combo break message', async () => {
+      it ('We are expecting KAPPA combo break message', async () => {
         await message.isSentRaw('3x Kappa combo', user.owner);
+      });
+
+      it ('Combo last break should be updated', async () => {
+        assert(comboLastBreak !== emotes.comboLastBreak);
+        comboLastBreak = emotes.comboLastBreak;
+      });
+    }
+  });
+
+  describe('Emotes combo should send proper message after 3 and 3 emotes', () => {
+    let comboLastBreak = 0;
+    before(async () => {
+      await db.cleanup();
+      await message.prepare();
+      await user.prepare();
+      emotes.comboEmoteCount = 0;
+    });
+
+    // we run it twice as to test without cooldown
+    for (let j = 0; j < 2; j++) {
+      for (let i = 0; i < 3; i++) {
+        it('Send a message with Kappa emote', async () => {
+          await emotes.containsEmotes({
+            emotesOffsets: emotesOffsetsKappa,
+            sender:        user.owner,
+            parameters:    'Kappa',
+            message:       'Kappa',
+          });
+        });
+      }
+      for (let i = 0; i < 3; i++) {
+        it('Send a message with HeyGuys emote', async () => {
+          await emotes.containsEmotes({
+            emotesOffsets: emotesOffsetsHeyGuys,
+            sender:        user.owner,
+            parameters:    'HeyGuys',
+            message:       'HeyGuys',
+          });
+        });
+      }
+
+      it('Send a message with Kappa emote', async () => {
+        await emotes.containsEmotes({
+          emotesOffsets: emotesOffsetsKappa,
+          sender:        user.owner,
+          parameters:    'Kappa',
+          message:       'Kappa',
+        });
+      });
+
+      it ('We are expecting KAPPA combo break message', async () => {
+        await message.isSentRaw('3x Kappa combo', user.owner);
+      });
+
+      it ('We are expecting HEYGUYS combo break message', async () => {
+        await message.isSentRaw('3x HeyGuys combo', user.owner);
       });
 
       it ('Combo last break should be updated', async () => {
@@ -65,13 +122,11 @@ describe('Emotes - combo', () => {
       await db.cleanup();
       await message.prepare();
       await user.prepare();
-      emotes = (require('../../../dest/overlays/emotes')).default;
       emotes.comboLastBreak = 0;
-      emotes.enableEmotesCombo = true;
       emotes.comboCooldown = 60;
+      emotes.comboEmoteCount = 0;
     });
     after(() => {
-      emotes.enableEmotesCombo = false;
       emotes.comboCooldown = 0;
     });
 
@@ -79,27 +134,27 @@ describe('Emotes - combo', () => {
     for (let j = 0; j < 2; j++) {
       for (let i = 0; i < 3; i++) {
         it('Send a message with Kappa emote', async () => {
-          await emotes.containsEmotes({ sender: {...user.owner, emotes: [
-            {
-              id: '25',
-              start: 0,
-              end: 4,
-            },
-          ]}, parameters: 'Kappa', message: 'Kappa' });
+          console.log(emotes.comboEmote)
+          console.log(emotes.comboEmoteCount)
+          await emotes.containsEmotes({
+            emotesOffsets: emotesOffsetsKappa,
+            sender:        user.owner,
+            parameters:    'Kappa',
+            message:       'Kappa',
+          });
         });
       }
 
       it ('Send a message with HeyGuys emote', async () => {
-        await emotes.containsEmotes({ sender: {...user.owner, emotes: [
-          {
-            id: '30259',
-            start: 0,
-            end: 6,
-          },
-        ]}, parameters: 'HeyGuys', message: 'HeyGuys' });
+        await emotes.containsEmotes({
+          emotesOffsets: emotesOffsetsHeyGuys,
+          sender:        user.owner,
+          parameters:    'HeyGuys',
+          message:       'HeyGuys',
+        });
       });
 
-      it ('We are expecting combo break message', async () => {
+      it ('We are expecting KAPPA combo break message', async () => {
         await message.isSentRaw('3x Kappa combo', user.owner);
       });
 

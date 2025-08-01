@@ -1,34 +1,34 @@
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const assert = require('assert');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
+import { User } from '../../../dest/database/entity/user.js';
 
-const points = (require('../../../dest/systems/points')).default;
+import points from '../../../dest/systems/points.js';
 
-const owner = { userId: String(Math.floor(Math.random() * 100000)), username: '__broadcaster__' };
-const user1 = { userId: String(Math.floor(Math.random() * 100000)), username: 'user1', points: 100 };
-const user2 = { userId: String(Math.floor(Math.random() * 100000)), username: 'user2' };
+const owner = { userId: String(Math.floor(Math.random() * 100000)), userName: '__broadcaster__' };
+const user1 = { userId: String(Math.floor(Math.random() * 100000)), userName: 'user1', points: 100 };
+const user2 = { userId: String(Math.floor(Math.random() * 100000)), userName: 'user2' };
 
-describe('Points - all()', () => {
+describe('Points - all() - @func1', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(User).save(owner);
-    await getRepository(User).save(user1);
-    await getRepository(User).save(user2);
+    await AppDataSource.getRepository(User).save(owner);
+    await AppDataSource.getRepository(User).save(user1);
+    await AppDataSource.getRepository(User).save(user2);
   });
 
   describe('Points should be correctly given', () => {
     it('!points get should return 0 for owner', async () => {
       const r = await points.get({ sender: owner, parameters: '' });
-      assert.strictEqual(r[0].response, '@__broadcaster__ has currently 0 points. Your position is 2/3.');
+      assert.strictEqual(r[0].response, '@__broadcaster__ has currently 0 points. Your position is ?/3.');
     });
 
     it('!points get should return 100 for user1', async () => {
@@ -48,7 +48,7 @@ describe('Points - all()', () => {
 
     it('!points get should return 100 for owner', async () => {
       const r = await points.get({ sender: owner, parameters: '' });
-      assert.strictEqual(r[0].response, '@__broadcaster__ has currently 100 points. Your position is 2/3.');
+      assert.strictEqual(r[0].response, '@__broadcaster__ has currently 100 points. Your position is ?/3.');
     });
 
     it('!points get should return 200 for user1', async () => {
@@ -68,7 +68,7 @@ describe('Points - all()', () => {
 
     it('!points get should return 0 for owner', async () => {
       const r = await points.get({ sender: owner, parameters: '' });
-      assert.strictEqual(r[0].response, '@__broadcaster__ has currently 0 points. Your position is 2/3.');
+      assert.strictEqual(r[0].response, '@__broadcaster__ has currently 0 points. Your position is ?/3.');
     });
 
     it('!points get should return 50 for user1', async () => {

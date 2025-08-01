@@ -4,8 +4,12 @@
 * Configuration
   * [Database](/configuration/database.md)
   * [Environment variables](/configuration/env.md)
+* Services
+  * [Twitch](/services/twitch.md)
+  * [Google](/services/google.md)
 * Systems
   * [Alias](/systems/alias.md)
+  * [Bets](/systems/bets.md)
   * [Commercial](/systems/commercial.md)
   * [Permissions](/systems/permissions.md)
   * [Custom Commands](/systems/custom-commands.md)
@@ -20,7 +24,6 @@
   * [Scrim](/systems/scrim.md)
   * [Songs](/systems/songs.md)
   * [Top](/systems/top.md)
-  * [Overlays](/systems/overlays.md)
   * [Ranks](/systems/ranks.md)
   * [Raffles](/systems/raffles.md)
   * [Queue](/systems/queue.md)
@@ -28,7 +31,6 @@
   * [Quotes](/systems/quotes.md)
   * [Miscellaneous](/systems/miscellaneous.md)
 * Games
-  * [Bets](/games/bets.md)
   * [Duel](/games/duel.md)
   * [FightMe](/games/fightme.md)
   * [Gamble](/games/gamble.md)
@@ -44,11 +46,9 @@
   * [Eventlist](/overlays/eventlist.md)
 * How To
   * [Connection to socket](/howto/connection-to-socket.md)
-  * [Phillips Hue](/howto/phillipshue.md)
   * [Eval snippets](/howto/eval.md)
   * [Run random command](/howto/run-random-command.md)
   * [Write own system](/howto/write-own-system.md)
 * Integrations
-  * [Twitter](/integrations/twitter.md)
   * [Last.fm](/integrations/lastfm.md)
   * [Spotify](/integrations/spotify.md)

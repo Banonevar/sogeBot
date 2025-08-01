@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-require('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import('../../general.js');
 
-const alias = (require('../../../dest/systems/alias')).default;
-const customcommands = (require('../../../dest/systems/customcommands')).default;
-const { announce } = require('../../../dest/helpers/commons/announce');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+
+import alias from '../../../dest/systems/alias.js';
+import customcommands from '../../../dest/systems/customcommands.js';
+import { announce } from '../../../dest/helpers/commons/announce.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Commons - #3620 - announce is not parsing message filters', () => {
+describe('Commons - @func2 - #3620 - announce is not parsing message filters', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -21,7 +21,7 @@ describe('Commons - #3620 - announce is not parsing message filters', () => {
 
   it('Announce() should have propery parsed filters', async () => {
     announce('Prikazy bota: !klip, !me, !heist, (list.!command), (list.!alias)', 'general');
-    await message.isSentRaw('Prikazy bota: !klip, !me, !heist, !testCmd, !testAlias', 'bot', 20000);
+    await message.isSentRaw('Prikazy bota: !klip, !me, !heist, !testCmd, !testAlias', '__bot__', 20000);
 
   });
 });

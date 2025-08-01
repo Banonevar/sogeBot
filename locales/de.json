@@ -5,7 +5,7 @@
     "disabled": "Deaktiviert",
     "usage": "Nutzung",
     "lang-selected": "Bot Sprache ist derzeit auf Deutsch gesetzt",
-    "refresh-panel": "Sie müssen die Benutzeroberfläche aktualisieren, um Änderungen zu sehen.",
+    "refresh-panel": "Du musst die Benutzeroberfläche aktualisieren, um Änderungen zu sehen.",
     "command-parse": "Sorry, $sender, aber dieser Befehl ist nicht korrekt, verwende",
     "error": "Entschuldigung $sender, aber etwas ist schief gelaufen!",
     "no-response": "",
@@ -34,12 +34,17 @@
     "empty": "leer",
     "isRegistered": "$sender, Du kannst !$keyword nicht verwenden, da es bereits für eine andere Aktion verwendet wird!"
   },
+  "clip": {
+    "notCreated": "Etwas ist schief gelaufen und Clip wurde nicht erstellt.",
+    "offline": "Stream ist momentan offline und Clip kann nicht erstellt werden."
+  },
   "uptime": {
     "online": "Stream ist online seit (if $days>0|$daysd )(if $hours>0|$hoursh )(if $minutes>0|$minutesm )(if $seconds>0|$secondss)",
     "offline": "Stream ist momentan offline seit (if $days>0|$daysd )(if $hours>0|$hoursh )(if $minutes>0|$minutesm )(if $seconds>0|$secondss)"
   },
   "webpanel": {
     "this-system-is-disabled": "Dieses System ist deaktiviert",
+    "or": "oder",
     "loading": "Wird geladen",
     "this-may-take-a-while": "Das <strong>könnte</strong> ein wenig dauern",
     "display-as": "Anzeigen als",
@@ -55,19 +60,8 @@
     "add": "Hinzufügen",
     "placeholders": {
       "text-url-generator": "Füge deinen Text oder HTML-Code ein, um base64 unten und die URL oben zu generieren",
-      "text-decode-base64": "Fügen deinen Base64 ein, um URL und Text oben zu generieren",
+      "text-decode-base64": "Füge Deinen Base64 ein, um URL und Text oben zu generieren",
       "creditsSpeed": "Setze die Roll-Geschwindigkeit der Credits. niedriger = schneller"
-    },
-    "custom-variables": {
-      "set-your-variables-to-watch-here": "Lege die zu beobachtenden Variablen hier fest",
-      "type": "Typ",
-      "unwatch": "Nicht mehr beobachten",
-      "watch": "Beobachten",
-      "options": "Optionen",
-      "number": "Nummer",
-      "text": "Text",
-      "options-placeholder": "Option1, Option2, Option3, hier ist Option 4",
-      "no-options-set": "Du hast noch keine Optionen festgelegt"
     },
     "timers": {
       "title": "Timers",
@@ -86,7 +80,7 @@
       "dialog": {
         "timer": "Timer",
         "name": "Name",
-        "tickOffline": "Should tick if stream offline",
+        "tickOffline": "Soll markiert werden, wenn Stream offline ist",
         "interval": "Intervall",
         "responses": "Rückmeldungen",
         "messages": "Alle X Nachrichten auslösen",
@@ -124,7 +118,7 @@
       "noEvents": "Keine Ereignisse in der Datenbank gefunden.",
       "whatsthis": "Was ist das?",
       "myRewardIsNotListed": "Meine Belohnung ist nicht gelistet!",
-      "redeemAndClickRefreshToSeeReward": "Wenn du deine erstellte Belohnung in einer Liste vermisst, aktualisiere sie indem du auf das Symbol klickst.",
+      "redeemAndClickRefreshToSeeReward": "Wenn Du Deine erstellte Belohnung in einer Liste vermisst, aktualisiere sie indem Du auf das Symbol klickst.",
       "badges": {
         "enabled": "Aktiviert",
         "disabled": "Deaktiviert"
@@ -169,12 +163,15 @@
         "operations": "Operationen"
       },
       "definitions": {
+        "taskId": {
+          "label": "Task ID"
+        },
         "filter": {
           "label": "Filter"
         },
         "linkFilter": {
           "label": "Link Overlay Filter",
-          "placeholder": "If using overlay, add link or id of your overlay"
+          "placeholder": "Wenn Overlay verwendet wird, Link oder ID des Overlays hinzufügen"
         },
         "hashtag": {
           "label": "Hashtag oder Schlüsselwort",
@@ -237,14 +234,24 @@
           "label": "Channel",
           "placeholder": "Channelname oder ID"
         },
+        "timeout": {
+          "label": "Auszeit, Unterbrechung / Zeitüberschreitung",
+          "placeholder": "Timeout in Millisekunden festlegen"
+        },
+        "timeoutType": {
+          "label": "Art des Timeouts",
+          "placeholder": "Art des Timeouts festlegen"
+        },
+        "command": {
+          "label": "Befehl",
+          "placeholder": "!Befehl festlegen"
+        },
         "commandToRun": {
           "label": "Befehl zum Starten",
           "placeholder": "Setze deinen !commandToRun"
         },
         "isCommandQuiet": {
-          "label": "Befehl stumm ausführen",
-          "true": "Befehlt ist stumm",
-          "false": "Befehl ist nicht stumm"
+          "label": "Stummschaltung der Befehlsausgabe"
         },
         "urlOfSoundFile": {
           "label": "Url der Sounddatei",
@@ -258,13 +265,18 @@
           "label": "Emote-Feuerwerk",
           "placeholder": "Liste der Emotes, z.B. Kappa PurpleHeart"
         },
+        "replay": {
+          "label": "Videoclip im Overlay wiederholen",
+          "true": "Wird als Wiederholung in Overlay/Alarmen abgespielt",
+          "false": "Wiedergabe wird nicht abgespielt"
+        },
         "announce": {
           "label": "Im Chat ankündigen",
           "true": "Wird angekündigt",
           "false": "Wird nicht angekündigt"
         },
         "hasDelay": {
-          "label": "Clip sollte eine leichte Verzögerung haben (um näher zu sein, was der Betrachter sieht)",
+          "label": "Clip should have slight delay (to be closer what viewer sees)",
           "true": "Wird Verzögerung haben",
           "false": "Wird keine Verzögerung haben"
         },
@@ -274,14 +286,14 @@
         },
         "customVariable": {
           "label": "$_",
-          "placeholder": "Zu aktualisierende, benutzerdefinierte Variable"
+          "placeholder": "Benutzerdefinierte Variable zum aktualisieren"
         },
         "numberToIncrement": {
           "label": "Zu erhöhende Zahl",
           "placeholder": ""
         },
         "value": {
-          "label": "Value",
+          "label": "Wert",
           "placeholder": ""
         },
         "numberToDecrement": {
@@ -289,32 +301,60 @@
           "placeholder": ""
         },
         "": "",
-        "titleOfReward": {
-          "label": "Titel der eingelösten Belohnung",
+        "reward": {
+          "label": "Belohnung",
           "placeholder": ""
         }
       }
     },
     "eventlist-events": {
-      "follow": "<strong>folgt</strong> Dir",
-      "host": "<strong>hosted</strong> dich jetzt mit $viewers Zuschauern",
-      "raid": "<strong>raided</strong> dich mit $viewers Zuschauern",
-      "sub": "<strong>subd</strong> dir | $tier",
-      "subgift": "<strong>verschenkte</strong> sub von $username",
-      "subcommunitygift": "<strong>verschenkte</strong> subs für $count Zuschauer",
-      "resub": "<strong>resubbed</strong> für $subStreak $subStreakName | $tier eingereicht",
-      "resubWithoutStreak": "<strong>resubbed</strong> | $tier | insgesamt $subCumulativeMonths $subCumulativeMonthsName",
-      "cheer": "<strong>cheered</strong> dir $bits bits",
-      "tip": "<strong>spendet</strong> dir $formatted_amount"
+      "follow": "<strong>folgt</strong> dir",
+      "raid": "<strong>raided</strong> you with <strong>$viewers</strong> raiders.",
+      "sub": "hat dich <strong>abonniert</strong> <strong>$subType</strong>. Sie abonnieren dich bereits seit $subCumulativeMonths $subCumulativeMonthsName.",
+      "subgift": "wurde <strong>mit</strong> von <strong>$username</strong> verschenkt",
+      "subcommunitygift": "<strong>Gönnete</strong> Abonnements für Community",
+      "resub": "<strong>Resubscribed</strong> with <strong>$subType</strong>. They've been subscribed for $subCumulativeMonths $subCumulativeMonthsName.",
+      "cheer": "<strong>Cheered</strong> you",
+      "tip": "<strong>Tipped</strong> you",
+      "tipToCharity": "<strong>donated</strong> to <strong>$campaignName</strong>"
     },
     "responses": {
       "variable": {
+        "tags": "Tags",
+        "titleOfPrediction": "Twitter Vorhersage - Titel",
+        "outcomes": "Twitch Vorhersage - Ergebnisse",
+        "locksAt": "Twitch Vorhersage - Datum der Sperre",
+        "winningOutcomeTitle": "Twitch Vorhersage - Gewinnergebnis Titel",
+        "winningOutcomeTotalPoints": "Twitch Vorhersage - Gewinnergebnis Gesamtzahlpunkte",
+        "winningOutcomePercentage": "Twitch Vorhersage - Gewinnergebnis Prozentsatz",
+        "titleOfPoll": "Twitch Umfrage - Titel",
+        "bitAmountPerVote": "Twitch-Umfrage - Anzahl der Bits, die als 1 Stimme zählen",
+        "bitVotingEnabled": "Twitch Umfrage - Ist Bit-Voting aktiviert (boolesch)",
+        "channelPointsAmountPerVote": "Twitch-Umfrage - Anzahl der Kanalpunkte, die als 1 Stimme zählen",
+        "channelPointsVotingEnabled": "Twitch-Umfrage - Ist die Abstimmung über Kanalpunkte aktiviert (boolesch)",
+        "votes": "Twitch-Umfrage - Stimmenanzahl",
+        "winnerChoice": "Twitch-Umfrage - Wahl des Siegers",
+        "winnerPercentage": "Twitch Umfrage - Prozentsatz der Wahl des Siegers",
+        "winnerVotes": "Twitch Umfrage - Wählerstimmen für Sieger",
+        "goal": "Ziel",
+        "total": "Gesamt",
+        "lastContributionTotal": "Letzter Beitrag - Gesamt",
+        "lastContributionType": "Letzter Beitrag - Typ",
+        "lastContributionUserId": "Letzter Beitrag - Benutzer-ID",
+        "lastContributionUsername": "Letzter Beitrag - Benutzername",
+        "level": "Level",
+        "topContributionsBitsTotal": "Top Bits Beitrag - Gesamt",
+        "topContributionsBitsUserId": "Top-Bits Beitrag - Benutzer-ID",
+        "topContributionsBitsUsername": "Top-Bits Beitrag - Benutzername",
+        "topContributionsSubsTotal": "Top-Subs - Gesamt",
+        "topContributionsSubsUserId": "Top-Subs - Benutzer-ID",
+        "topContributionsSubsUsername": "Top Subs Beitrag - Benutzername",
         "sender": "Benutzer der initiiert hat",
         "title": "Aktueller Titel",
-        "game": "Aktuelles Spiel",
+        "game": "Aktuelle Kategorie",
         "language": "Aktuelle Sprache des Stream",
         "viewers": "Anzahl der aktuellen Zuschauer",
-        "views": "Aktuelle Zuschaueranzahl",
+        "hostViewers": "Anzahl der Raid-Zuschauer",
         "followers": "Aktuelle Follower Anzahl",
         "subscribers": "Anzahl aktueller Abonnenten",
         "arg": "Argument",
@@ -329,7 +369,6 @@
         "type": "Typ",
         "days": "Tage",
         "hours": "Stunden",
-        "minutesName": "Singular oder Plurale des Wortes Minuten",
         "minutes": "Minuten",
         "seconds": "Sekunden",
         "description": "Beschreibung",
@@ -387,7 +426,7 @@
         "tier": "Stufe",
         "months": "Monate",
         "monthsName": "Lokalisierter Name des Monats (1 Monat, 2 Monate)",
-        "oldGame": "Spiel vor Änderung",
+        "oldGame": "Category before change",
         "recipientObject": "Vollständiges Empfängerobjekt",
         "recipient": "Empfänger",
         "ytSong": "Aktueller Song auf YouTube",
@@ -422,10 +461,13 @@
         "source": "Aktuelle Quelle (twitch oder discord)",
         "userInput": "Benutzereingabe beim Einlösen der Belohnung",
         "isBotSubscriber": "Ist Bot Abonnent (bool)",
+        "isStreamOnline": "Ist der Stream online (bool)",
+        "uptime": "Laufzeit des Stream",
         "is": {
           "moderator": "Ist Benutzer Mod? (Bool)",
           "subscriber": "Ist Benutzer Sub? (Bool)",
           "vip": "Ist Benutzer VIP? (bool)",
+          "newchatter": "Ist die erste Nachricht des Benutzers (Bool)",
           "follower": "Ist Benutzer Follower? (Bool)",
           "broadcaster": "Ist Benutzer Broadcast? (Bool)",
           "bot": "Ist Benutzer Bot? (Bool)",
@@ -440,13 +482,9 @@
           "bot": "Ist Teilnehmer ein Bot? (Bool)",
           "owner": "Ist Teilnehmer der Bot-Besitzer? (Bool)"
         },
-        "tweet": {
-          "text": "Text des Tweets",
-          "username": "Benutzername auf Twitter",
-          "displayname": "Name auf Twitter",
-          "url": "Tweet Link"
-        },
-        "sceneName": "Name der Szene"
+        "sceneName": "Name der Szene",
+        "inputName": "Name of input",
+        "inputMuted": "Mute state (bool)"
       }
     },
     "page-settings": {
@@ -506,8 +544,8 @@
     "viewers-points-of-all-users": "Punkte aller Benutzer",
     "viewers-watchtime-of-all-users": "Zugeschaute Zeit aller Benutzer ansehen",
     "viewers-messages-of-all-users": "Nachrichten von allen Benutzern",
-    "events-game-after-change": "Spiel nach Änderung",
-    "events-game-before-change": "Spiel vor Änderung",
+    "events-game-after-change": "category after change",
+    "events-game-before-change": "category before change",
     "events-user-triggered-event": "vom Benutzer ausgelöstes Ereignis",
     "events-method-used-to-subscribe": "zum Abonnieren verwendete Methode",
     "events-months-of-subscription": "Monate des Abonnements",
@@ -517,12 +555,9 @@
     "events-reason-for-ban-timeout": "Grund für Bann/Timeout",
     "events-duration-of-timeout": "Dauer des Timeouts",
     "events-duration-of-commercial": "dauer der Werbung",
-    "events-target-of-your-hosting": "Ziel Ihres Hosts",
-    "events-viewers-of-hosting": "Zuschauer des Host",
     "overlays-eventlist-resub": "re-Subs",
     "overlays-eventlist-subgift": "verschenkter Sub",
     "overlays-eventlist-subcommunitygift": "subcommunitygeschenk",
-    "overlays-eventlist-host": "Host",
     "overlays-eventlist-sub": "Sub",
     "overlays-eventlist-follow": "Follow",
     "overlays-eventlist-cheer": "Bits",
@@ -546,7 +581,6 @@
     "in-seconds": "in Sekunden",
     "songs": "Songs",
     "show-usernames-with-at": "Benutzernamen mit @ anzeigen",
-    "twitter-send-message": "Twittern",
     "send-message-as-a-bot": "Nachricht als Bot senden",
     "chat-as-bot": "Chat (als Bot)",
     "product": "Produkt",
@@ -564,6 +598,9 @@
     "dashboard": "Dashboard",
     "carousel": "BilderKarussell",
     "text": "Text",
+    "filter": "Filter",
+    "filters": "Filters",
+    "isUsed": "Is used",
     "permissions": "Berechtigungen",
     "permission": "Berechtigung",
     "viewers": "Zuschauer",
@@ -582,19 +619,17 @@
     "rank": "Rang",
     "previous": "Zurück",
     "next": "Weiter",
-    "or": "oder",
     "close": "Schließen",
     "save-changes": "Änderungen speichern",
     "saving": "Speichert...",
     "deleting": "Lösche...",
     "done": "Fertig",
     "error": "Fehler",
-    "custom-title-empty-error": "Benutzerdefinierter Titel ist ausgewählt, aber leer!",
     "title": "Titel",
     "change-title": "Titel ändern",
-    "game": "Spiel",
+    "game": "category",
     "tags": "Tags",
-    "change-game": "Spiel wechseln",
+    "change-game": "Change category",
     "click-to-change": "Zum Ändern anklicken",
     "uptime": "Uptime",
     "not-affiliate-or-partner": "Kein Affiliate/Partner",
@@ -602,7 +637,6 @@
     "max-viewers": "Max. Zuschauer",
     "new-chatters": "Neue Chatter",
     "chat-messages": "Chat-Nachrichten",
-    "views": "Ansichten",
     "followers": "Followers",
     "subscribers": "Abonnenten",
     "bits": "Bits",
@@ -614,14 +648,8 @@
     "status": "Status",
     "add-widget": "Widget hinzufügen",
     "remove-dashboard": "Dashboard entfernen",
-    "for": "für",
     "close-bet-after": "Schließe Wette nach",
-    "gain-every-option": "Jede Option erhalten",
-    "reuse-bet": "Einsatz wiederholen",
     "refund": "Rückerstattung",
-    "open-queue": "Warteschlange öffnen",
-    "close-queue": "Warteschlange schließen",
-    "number-of-users": "Anzahl Benutzer",
     "roll-again": "Nochmal würfeln",
     "no-eligible-participants": "Keine berechtigten Teilnehmer",
     "follower": "Follower",
@@ -630,14 +658,12 @@
     "seconds": "Sekunden",
     "hours": "Stunden",
     "months": "Monate",
-    "eligible-to-enter": "Zum Beitreten berechtigt:",
-    "followers-only": "Nur Follower",
-    "subscribers-only": "Nur Abonnenten",
+    "eligible-to-enter": "Zum Beitreten berechtigt",
     "everyone": "Jeder",
     "roll-a-winner": "Einen Gewinner würfeln",
     "send-message": "Nachricht senden",
     "messages": "Nachrichten",
-    "announce-every": "Ankündigung alle",
+    "level": "Level",
     "create": "Erstellen",
     "cooldown": "Cooldown",
     "confirm": "Bestätigen",
@@ -647,18 +673,13 @@
     "enable": "Aktivieren",
     "disable": "Deaktivieren",
     "slug": "Slug",
-    "stream-title": "Streamtitel",
     "posted-by": "Gepostet von",
     "time": "Zeit",
     "type": "Typ",
     "response": "Antworten",
-    "num-of-responses": "# Antworten",
     "cost": "Kosten",
     "name": "Name",
     "playlist": "Playlist",
-    "public-link": "Öffentlicher Link",
-    "banned-songs": "Gesperrte Songs",
-    "youtube-id": "YouTube-ID",
     "length": "Länge",
     "volume": "Lautstärke",
     "start-time": "Startzeit",
@@ -677,76 +698,27 @@
     "date": "Datum",
     "points": "Punkte",
     "calendar": "Kalender",
-    "stream-events": "Stream-Ereignisse",
-    "select-date-from-calendar": "Datum aus Kalender auswählen",
-    "select-stream-from-calendar-and-events": "Stream aus Kalender und Events auswählen",
-    "there-is-no-events-on-selected-date": "Es gibt keine Ereignisse am ausgewählten Datum",
     "string": "Zeichenkette",
-    "points-name": "Name der Punkte",
-    "points-single-multi": "einzeln|multi",
-    "points-response": "Punkte Antwort",
-    "points-interval": "Punktintervall",
-    "points-per-interval": "Punkte pro Intervall",
-    "points-interval-offline": "Punktintervall (Offline)",
-    "points-per-interval-offline": "Punkte pro Intervall (Offline)",
-    "points-per-message": "Punkte pro Nachricht",
-    "points-per-message-interval": "Punkte jede X Nachricht hinzufügen",
     "interval": "Intervall",
     "number": "Nummer",
     "minimal-messages-required": "Minimale Nachrichten erforderlich",
     "max-duration": "Max. Dauer",
     "shuffle": "Zufallswiedergabe",
-    "song-requests": "Song-Requests",
     "song-request": "Song-Request",
-    "song-notify": "Benachrichtigung am Anfang eines Liedes",
     "format": "Format",
     "available": "Verfügbar",
-    "links": "Links",
-    "symbols": "Symbole",
-    "long-messages": "Lange Nachrichten",
-    "capitals": "Großbuchstaben",
-    "spam": "Spam",
-    "colors": "Farben",
-    "emotes": "Emotes",
     "one-record-per-line": "ein Eintrag pro Zeile",
     "on": "an",
     "off": "aus",
     "search-by-username": "Nach Benutzernamen suchen",
-    "create-and-use-a-new-game": "Neues Spiel erstellen und verwenden",
-    "create-and-use-a-new-title": "Neuen Titel erstellen und verwenden",
-    "search-tags": "Nach verfügbaren Tags suchen (einige Spiel-Tags fehlen möglicherweise / Twitch-Richtlinie)",
-    "no-options-found-for-this-search": "Keine Optionen für diese Suche gefunden.",
-    "followers-show-number": "Anzeigen",
-    "followers-show": "Followers",
-    "eventlist-overflow-height": "Max. Widget-Höhe",
-    "eventlist-show-number": "Anzeigen",
-    "eventlist-show": "Ereignisse",
-    "subscribers-show": "Abonnenten",
-    "followers-size": "Schriftgröße",
-    "followers-message-size": "Nachricht-Schriftgröße",
-    "custom-message": "Benutzerdefinierte Nachricht",
-    "custom-ban-message": "Benutzerdefinierte Bann-Nachricht",
-    "custom-ban-message-warning": "Benutzerdefinierte Warnmeldung",
-    "minimal-watched-time": "Minimale zugeschaute Zeit:",
-    "widget-title-customvariables": "BENUTZERDEFINIERTE VARIABLEN",
-    "widget-title-randomizer": "ZUFALLSGENERATOR",
+    "widget-title-custom": "Benutzerdefiniert",
     "widget-title-eventlist": "EVENTLISTE",
-    "widget-title-bets": "WETTEN",
     "widget-title-chat": "CHAT",
-    "widget-title-clips": "AKTUELLSTE CLIPS",
     "widget-title-queue": "WARTESCHLANGE",
     "widget-title-raffles": "RAFFLES",
-    "widget-title-soundboard": "SOUNDBOARD",
-    "widget-title-cmdboard": "COMMANDBOARD",
-    "widget-title-twitch": "TWITCH STREAM MONITOR",
-    "widget-title-ytplayer": "MUSIC-SPIELER",
-    "widget-title-latest-followers": "AKTUELLSTE FOLLOWER",
-    "widget-title-latest-subscribers": "AKTUELLSTE ABONNENTEN",
-    "widget-title-commercial": "WERBUNG",
-    "widget-title-spotify": "SPOTIFY",
-    "widget-title-join": "JOIN LISTE",
-    "widget-title-part": "PART LISTE",
     "widget-title-social": "SOCIAL",
+    "widget-title-ytplayer": "MUSIC-SPIELER",
+    "widget-title-monitor": "MONITOR",
     "event": "Ereignis",
     "operation": "Operation",
     "tweet-post-with-hashtag": "Tweet mit Hashtag veröffentlicht",
@@ -755,7 +727,18 @@
     "follow": "Neuer Follower",
     "tip": "Neue Spende",
     "obs-scene-changed": "OBS Szene geändert",
+    "obs-input-mute-state-changed": "OBS input source mute state changed",
     "unfollow": "Entfolgen",
+    "hypetrain-started": "Hype Zug gestartet",
+    "hypetrain-ended": "Hype Zug beendet",
+    "shoutout-created": "Twitch Shoutout - Created",
+    "shoutout-received": "Twitch Shoutout - Received",
+    "prediction-started": "Twitch Vorhersage gestartet",
+    "prediction-locked": "Twitch-Vorhersage gesperrt",
+    "prediction-ended": "Twitch Vorhersage beendet",
+    "poll-started": "Twitch-Umfrage gestartet",
+    "poll-ended": "Twitch-Umfrage beendet",
+    "hypetrain-level-reached": "Hype Zug hat ein neues Level erreicht",
     "subscription": "Neuer Abonnent",
     "subgift": "Neuer verschenkter Sub",
     "subcommunitygift": "Neuer verschenkter Community-Sub",
@@ -767,23 +750,22 @@
     "reward-redeemed": "Belohnung eingelöst",
     "stream-stopped": "Stream gestoppt",
     "stream-is-running-x-minutes": "Stream läuft seit x Minuten",
+    "chatter-first-message": "erste Nachricht des Chatters",
     "every-x-minutes-of-stream": "alle X Minuten des Streams",
-    "game-changed": "Spiel geändert",
+    "game-changed": "category changed",
     "cheer": "empfangene Bits",
     "clearchat": "Chat wurde geleert",
     "action": "Benutzer verwendete /me",
     "ban": "Benutzer wurde gebannt",
-    "hosting": "dein Kanal hat angefangen zu Hosten",
-    "hosted": "Dein Channel wird gehostet",
     "raid": "Dein Kanal wird geraided",
     "mod": "Benutzer ist ein neuer Mod",
     "timeout": "der Benutzer hatte einen Timeout",
     "create-a-new-event-listener": "Neuen Event Listener erstellen",
-    "send-twitter-message": "Eine Twitter-Nachricht veröffentlichen",
     "send-discord-message": "sende eine Discord Nachricht",
     "send-chat-message": "sende eine Twitch Chat Nachricht",
     "send-whisper": "einen Whisper senden",
     "run-command": "Einen Befehl ausführen",
+    "run-obswebsocket-command": "einen OBS Websocket Befehl ausführen",
     "do-nothing": "--- nichts tun ---",
     "count": "Anzahl",
     "timestamp": "Zeitstempel",
@@ -811,9 +793,8 @@
     "bot-will-join-channel": "Bot tritt dem Kanal bei",
     "bot-will-leave-channel": "Bot wird den Kanal verlassen",
     "create-a-clip": "Clip erstellen",
-    "create-a-clip-and-play-replay": "einen Clip erstellen und als Wiedergabe abspielen (Overlay/Alers)",
-    "increment-custom-variable": "Erhöhen Sie eine benutzerdefinierte Variable",
-    "set-custom-variable": "set a custom variable",
+    "increment-custom-variable": "Erhöhe eine benutzerdefinierte Variable",
+    "set-custom-variable": "eine eigene Variable setzen",
     "decrement-custom-variable": "Verringern Sie eine benutzerdefinierte Variable",
     "omit": "weglassen",
     "comply": "erfüllen",
@@ -846,10 +827,10 @@
     "raffle-winner-is": "Gewinner der Verlosung $keyword ist $username! Gewinnerwahrscheinlichkeit war $probability%!"
   },
   "bets": {
-    "running": "$sender, Wette ist bereits geöffnet! Wett-Optionen: $options. Verwenden Sie $command einsatz-$maxIndex",
-    "notRunning": "Derzeit ist keine Wette geöffnet, fragen Sie Mods, um sie zu öffnen!",
-    "opened": "Neue Wette '$title' ist geöffnet! Wett-Optionen: $options. Verwenden Sie $command 1-$maxIndex <amount> , um zu gewinnen! Sie haben nur $minutesmin um zu setzen!",
-    "closeNotEnoughOptions": "$sender, Sie müssen die Gewinnoption auswählen, um den Einsatz zu schließen.",
+    "running": "$sender, Wette ist bereits geöffnet! Wett-Optionen: $options. Verwende $command einsatz-$maxIndex",
+    "notRunning": "Derzeit ist keine Wette geöffnet. Frage die Mods, um eine zu eröffnen!",
+    "opened": "Neue Wette '$title' ist eröffnet! Wett-Optionen: $options. Verwende $command 1-$maxIndex <amount> , um zu gewinnen! Du hast nur $minutesmin, um zu setzen!",
+    "closeNotEnoughOptions": "$sender, Du musst eine Gewinnoption auswählen, um den Einsatz zu schließen.",
     "notEnoughOptions": "$sender, neue Wetten benötigen mindestens 2 Optionen!",
     "info": "Wetten '$title' ist noch geöffnet! Wetten-Optionen: $options. Verwenden Sie $command 1-$maxIndex <amount> , um zu gewinnen! Sie haben nur $minutesmin zum Wetten!",
     "diffBet": "$sender, Sie haben bereits auf $option gesetzt und können nicht auf eine andere Option setzen!",
@@ -967,6 +948,7 @@
     "youtube-is-not-responding-correctly": "Entschuldigung, $sender, aber YouTube sendet unerwartete Antworten, bitte versuchen Sie es später erneut.",
     "song-was-not-found": "Sorry, $sender, aber dieser Song wurde nicht gefunden",
     "song-is-too-long": "Sorry, $sender, aber dieser Song ist zu lang",
+    "this-song-is-not-in-playlist": "Sorry, $sender, aber dieser Song ist nicht in der aktuellen Wiedergabeliste",
     "incorrect-category": "Sorry, $sender, aber der Song muss eine Musikkategorie sein",
     "song-was-added-to-queue": "$sender, Song $name wurde zur Warteschlange hinzugefügt",
     "song-was-added-to-playlist": "$sender, Song $name wurde zur Wiedergabeliste hinzugefügt",
@@ -986,8 +968,8 @@
     "price-was-enabled": "$sender, Preis für $command wurde aktiviert",
     "price-was-disabled": "$sender, der Preis für $command wurde deaktiviert",
     "user-have-not-enough-points": "Entschuldigung, $sender, aber du hast nicht $amount $pointsName um $command zu benutzen",
-    "user-have-not-enough-points-or-bits": "Sorry, $sender, but you don't have $amount $pointsName or redeem command by $bitsAmount bits to use $command",
-    "user-have-not-enough-bits": "Sorry, $sender, but you need to redeem command by $bitsAmount bits to use $command",
+    "user-have-not-enough-points-or-bits": "Sorry, $sender, aber Sie haben nicht $amount $pointsName oder einlösen Befehl von $bitsAmount Bits um $command zu verwenden",
+    "user-have-not-enough-bits": "Sorry, $sender, aber du musse für den Befehl $bitsAmount Bits einlösen, um $command zu verwenden",
     "list-is-empty": "$sender, Liste der Preise ist leer",
     "list-is-not-empty": "$sender, Liste der Preise: $list"
   },
@@ -1058,8 +1040,8 @@
     "without-permission": "Du hast nicht genügend Berechtigungen für '$command'"
   },
   "moderation": {
-    "user-have-immunity": "$sender, user $username have $type immunity for $time seconds",
-    "user-have-immunity-parameterError": "$sender, parameter error. $command <username> <type> <duration>",
+    "user-have-immunity": "$sender, Benutzer $username haben $type Immunität für $time Sekunden",
+    "user-have-immunity-parameterError": "$sender, Parameterfehler. $command <username> <type> <duration>",
     "user-have-link-permit": "Benutzer $username kann $count $link im Chat schreiben",
     "permit-parse-failed": "{core.command-parse} !permit [username]",
     "user-is-warned-about-links": "Keine Links erlaubt, frage nach !permit [$count warnungen übrig]",
@@ -1067,17 +1049,17 @@
     "user-is-warned-about-long-message": "Lange Nachrichten sind nicht erlaubt [$count warnungen übrig]",
     "user-is-warned-about-caps": "Keine übermäßige Verwendung von Caps [$count Warnungen übrig]",
     "user-is-warned-about-spam": "Spamming ist nicht erlaubt [$count Warnungen übrig]",
-    "user-is-warned-about-color": "Farben und /me sind nicht erlaubt [$count Warnungen übrig]",
+    "user-is-warned-about-color": "Kursiv und /me ist nicht erlaubt [$count Warnungen übrig]",
     "user-is-warned-about-emotes": "Keine Emotes Spamming [$count Warnungen übrig]",
-    "user-is-warned-about-forbidden-words": "No forbidden words [$count warnings left]",
+    "user-is-warned-about-forbidden-words": "Keine verbotenen Wörter [$count Warnungen übrig]",
     "user-have-timeout-for-links": "Keine Links erlaubt. Frage nach !permit",
     "user-have-timeout-for-symbols": "Keine übermäßige Verwendung von Symbolen",
     "user-have-timeout-for-long-message": "Lange Nachricht ist nicht erlaubt",
     "user-have-timeout-for-caps": "Keine übermäßige Verwendung von Caps",
     "user-have-timeout-for-spam": "Spammen ist nicht erlaubt",
-    "user-have-timeout-for-color": "Farben und /me sind nicht erlaubt",
+    "user-have-timeout-for-color": "Kursiv und /me ist nicht erlaubt",
     "user-have-timeout-for-emotes": "Kein Emotes Spamming",
-    "user-have-timeout-for-forbidden-words": "No forbidden words"
+    "user-have-timeout-for-forbidden-words": "Keine verbotenen Wörter"
   },
   "queue": {
     "list": "$sender, aktueller Warteschlangen pool: $users",
@@ -1098,6 +1080,7 @@
       "none": "Keine Benutzer in der Warteschlange gefunden"
     }
   },
+  "marker": "Stream marker has been created at $time.",
   "title": {
     "current": "$sender, Titel des Stream ist '$title'.",
     "change": {
@@ -1107,13 +1090,13 @@
   "game": {
     "current": "$sender, Streamer spielt derzeit $game.",
     "change": {
-      "success": "$sender, Spiel wurde auf $game gesetzt"
+      "success": "$sender, category was set to: $game"
     }
   },
   "cooldowns": {
     "cooldown-was-set": "$sender, $type Abklingzeit für $command wurde auf $secondss gesetzt",
-    "cooldown-was-unset": "$sender, cooldown for $command was unset",
-    "cooldown-triggered": "$sender, Sie können nicht $command verwenden, verbleibende Zeit $secondss",
+    "cooldown-was-unset": "$sender, Abklingzeit für $command wurde nicht gesetzt",
+    "cooldown-triggered": "$sender, '$command' ist auf Abklingzeit, verbleibend $secondss",
     "cooldown-not-found": "$sender, Abklingzeit für $command wurde nicht gefunden",
     "cooldown-was-enabled": "$sender, Abklingzeit für $command wurde aktiviert",
     "cooldown-was-disabled": "$sender, Abklingzeit für $command wurde deaktiviert",
@@ -1133,7 +1116,7 @@
     "response-must-be-defined": "$sender, Timer Antwort muss definiert werden.",
     "cannot-set-messages-and-seconds-0": "$sender, Sie können nicht beide Nachrichten und Sekunden auf 0 setzen.",
     "timer-was-set": "$sender, der Timer $name wurde mit der Nachricht $messages und $seconds Sekunden gesetzt, um ihn auszulösen",
-    "timer-was-set-with-offline-flag": "$sender, timer $name was set with $messages messages and $seconds seconds to trigger even when stream is offline",
+    "timer-was-set-with-offline-flag": "$sender, der Timer $name wurde mit $messages Nachrichten und $seconds Sekunden gesetzt, um ihn auszulösen, auch wenn der Stream offline ist",
     "timer-not-found": "$sender, Timer (Name: $name) wurde in der Datenbank nicht gefunden. Überprüfe Timer mit der !timers list",
     "timer-deleted": "$sender, Timer $name und seine Antworten wurden gelöscht.",
     "timer-enabled": "$sender, timer (name: $name) wurde aktiviert",
@@ -1168,22 +1151,6 @@
       "broadcaster": "$sender benutzt eine leere Waffe, Boo!",
       "timeout": "Roulette Timeout auf $values gesetzt"
     },
-    "seppuku": {
-      "text": "$sender hat Seppuku begangen.",
-      "mod": "$sender hat versucht Seppuku zu begehen, brach aber sein Schwert.",
-      "broadcaster": "$sender hat versucht Seppuku zu begehen, verlor aber sein Schwert.",
-      "timeout": "Seppuku Timeout auf $values gesetzt"
-    },
-    "fightme": {
-      "cannotFightWithYourself": "$sender, du kannst nicht mit dir selbst kämpfen!",
-      "cooldown": "$sender, Sie können $command nicht für $cooldown $minutesName verwenden.",
-      "challenge": "(ง'̀-'́)ง $sender möchte dich $username bekämpfen! Wenn du akzeptierst, sende $command $sender",
-      "winner": "٩(^ᴗ^)۶ $winner ist stolzer Gewinner und $loser ist verlierer! Wer ist als Nächstes?",
-      "notEnoughOptions": "$sender, Sie müssen den Benutzer auswählen, um zu kämpfen.",
-      "broadcaster": "ψ(｀∇´)ψ $winner ist ein Gott unter Euch. Achte auf $loser! Dieser Kampf wurde schon vor seinem Start entschieden.",
-      "bothModerators": "$challenger (*-`ω´- )人(*-`ω´- ) $sender, dieser Kampf wird Jahrtausende dauern, um zu entscheiden!",
-      "oneModerator": "¯\\_(ツ)_/¯ $winner steht unter göttlichem Schutz. Sorry, $loser."
-    },
     "gamble": {
       "chanceToWin": "$sender, Chance zu gewinnen !gamble gesetzt auf $value%",
       "zeroBet": "$sender, du kannst mit 0 $pointsName nicht spielen",
@@ -1196,6 +1163,7 @@
       "loseWithJackpot": "$sender, du hast verloren! Du hast jetzt $points $pointsName. Der Jackpot wurde auf $jackpot $jackpotName erhöht",
       "lose": "$sender, du hast verloren! Du hast jetzt $points $pointsName",
       "currentJackpot": "$sender, aktueller Jackpot für $command ist $points $pointsName",
+      "winJackpotCount": "$sender, du hast $count Jackpots gewonnen",
       "jackpotIsDisabled": "$sender, Jackpot ist für $command deaktiviert."
     }
   },
@@ -1210,8 +1178,8 @@
   "whisper": {
     "settings": {
       "disablePermissionWhispers": {
-        "true": "Bot wird keine unzureichenden Berechtigungen Fehler senden",
-        "false": "Bot sendet unzureichende Berechtigungen durch Flüsterflüstern"
+        "true": "Der Bot sendet keine Fehler bei unzureichenden Berechtigungen",
+        "false": "Der Bot sendet keine Fehler bei unzureichenden Berechtigungen über Whispers"
       },
       "disableCooldownWhispers": {
         "true": "Bot sendet keine Cooldown-Benachrichtigungen",
@@ -1219,12 +1187,9 @@
       }
     }
   },
-  "phillipsHue": {
-    "list": "$sender, Liste von Phillips Hue verbundenen Lampen: "
-  },
-  "time": "Aktuelle Streamer-Zeit in seiner Zeitzone ist $time",
+  "time": "Aktuelle Zeit in der Streamer's Zeitzone ist $time",
   "subs": "$sender, es gibt derzeit $onlineSubCount Online Abonnenten. Letzte Sub/Resub war $lastSubUsername $lastSubAgo",
-  "followers": "$sender, derzeit sind $onlineFollowersCount Follower Online. Zuletzt Follower war $lastFollowUsername $lastFollowAgo",
+  "followers": "$sender, last follow was $lastFollowUsername $lastFollowAgo",
   "ignore": {
     "user": {
       "is": {

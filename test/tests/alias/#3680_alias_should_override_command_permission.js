@@ -1,37 +1,34 @@
-/* global describe it */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
-const alias = (require('../../../dest/systems/alias')).default;
-const assert = require('assert');
-const { prepare } = (require('../../../dest/helpers/commons/prepare'));
-const Parser = require('../../../dest/parser').default;
+import assert from 'assert';
+
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import { Parser } from '../../../dest/parser.js';
+import alias from '../../../dest/systems/alias.js';
+import { db, message, user } from '../../general.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Alias - #3680 - alias should override command permission', () => {
+describe('Alias - @func1 - #3680 - alias should override command permission', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
   });
 
-  it('create alias !test for command !alert (caster only)', async () => {
-    const r = await alias.add({ sender: owner, parameters: '-a !test -c !alert type=video' });
-    assert.strictEqual(r[0].response, prepare('alias.alias-was-added', { alias: '!test', command: '!alert type=video' }));
+  it('create alias !test for command !queue open (caster only)', async () => {
+    const r = await alias.add({ sender: owner, parameters: '-a !test -c !queue open' });
+    assert.strictEqual(r[0].response, prepare('alias.alias-was-added', { alias: '!test', command: '!queue open' }));
   });
 
-  it('call !alert directly with regular viewer should send permission error', async () => {
-    const parse = new Parser({ sender: user.viewer, message: '!alert type=video', skip: false, quiet: false });
+  it('call !queue open directly with regular viewer should send permission error', async () => {
+    const parse = new Parser({ sender: user.viewer, message: '!queue open', skip: false, quiet: false });
     const r = await parse.process();
-    assert.strictEqual(r[0].response, 'You don\'t have enough permissions for \'!alert type=video\'');
+    assert.strictEqual(r[0].response, 'You don\'t have enough permissions for \'!queue open\'');
   });
 
   it('call alias with regular viewer should process it correctly', async () => {
     await alias.run({ sender: user.viewer, message: '!test' });
-    await message.debug('alias.process', '!alert type=video');
-    await message.debug('alerts.emit', 'type=video');
+    await message.debug('alias.process', '!queue open');
   });
 });

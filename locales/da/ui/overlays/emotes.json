@@ -1,11 +1,14 @@
 {
 	"settings": {
 		"btnRemoveCache": "Delete cache",
-		"btnTestExplosion": "Emote explosion",
-		"btnTestEmote": "Emote",
-		"btnTestFirework": "Emote firework",
+		"hypeMessagesEnabled": "Show hype messages in chat",
+		"btnTestExplosion": "Test emote explosion",
+		"btnTestEmote": "Test emote",
+		"btnTestFirework": "Test emote firework",
 		"cEmotesSize": "Emotes size",
-		"cEmotesMaxEmotesPerMessage": "Maximum of emotes per messge",
+		"cEmotesMaxEmotesPerMessage": "Maximum of emotes per message",
+		"cEmotesMaxRotation": "Maximal rotation of emote",
+		"cEmotesOffsetX": "Maximal offset on X-axis",
 		"cEmotesAnimation": "Animation",
 		"cEmotesAnimationTime": "Animation duration",
 		"cExplosionNumOfEmotes": "No. of emotes",
@@ -30,6 +33,10 @@
 			"help": "Minimal message threshold to count emotes as combo (until then won't trigger cooldown)"
 		},
 		"comboMessages": "Combo messages"
+	},
+	"hype": {
+		"5": "Let's go! We got $amountx $emote combo so far! SeemsGood",
+		"15": "Keep it going! Can we get more than $amountx $emote? TriHard"
 	},
 	"message": {
 		"3": "$amountx $emote combo",

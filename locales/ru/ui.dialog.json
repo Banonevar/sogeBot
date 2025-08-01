@@ -55,16 +55,16 @@
     "edit": "Редактировать",
     "delete": "Удалить",
     "play": "Прослушать",
-    "stop": "Stop",
+    "stop": "Остановить",
     "hold-to-delete": "Удерживайте, чтобы удалить",
     "yes": "Да",
     "no": "Нет",
-    "permission": "Permission",
-    "group": "Group",
-    "visibility": "Visibility",
-    "reset": "Reset "
+    "permission": "Разрешение",
+    "group": "Группа",
+    "visibility": "Видимость",
+    "reset": "Сброс "
   },
-  "changesPending": "Ваши изменения не были сохранены.",
+  "changesPending": "Your changes were not saved.",
   "formNotValid": "Форма неверна.",
   "nothingToShow": "Нечего показывать"
 }

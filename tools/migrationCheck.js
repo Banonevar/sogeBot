@@ -1,48 +1,50 @@
-const exec = require('child_process').exec;
+import {exec, spawn } from 'child_process'
 
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-const getMigrationType = require('../dest/helpers/getMigrationType').getMigrationType;
+import { getMigrationType } from '../dest/helpers/getMigrationType.js';
 
 async function test() {
-  await new Promise((resolve) => {
-    exec('npx typeorm migration:run', {
-      env: {
-        ...process.env,
-        'TYPEORM_ENTITIES':   'dest/database/entity/*.js',
-        'TYPEORM_MIGRATIONS': `dest/database/migration/${getMigrationType(process.env.TYPEORM_CONNECTION)}/**/*.js`,
-      },
-    }, (error, stdout, stderr) => {
-      process.stdout.write(stdout);
-      resolve();
-    });
+  await new Promise((resolve, reject) => {
+    try {
+      exec('npx typeorm migration:run -d dest/database.js', {
+        env: {
+          ...process.env,
+          'TYPEORM_ENTITIES':   'dest/database/entity/*.js',
+          'TYPEORM_MIGRATIONS': `dest/database/migration/${getMigrationType(process.env.TYPEORM_CONNECTION)}/**/*.js`,
+        },
+      }, (error, stdout, stderr) => {
+        process.stdout.write(stdout);
+        process.stderr.write(stderr);
+        if (error) {
+          reject(error);
+          process.stderr.write(error);
+          process.exit(1);
+        }
+        resolve();
+      });
+    } catch(e) {
+      reject();
+    }
   });
 
-  let output = '';
-  const expectedOutput = 'No changes in database schema were found - cannot generate a migration. To create a new empty migration use "typeorm migration:create" command\n';
-  await new Promise(async (resolve) => {
-    exec('npx typeorm migration:generate -n generatedMigration', {
-      env: {
-        ...process.env,
-        'TYPEORM_ENTITIES':   'dest/database/entity/*.js',
-        'TYPEORM_MIGRATIONS': `dest/database/migration/${getMigrationType(process.env.TYPEORM_CONNECTION)}/**/*.js`,
-      },
-    }, (error, stdout, stderr) => {
-      output += stdout;
-      resolve();
-    });
+  const out2 = spawn(process.platform === 'win32' ? 'npx.cmd' : 'npx', 'typeorm migration:generate -d dest/database.js --ch ./'.split(' '), {
+    env: {
+      ...process.env,
+      'TYPEORM_ENTITIES':   'dest/database/entity/*.js',
+      'TYPEORM_MIGRATIONS': `dest/database/migration/${getMigrationType(process.env.TYPEORM_CONNECTION)}/**/*.js`,
+    },
   });
-  console.log(output);
-  if (output !== expectedOutput) {
-    await new Promise((resolve2) => {
-      exec('cat ./*generatedMigration*', (error, stdout, stderr) => {
-        console.log('\n =================================== generated migration file  =================================== \n');
-        console.log(stdout);
-        resolve2();
-      });
-    });
-  }
-  process.exit(output === expectedOutput ? 0 : 1);
+
+  out2.stdout.on('data', function(msg){
+    console.log(`${msg}`);
+  });
+  out2.stderr.on('data', function(msg){
+    console.error(`${msg}`);
+  });
+
+  out2.on('exit', code => process.exit(code));
 }
 
 test();

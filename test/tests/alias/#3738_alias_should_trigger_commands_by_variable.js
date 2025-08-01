@@ -1,46 +1,44 @@
 /* global describe it */
-const assert = require('assert');
+import assert from 'assert';
 
-require('../../general.js');
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
-const alias = (require('../../../dest/systems/alias')).default;
+import('../../general.js');
+import { db, message, user } from '../../general.js';
+import alias from '../../../dest/systems/alias.js';
 
-const { prepare } = (require('../../../dest/helpers/commons/prepare'));
-const { defaultPermissions } = require('../../../dest/helpers/permissions/');
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
 
-const { getRepository } = require('typeorm');
-const { Variable } = require('../../../dest/database/entity/variable');
+import { Variable } from '../../../dest/database/entity/variable.js';
+import { AppDataSource } from '../../../dest/database.js'
 
-describe('Alias - #3738 - alias should trigger commands by variable', () => {
+describe('Alias - @func1 - #3738 - alias should trigger commands by variable', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
   });
 
   it('create variable $_alert', async () => {
-    await getRepository(Variable).save({
+    const variable = Variable.create({
       variableName: '$_alert',
       readOnly: false,
-      currentValue: '!alert type=video',
+      currentValue: '!queue open',
       type: 'string',
       responseType: 0,
       permission: defaultPermissions.CASTERS,
       evalValue: '',
       usableOptions: [],
-    });
+    })
+    await variable.save();
   });
 
-  it('create alias !test for command !alert (caster only)', async () => {
+  it('create alias !test for command !queue open (caster only)', async () => {
     const r = await alias.add({ sender: user.owner, parameters: '-a !test -c $_alert' });
     assert.strictEqual(r[0].response, prepare('alias.alias-was-added', { alias: '!test', command: '$_alert' }));
   });
 
   it('call alias with regular viewer should process it correctly', async () => {
     await alias.run({ sender: user.viewer, message: '!test' });
-    await message.debug('alias.process', '!alert type=video');
-    await message.debug('parser.command', 'Running !alert');
-    await message.debug('alerts.emit', 'type=video');
+    await message.debug('alias.process', '!queue open');
+    await message.debug('parser.command', 'Running !queue open');
   });
 });

@@ -1,32 +1,32 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
 
-require('../../general.js');
+import('../../general.js');
 
-const { getRepository } = require('typeorm');
-const { Cooldown, CooldownViewer } = require('../../../dest/database/entity/cooldown');
-const { User } = require('../../../dest/database/entity/user');
-const { Keyword } = require('../../../dest/database/entity/keyword');
+import { Cooldown } from '../../../dest/database/entity/cooldown.js';
+import { User } from '../../../dest/database/entity/user.js';
+import { Keyword } from '../../../dest/database/entity/keyword.js';
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const cooldown = (require('../../../dest/systems/cooldown')).default;
+import cooldown from '../../../dest/systems/cooldown.js'
 
 // users
-const owner = { userId: String(Math.floor(Math.random() * 100000)), username: '__broadcaster__', badges: {} };
-const testUser = { userId: String(Math.floor(Math.random() * 100000)), username: 'test', badges: {} };
+const owner = { userId: String(Math.floor(Math.random() * 100000)), userName: '__broadcaster__', badges: {} };
+const testUser = { userId: String(Math.floor(Math.random() * 100000)), userName: 'test', badges: {} };
 
 
-describe('cooldown check should not endlessly loop', () => {
+describe('cooldown - @func3 check should not endlessly loop', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(User).save({ username: owner.username, userId: owner.userId, isSubscriber: true });
+    await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId, isSubscriber: true });
 
   });
 

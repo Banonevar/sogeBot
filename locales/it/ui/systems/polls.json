@@ -1,39 +1,6 @@
 {
-  "settings": {
-    "enabled": "Stato",
-    "everyXMessages": {
-      "title": "Ricordare ogni X messaggi",
-      "help": "0 = disabilitato; entrambe le condizioni di memoria devono essere vere per la stampa del bot"
-    },
-    "everyXSeconds": {
-      "title": "Ricorda ogni X secondi",
-      "help": "0 = disabilitato; entrambe le condizioni di memoria devono essere vere per la stampa del bot"
-    }
-  },
-  "overlay": {
-    "type": "Tipo",
-    "add": "Aggiungi",
-    "inChatToVote": "... nella chat per votare",
-    "tips": "tip",
-    "bits": "bits",
-    "toYourMessage": "... nel tuo messaggio <strong>$type</strong>"
-  },
-  "title": "Titolo",
-  "done": "FATTO",
-  "running": "IN CORSO",
-  "stop": "Ferma",
-  "copy": "Copia",
   "totalVotes": "Voti totali",
-  "cannotCopyIfInProgress": "Impossibile copiare, se un altro sondaggio è in corso",
+  "totalPoints": "Total points",
   "closedAt": "Chiuso a",
-  "activeFor": "Attivo per",
-  "votingBy": "Voto di",
-  "tips": "donazioni",
-  "numbers": "numeri",
-  "bits": "bits",
-  "command": "!vote",
-  "create": "Fai clic per creare un nuovo sondaggio",
-  "cannotCreateIfEmpty": "Impossibile creare un nuovo sondaggio senza almeno 2 opzioni",
-  "cannotCreateWithoutTitle": "Impossibile creare un nuovo sondaggio senza il titolo",
-  "cannotCreateNewVoteIfInProgress": "Impossibile creare un nuovo sondaggio, se un altro sondaggio è in atto"
+  "activeFor": "Attivo per"
 }

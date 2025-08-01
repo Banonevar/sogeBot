@@ -1,15 +1,14 @@
 /* global describe it before */
 
-const assert = require('assert');
+import assert from 'assert';
 
-require('../../general.js');
-
-const moderation = (require('../../../dest/systems/moderation')).default;
-const db = require('../../general.js').db;
-const variable = require('../../general.js').variable;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
-const time = require('../../general.js').time;
+import('../../general.js');
+import moderation from '../../../dest/systems/moderation.js';
+import { db } from '../../general.js';
+import { variable } from '../../general.js';
+import { message } from '../../general.js';
+import { user } from '../../general.js';
+import { time } from '../../general.js';
 
 const tests = {
   'timeout': [
@@ -20,7 +19,7 @@ const tests = {
   ],
 };
 
-describe('systems/moderation - longMessage()', () => {
+describe('systems/moderation - longMessage() - @func3', () => {
   describe('moderationLongMessage=false', async () => {
     before(async () => {
       await db.cleanup();
@@ -75,7 +74,7 @@ describe('systems/moderation - longMessage()', () => {
     });
 
     it(`add user immunity`, async () => {
-      const r = await moderation.immune({ parameters: `${user.viewer.username} longmessage 5s` });
+      const r = await moderation.immune({ parameters: `${user.viewer.userName} longmessage 5s` });
       assert(r[0].response === '$sender, user @__viewer__ have longmessage immunity for 5 seconds');
     });
 

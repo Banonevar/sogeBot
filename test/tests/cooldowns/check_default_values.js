@@ -1,34 +1,33 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
 
-require('../../general.js');
+import('../../general.js');
 
-const { getRepository } = require('typeorm');
-const { Cooldown, CooldownViewer } = require('../../../dest/database/entity/cooldown');
-const { User } = require('../../../dest/database/entity/user');
-const { Keyword } = require('../../../dest/database/entity/keyword');
+import { Cooldown } from '../../../dest/database/entity/cooldown.js';
+import { User } from '../../../dest/database/entity/user.js';
+import { Keyword } from '../../../dest/database/entity/keyword.js';
 
-const assert = require('assert');
+import assert from 'assert';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const time = require('../../general.js').time;
-const { defaultPermissions } = require('../../../dest/helpers/permissions/');
+import { db } from '../../general.js';
+import { message, time } from '../../general.js';
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
+import { AppDataSource } from '../../../dest/database.js';
 
-const cooldown = (require('../../../dest/systems/cooldown')).default;
-const customcommands = (require('../../../dest/systems/customcommands')).default;
-const gamble = (require('../../../dest/games/gamble')).default;
+import cooldown from '../../../dest/systems/cooldown.js'
+import customcommands from '../../../dest/systems/customcommands.js';
+import gamble from '../../../dest/games/gamble.js';
 
 // users
-const owner = { userId: String(Math.floor(Math.random() * 100000)), username: '__broadcaster__', badges: {} };
-const usermod1 = { userId: String(Math.floor(Math.random() * 100000)), username: 'usermod1', badges: { moderator: 1 } };
-const subuser1 = { userId: String(Math.floor(Math.random() * 100000)), username: 'subuser1', badges: { subscriber: 1 } };
-const testUser = { userId: String(Math.floor(Math.random() * 100000)), username: 'test', badges: {} };
-const testUser2 = { userId: String(Math.floor(Math.random() * 100000)), username: 'test2', badges: {} };
+const owner = { userId: String(Math.floor(Math.random() * 100000)), userName: '__broadcaster__', badges: {} };
+const usermod1 = { userId: String(Math.floor(Math.random() * 100000)), userName: 'usermod1', badges: { moderator: 1 } };
+const subuser1 = { userId: String(Math.floor(Math.random() * 100000)), userName: 'subuser1', badges: { subscriber: 1 } };
+const testUser = { userId: String(Math.floor(Math.random() * 100000)), userName: 'test', badges: {} };
+const testUser2 = { userId: String(Math.floor(Math.random() * 100000)), userName: 'test2', badges: {} };
 
 
-describe('Cooldowns - default check', () => {
+describe('Cooldowns - @func3 - default check', () => {
   describe('command - default', async () => {
     before(async () => {
       await db.cleanup();
@@ -37,11 +36,11 @@ describe('Cooldowns - default check', () => {
       gamble.enabled = true;
       cooldown.__permission_based__defaultCooldownOfCommandsInSeconds[defaultPermissions.VIEWERS] = 5;
 
-      await getRepository(User).save({ username: usermod1.username, userId: usermod1.userId, isModerator: true });
-      await getRepository(User).save({ username: subuser1.username, userId: subuser1.userId, isSubscriber: true });
-      await getRepository(User).save({ username: testUser.username, userId: testUser.userId });
-      await getRepository(User).save({ username: testUser2.username, userId: testUser2.userId });
-      await getRepository(User).save({ username: owner.username, userId: owner.userId, isSubscriber: true });
+      await AppDataSource.getRepository(User).save({ userName: usermod1.userName, userId: usermod1.userId, isModerator: true });
+      await AppDataSource.getRepository(User).save({ userName: subuser1.userName, userId: subuser1.userId, isSubscriber: true });
+      await AppDataSource.getRepository(User).save({ userName: testUser.userName, userId: testUser.userId });
+      await AppDataSource.getRepository(User).save({ userName: testUser2.userName, userId: testUser2.userId });
+      await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId, isSubscriber: true });
 
       await time.waitMs(5000);
     });
@@ -94,11 +93,11 @@ describe('Cooldowns - default check', () => {
       gamble.enabled = true;
       cooldown.__permission_based__defaultCooldownOfKeywordsInSeconds[defaultPermissions.VIEWERS] = 5;
 
-      await getRepository(User).save({ username: usermod1.username, userId: usermod1.userId, isModerator: true });
-      await getRepository(User).save({ username: subuser1.username, userId: subuser1.userId, isSubscriber: true });
-      await getRepository(User).save({ username: testUser.username, userId: testUser.userId });
-      await getRepository(User).save({ username: testUser2.username, userId: testUser2.userId });
-      await getRepository(User).save({ username: owner.username, userId: owner.userId, isSubscriber: true });
+      await AppDataSource.getRepository(User).save({ userName: usermod1.userName, userId: usermod1.userId, isModerator: true });
+      await AppDataSource.getRepository(User).save({ userName: subuser1.userName, userId: subuser1.userId, isSubscriber: true });
+      await AppDataSource.getRepository(User).save({ userName: testUser.userName, userId: testUser.userId });
+      await AppDataSource.getRepository(User).save({ userName: testUser2.userName, userId: testUser2.userId });
+      await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId, isSubscriber: true });
 
       await time.waitMs(5000);
     });
@@ -110,9 +109,16 @@ describe('Cooldowns - default check', () => {
     });
 
     it('test', async () => {
-      await getRepository(Keyword).save({
+      await AppDataSource.getRepository(Keyword).save({
         keyword: 'me',
-        response: '(!me)',
+        responses: [{
+          id: '1234',
+          order: 0,
+          response: '(!me)',
+          stopIfExecuted: false,
+          permission: defaultPermissions.VIEWERS,
+          filter: '',
+        }],
         enabled: true,
       });
 

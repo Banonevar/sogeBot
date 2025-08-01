@@ -1,23 +1,24 @@
 /* global describe it before */
-const { getOwner } = require('../../../dest/helpers/commons/getOwner');
+import { getOwner } from '../../../dest/helpers/commons/getOwner.js';
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
+import { User } from '../../../dest/database/entity/user.js';
 
-const { prepare } = require('../../../dest/helpers/commons/prepare');
-const tmi = (require('../../../dest/tmi')).default;
-const top = (require('../../../dest/systems/top')).default;
-const assert = require('assert');
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import top from '../../../dest/systems/top.js';
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js'
+import twitch from '../../../dest/services/twitch.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
+let user;
 
-describe('Top - !top points', () => {
+describe('Top - !top points - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -25,26 +26,26 @@ describe('Top - !top points', () => {
 
   it ('Add 10 users into db and last user will don\'t have any points', async () => {
     for (let i = 0; i < 10; i++) {
-      user = await getRepository(User).save({
+      user = await AppDataSource.getRepository(User).save({
         userId: String(Math.floor(Math.random() * 100000)),
-        username: 'user' + i,
+        userName: 'user' + i,
         points: i * 15,
       });
     }
   });
 
   it('run !top points and expect correct output', async () => {
-    const r = await top.points({ sender: { username: getOwner() } });
+    const r = await top.points({ sender: { userName: getOwner() } });
     assert.strictEqual(r[0].response, 'Top 10 (points): 1. @user9 - 135 points, 2. @user8 - 120 points, 3. @user7 - 105 points, 4. @user6 - 90 points, 5. @user5 - 75 points, 6. @user4 - 60 points, 7. @user3 - 45 points, 8. @user2 - 30 points, 9. @user1 - 15 points, 10. @user0 - 0 points', owner);
   });
 
   it('add user0 to ignore list', async () => {
-    const r = await tmi.ignoreAdd({ sender: owner, parameters: 'user0' });
-    assert.strictEqual(r[0].response, prepare('ignore.user.is.added' , { username: 'user0' }));
+    const r = await twitch.ignoreAdd({ sender: owner, parameters: 'user0' });
+    assert.strictEqual(r[0].response, prepare('ignore.user.is.added' , { userName: 'user0' }));
   });
 
   it('run !top points and expect correct output', async () => {
-    const r = await top.points({ sender: { username: getOwner() } });
+    const r = await top.points({ sender: { userName: getOwner() } });
     assert.strictEqual(r[0].response, 'Top 10 (points): 1. @user9 - 135 points, 2. @user8 - 120 points, 3. @user7 - 105 points, 4. @user6 - 90 points, 5. @user5 - 75 points, 6. @user4 - 60 points, 7. @user3 - 45 points, 8. @user2 - 30 points, 9. @user1 - 15 points', owner);
   });
 });

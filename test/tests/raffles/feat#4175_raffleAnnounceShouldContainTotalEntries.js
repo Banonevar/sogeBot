@@ -1,22 +1,21 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
-const commons = require('../../../dest/commons');
+import { db, message, user } from '../../general.js';
+import * as commons from '../../../dest/commons.js'
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const { Raffle } = require('../../../dest/database/entity/raffle');
+import { User } from '../../../dest/database/entity/user.js';
+import { Raffle } from '../../../dest/database/entity/raffle.js';
 
-const raffles = (require('../../../dest/systems/raffles')).default;
-const isStreamOnline = (require('../../../dest/helpers/api/isStreamOnline' )).isStreamOnline
-const assert = require('assert');
+import raffles from '../../../dest/systems/raffles.js';
+import {isStreamOnline} from '../../../dest/helpers/api/isStreamOnline.js'
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
+import { IsNull } from 'typeorm';
 
-describe('Raffles - announce should contain total entries #4175', () => {
+describe('Raffles - announce should contain total entries #4175 - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -31,12 +30,12 @@ describe('Raffles - announce should contain total entries #4175', () => {
 
   it('create ticket raffle', async () => {
     raffles.open({ sender: user.owner, parameters: '!winme -min 0 -max 100' });
-    await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme <1-100>". Raffle is opened for everyone.', { username: 'bot' })
+    await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme <1-100>". Raffle is opened for everyone.', { userName: '__bot__' })
   });
 
   it('Update viewer and viewer2 to have 200 points', async () => {
-    await getRepository(User).save({ username: user.viewer.username, userId: user.viewer.userId, points: 200 });
-    await getRepository(User).save({ username: user.viewer2.username, userId: user.viewer2.userId, points: 200 });
+    await AppDataSource.getRepository(User).save({ userName: user.viewer.userName, userId: user.viewer.userId, points: 200 });
+    await AppDataSource.getRepository(User).save({ userName: user.viewer2.userName, userId: user.viewer2.userId, points: 200 });
   });
 
   it('Viewer bets max points', async () => {
@@ -50,9 +49,9 @@ describe('Raffles - announce should contain total entries #4175', () => {
   });
 
   it('expecting 2 participants to have bet of 100 and 50', async () => {
-    const raffle = await getRepository(Raffle).findOne({
+    const raffle = await AppDataSource.getRepository(Raffle).findOne({
       relations: ['participants'],
-      where: { winner: null, isClosed: false },
+      where: { winner: IsNull(), isClosed: false },
     });
     assert.strictEqual(raffle.participants.length, 2);
     try {
@@ -70,6 +69,6 @@ describe('Raffles - announce should contain total entries #4175', () => {
     raffles.lastAnnounce = 0;
     raffles.raffleAnnounceMessageInterval = 0;
     await raffles.announce();
-    await message.isSentRaw('Raffle is running (150 entries). To enter type "!winme <1-100>". Raffle is opened for everyone.', { username: 'bot' })
+    await message.isSentRaw('Raffle is running (150 entries). To enter type "!winme <1-100>". Raffle is opened for everyone.', { userName: '__bot__' })
   });
 });

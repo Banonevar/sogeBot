@@ -34,12 +34,17 @@
     "empty": "empty",
     "isRegistered": "$sender, you cannot use !$keyword, because is already in use for another action!"
   },
+  "clip": {
+    "notCreated": "Something went wrong and clip was not created.",
+    "offline": "Stream is currently offline and clip cannot be created."
+  },
   "uptime": {
     "online": "Stream is online for (if $days>0|$daysd )(if $hours>0|$hoursh )(if $minutes>0|$minutesm )(if $seconds>0|$secondss)",
     "offline": "Stream is currently offline for (if $days>0|$daysd )(if $hours>0|$hoursh )(if $minutes>0|$minutesm )(if $seconds>0|$secondss)"
   },
   "webpanel": {
     "this-system-is-disabled": "This system is disabled",
+    "or": "or",
     "loading": "Loading",
     "this-may-take-a-while": "This <strong>may</strong> take a while",
     "display-as": "Display as",
@@ -57,17 +62,6 @@
       "text-url-generator": "Paste your text or html to generate base64 below and URL above",
       "text-decode-base64": "Paste your base64 to generate URL and text above",
       "creditsSpeed": "Set speed of credits rolling, lower = faster"
-    },
-    "custom-variables": {
-      "set-your-variables-to-watch-here": "Set your variables to watch here",
-      "type": "type",
-      "unwatch": "Unwatch",
-      "watch": "Watch",
-      "options": "options",
-      "number": "number",
-      "text": "text",
-      "options-placeholder": "option1, option2, option3, here is option 4",
-      "no-options-set": "You didn't set your options yet"
     },
     "timers": {
       "title": "Timers",
@@ -169,6 +163,9 @@
         "operations": "Operations"
       },
       "definitions": {
+        "taskId": {
+          "label": "Task ID"
+        },
         "filter": {
           "label": "Filter"
         },
@@ -237,14 +234,24 @@
           "label": "Channel",
           "placeholder": "Channelname or ID"
         },
+        "timeout": {
+          "label": "Timeout",
+          "placeholder": "Set timeout in milliseconds"
+        },
+        "timeoutType": {
+          "label": "Type of timeout",
+          "placeholder": "Set type of timeout"
+        },
+        "command": {
+          "label": "Command",
+          "placeholder": "Set your !command"
+        },
         "commandToRun": {
           "label": "Command To Run",
           "placeholder": "Set your !commandToRun"
         },
         "isCommandQuiet": {
-          "label": "Should be command quiet",
-          "true": "Command will be quiet",
-          "false": "Command won't be quiet"
+          "label": "Mute command output"
         },
         "urlOfSoundFile": {
           "label": "Url Of Your Sound File",
@@ -258,13 +265,18 @@
           "label": "Emotes To Firework",
           "placeholder": "List of emotes to firework, e.g. Kappa PurpleHeart"
         },
+        "replay": {
+          "label": "Replay clip in overlay",
+          "true": "Will play in as replay in overlay/alerts",
+          "false": "Replay won't be played"
+        },
         "announce": {
           "label": "Announce in chat",
           "true": "Will be announced",
           "false": "Will not be announced"
         },
         "hasDelay": {
-          "label": "Clip should have slight delay (to be closer what viewer see)",
+          "label": "Clip should have slight delay (to be closer what viewer sees)",
           "true": "Will have delay",
           "false": "Will not have delay"
         },
@@ -289,32 +301,60 @@
           "placeholder": ""
         },
         "": "",
-        "titleOfReward": {
-          "label": "Title of redeemed reward",
+        "reward": {
+          "label": "Reward",
           "placeholder": ""
         }
       }
     },
     "eventlist-events": {
-      "follow": "<strong>followed</strong> you",
-      "host": "<strong>hosted</strong> you with $viewers viewers",
-      "raid": "<strong>raided</strong> you with $viewers viewers",
-      "sub": "<strong>subbed</strong> you | $tier",
-      "subgift": "have <strong>gifted</strong> sub from $username",
-      "subcommunitygift": "have <strong>gifted</strong> subs for $count viewers",
-      "resub": "<strong>resubbed</strong> you for $subStreak $subStreakName | $tier",
-      "resubWithoutStreak": "<strong>resubbed</strong> | $tier | in total of $subCumulativeMonths $subCumulativeMonthsName",
-      "cheer": "<strong>cheered</strong> you for $bits bits",
-      "tip": "<strong>tipped</strong> you for $formatted_amount"
+      "follow": "<strong>Followed</strong> you",
+      "raid": "<strong>Raided</strong> you with <strong>$viewers</strong> raiders.",
+      "sub": "<strong>Subscribed</strong> to you with <strong>$subType</strong>. They've been subscribed for $subCumulativeMonths $subCumulativeMonthsName.",
+      "subgift": "has been <strong>gifted</strong> subscription from <strong>$username</strong>",
+      "subcommunitygift": "<strong>Gifted</strong> subscriptions for community",
+      "resub": "<strong>Resubscribed</strong> with <strong>$subType</strong>. They've been subscribed for $subCumulativeMonths $subCumulativeMonthsName.",
+      "cheer": "<strong>Cheered</strong> you",
+      "tip": "<strong>Tipped</strong> you",
+      "tipToCharity": "<strong>donated</strong> to <strong>$campaignName</strong>"
     },
     "responses": {
       "variable": {
+        "tags": "Tags",
+        "titleOfPrediction": "Twitch Prediction - Title",
+        "outcomes": "Twitch Prediction - Outcomes",
+        "locksAt": "Twitch Prediction - Locks At Date",
+        "winningOutcomeTitle": "Twitch Prediction - Winning outcome title",
+        "winningOutcomeTotalPoints": "Twitch Prediction - Winning outcome total points",
+        "winningOutcomePercentage": "Twitch Prediction - Winning outcome percentage",
+        "titleOfPoll": "Twitch Poll - Title",
+        "bitAmountPerVote": "Twitch Poll - Amount of bits to count as 1 vote",
+        "bitVotingEnabled": "Twitch Poll - Is bit voting enabled (boolean)",
+        "channelPointsAmountPerVote": "Twitch Poll - Amount of channel points to count as 1 vote",
+        "channelPointsVotingEnabled": "Twitch Poll - Is channel points voting enabled (boolean)",
+        "votes": "Twitch Poll - votes count",
+        "winnerChoice": "Twitch Poll - Winner choice",
+        "winnerPercentage": "Twitch Poll - Winner choice percentage",
+        "winnerVotes": "Twitch Poll - Winner choice votes",
+        "goal": "Goal",
+        "total": "Total",
+        "lastContributionTotal": "Last Contribution - Total",
+        "lastContributionType": "Last Contribution - Type",
+        "lastContributionUserId": "Last Contribution - User ID",
+        "lastContributionUsername": "Last Contribution - Username",
+        "level": "Level",
+        "topContributionsBitsTotal": "Top Bits Contribution - Total",
+        "topContributionsBitsUserId": "Top Bits Contribution - User ID",
+        "topContributionsBitsUsername": "Top Bits Contribution - Username",
+        "topContributionsSubsTotal": "Top Subs Contribution - Total",
+        "topContributionsSubsUserId": "Top Subs Contribution - User ID",
+        "topContributionsSubsUsername": "Top Subs Contribution - Username",
         "sender": "User who initiated",
         "title": "Current title",
-        "game": "Current game",
+        "game": "Current category",
         "language": "Current stream language",
         "viewers": "Current viewers count",
-        "views": "Current views count",
+        "hostViewers": "Raid viewers count",
         "followers": "Current followers count",
         "subscribers": "Current subscribers count",
         "arg": "Argument",
@@ -329,7 +369,6 @@
         "type": "Type",
         "days": "Days",
         "hours": "Hours",
-        "minutesName": "Singular or Plural of word minute",
         "minutes": "Minutes",
         "seconds": "Seconds",
         "description": "Description",
@@ -387,7 +426,7 @@
         "tier": "Tier",
         "months": "Months",
         "monthsName": "localized name of month (1 month, 2 months)",
-        "oldGame": "Game before change",
+        "oldGame": "Category before change",
         "recipientObject": "Full recipient object",
         "recipient": "Recipient",
         "ytSong": "Current song on YouTube",
@@ -422,10 +461,13 @@
         "source": "Current source (twitch or discord)",
         "userInput": "User input during reward redeem",
         "isBotSubscriber": "Is bot subscriber (bool)",
+        "isStreamOnline": "Is stream online (bool)",
+        "uptime": "Uptime of stream",
         "is": {
           "moderator": "Is user mod? (bool)",
           "subscriber": "Is user sub? (bool)",
           "vip": "Is user vip? (bool)",
+          "newchatter": "Is user's first message? (bool)",
           "follower": "Is user follower? (bool)",
           "broadcaster": "Is user broadcaster? (bool)",
           "bot": "Is user bot? (bool)",
@@ -440,13 +482,9 @@
           "bot": "Is recipient bot? (bool)",
           "owner": "Is recipient bot owner? (bool)"
         },
-        "tweet": {
-          "text": "Text of tweet",
-          "username": "Username on Twitter",
-          "displayname": "Screen name on twitter",
-          "url": "Tweet link"
-        },
-        "sceneName": "Name of scene"
+        "sceneName": "Name of scene",
+        "inputName": "Name of input",
+        "inputMuted": "Mute state (bool)"
       }
     },
     "page-settings": {
@@ -506,8 +544,8 @@
     "viewers-points-of-all-users": "Points of all users",
     "viewers-watchtime-of-all-users": "Watch time of all users",
     "viewers-messages-of-all-users": "Messages of all users",
-    "events-game-after-change": "game after change",
-    "events-game-before-change": "game before change",
+    "events-game-after-change": "category after change",
+    "events-game-before-change": "category before change",
     "events-user-triggered-event": "user triggered event",
     "events-method-used-to-subscribe": "method used to subscribe",
     "events-months-of-subscription": "months of subscription",
@@ -517,12 +555,9 @@
     "events-reason-for-ban-timeout": "reason for ban/timeout",
     "events-duration-of-timeout": "duration of timeout",
     "events-duration-of-commercial": "duration of commercial",
-    "events-target-of-your-hosting": "target of your hosting",
-    "events-viewers-of-hosting": "viewers of hosting",
     "overlays-eventlist-resub": "resub",
     "overlays-eventlist-subgift": "subgift",
     "overlays-eventlist-subcommunitygift": "subcommunitygift",
-    "overlays-eventlist-host": "host",
     "overlays-eventlist-sub": "sub",
     "overlays-eventlist-follow": "follow",
     "overlays-eventlist-cheer": "bits",
@@ -546,7 +581,6 @@
     "in-seconds": "in seconds",
     "songs": "Songs",
     "show-usernames-with-at": "Show usernames with @",
-    "twitter-send-message": "Tweet",
     "send-message-as-a-bot": "Send message as a bot",
     "chat-as-bot": "Chat (as bot)",
     "product": "Product",
@@ -564,6 +598,9 @@
     "dashboard": "Dashboard",
     "carousel": "Image Carousel",
     "text": "Text",
+    "filter": "Filter",
+    "filters": "Filters",
+    "isUsed": "Is used",
     "permissions": "Permissions",
     "permission": "Permission",
     "viewers": "Viewers",
@@ -582,19 +619,17 @@
     "rank": "Rank",
     "previous": "Previous",
     "next": "Next",
-    "or": "or",
     "close": "Close",
     "save-changes": "Save changes",
     "saving": "Saving...",
     "deleting": "Deleting...",
     "done": "Done",
     "error": "Error",
-    "custom-title-empty-error": "Custom title is checked, but is empty!",
     "title": "Title",
     "change-title": "Change title",
-    "game": "game",
+    "game": "category",
     "tags": "Tags",
-    "change-game": "Change game",
+    "change-game": "Change category",
     "click-to-change": "click to change",
     "uptime": "uptime",
     "not-affiliate-or-partner": "Not affiliate/partner",
@@ -602,7 +637,6 @@
     "max-viewers": "Max viewers",
     "new-chatters": "New Chatters",
     "chat-messages": "Chat messages",
-    "views": "Views",
     "followers": "Followers",
     "subscribers": "Subscribers",
     "bits": "Bits",
@@ -614,14 +648,8 @@
     "status": "Status",
     "add-widget": "Add widget",
     "remove-dashboard": "Remove dashboard",
-    "for": "for",
     "close-bet-after": "Close bet after",
-    "gain-every-option": "Gain every option",
-    "reuse-bet": "re-use bet",
     "refund": "refund",
-    "open-queue": "Open queue",
-    "close-queue": "Close queue",
-    "number-of-users": "No. users",
     "roll-again": "Roll again",
     "no-eligible-participants": "No eligible participants",
     "follower": "Follower",
@@ -630,14 +658,12 @@
     "seconds": "seconds",
     "hours": "hours",
     "months": "months",
-    "eligible-to-enter": "Eligible to enter:",
-    "followers-only": "Followers only",
-    "subscribers-only": "Subscribers only",
+    "eligible-to-enter": "Eligible to enter",
     "everyone": "Everyone",
     "roll-a-winner": "Roll a winner",
     "send-message": "Send Message",
     "messages": "Messages",
-    "announce-every": "Announce every",
+    "level": "Level",
     "create": "Create",
     "cooldown": "Cooldown",
     "confirm": "Confirm",
@@ -647,18 +673,13 @@
     "enable": "Enable",
     "disable": "Disable",
     "slug": "Slug",
-    "stream-title": "Stream title",
     "posted-by": "Posted by",
     "time": "Time",
     "type": "Type",
     "response": "Response",
-    "num-of-responses": "# Responses",
     "cost": "Cost",
     "name": "Name",
     "playlist": "Playlist",
-    "public-link": "Public link",
-    "banned-songs": "Banned songs",
-    "youtube-id": "YouTube ID",
     "length": "Length",
     "volume": "Volume",
     "start-time": "Start Time",
@@ -677,76 +698,27 @@
     "date": "Date",
     "points": "Points",
     "calendar": "Calendar",
-    "stream-events": "Stream Events",
-    "select-date-from-calendar": "Select date from calendar",
-    "select-stream-from-calendar-and-events": "Select stream from calendar and events",
-    "there-is-no-events-on-selected-date": "There is no events on selected date",
     "string": "string",
-    "points-name": "Points Name",
-    "points-single-multi": "single|multi",
-    "points-response": "Points Response",
-    "points-interval": "Points Interval",
-    "points-per-interval": "Points per Interval",
-    "points-interval-offline": "Points Interval (offline)",
-    "points-per-interval-offline": "Points per Interval (offline)",
-    "points-per-message": "Points per Message",
-    "points-per-message-interval": "Add points every X message",
     "interval": "Interval",
     "number": "number",
     "minimal-messages-required": "Minimal Messages Required",
     "max-duration": "Max duration",
     "shuffle": "Shuffle",
-    "song-requests": "Song Requests",
     "song-request": "Song Request",
-    "song-notify": "Notification on beginning of a song",
     "format": "Format",
     "available": "Available",
-    "links": "Links",
-    "symbols": "Symbols",
-    "long-messages": "Long Messages",
-    "capitals": "Capitals",
-    "spam": "Spam",
-    "colors": "Colors",
-    "emotes": "Emotes",
     "one-record-per-line": "one record per line",
     "on": "on",
     "off": "off",
     "search-by-username": "Search by username",
-    "create-and-use-a-new-game": "Create and use a new game",
-    "create-and-use-a-new-title": "Create and use a new title",
-    "search-tags": "Search for available tags (some game tags might missing / twitch policy)",
-    "no-options-found-for-this-search": "No options found for this search.",
-    "followers-show-number": "Show",
-    "followers-show": "followers",
-    "eventlist-overflow-height": "Max widget height",
-    "eventlist-show-number": "Show",
-    "eventlist-show": "events",
-    "subscribers-show": "subscribers",
-    "followers-size": "Font size",
-    "followers-message-size": "Message font size",
-    "custom-message": "Custom message",
-    "custom-ban-message": "Custom ban message",
-    "custom-ban-message-warning": "Custom warning message",
-    "minimal-watched-time": "Minimal watched time:",
-    "widget-title-customvariables": "CUSTOM VARIABLES",
-    "widget-title-randomizer": "RANDOMIZER",
+    "widget-title-custom": "CUSTOM",
     "widget-title-eventlist": "EVENTLIST",
-    "widget-title-bets": "BETS",
     "widget-title-chat": "CHAT",
-    "widget-title-clips": "LATEST CLIPS",
     "widget-title-queue": "QUEUE",
     "widget-title-raffles": "RAFFLES",
-    "widget-title-soundboard": "SOUNDBOARD",
-    "widget-title-cmdboard": "COMMANDBOARD",
-    "widget-title-twitch": "TWITCH STREAM MONITOR",
-    "widget-title-ytplayer": "MUSIC PLAYER",
-    "widget-title-latest-followers": "LATEST FOLLOWERS",
-    "widget-title-latest-subscribers": "LATEST SUBSCRIBERS",
-    "widget-title-commercial": "COMMERCIALS",
-    "widget-title-spotify": "SPOTIFY",
-    "widget-title-join": "JOIN LIST",
-    "widget-title-part": "PART LIST",
     "widget-title-social": "SOCIAL",
+    "widget-title-ytplayer": "MUSIC PLAYER",
+    "widget-title-monitor": "MONITOR",
     "event": "event",
     "operation": "operation",
     "tweet-post-with-hashtag": "Tweet posted with hashtag",
@@ -755,7 +727,18 @@
     "follow": "new follow",
     "tip": "new tip",
     "obs-scene-changed": "OBS scene changed",
+    "obs-input-mute-state-changed": "OBS input source mute state changed",
     "unfollow": "unfollow",
+    "hypetrain-started": "Hype Train started",
+    "hypetrain-ended": "Hype Train ended",
+    "shoutout-created": "Twitch Shoutout - Created",
+    "shoutout-received": "Twitch Shoutout - Received",
+    "prediction-started": "Twitch Prediction started",
+    "prediction-locked": "Twitch Prediction locked",
+    "prediction-ended": "Twitch Prediction ended",
+    "poll-started": "Twitch Poll started",
+    "poll-ended": "Twitch Poll ended",
+    "hypetrain-level-reached": "Hype Train new level reached",
     "subscription": "new subscription",
     "subgift": "new subgift",
     "subcommunitygift": "new sub given to community",
@@ -767,23 +750,22 @@
     "reward-redeemed": "reward redeemed",
     "stream-stopped": "stream stopped",
     "stream-is-running-x-minutes": "stream is running x minutes",
+    "chatter-first-message": "first message of chatter",
     "every-x-minutes-of-stream": "every x minutes of stream",
-    "game-changed": "game changed",
+    "game-changed": "category changed",
     "cheer": "received bits",
     "clearchat": "chat was cleared",
     "action": "user sent /me",
     "ban": "user was banned",
-    "hosting": "your channel started hosting",
-    "hosted": "your channel is hosted",
     "raid": "your channel is raided",
     "mod": "user is a new mod",
     "timeout": "user was timeouted",
     "create-a-new-event-listener": "Create a new event listener",
-    "send-twitter-message": "post a twitter message",
     "send-discord-message": "send a discord message",
     "send-chat-message": "send a twitch chat message",
     "send-whisper": "send a whisper",
     "run-command": "run a command",
+    "run-obswebsocket-command": "run an OBS Websocket command",
     "do-nothing": "--- do nothing ---",
     "count": "count",
     "timestamp": "timestamp",
@@ -811,7 +793,6 @@
     "bot-will-join-channel": "bot will join channel",
     "bot-will-leave-channel": "bot will leave channel",
     "create-a-clip": "create a clip",
-    "create-a-clip-and-play-replay": "create a clip and play as replay (overlay/alerts)",
     "increment-custom-variable": "increment a custom variable",
     "set-custom-variable": "set a custom variable",
     "decrement-custom-variable": "decrement a custom variable",
@@ -967,6 +948,7 @@
     "youtube-is-not-responding-correctly": "Sorry, $sender, but YouTube is sending unexpected responses, please try again later.",
     "song-was-not-found": "Sorry, $sender, but this song was not found",
     "song-is-too-long": "Sorry, $sender, but this song is too long",
+    "this-song-is-not-in-playlist": "Sorry, $sender, but this song is not in current playlist",
     "incorrect-category": "Sorry, $sender, but this song must be music category",
     "song-was-added-to-queue": "$sender, song $name was added to queue",
     "song-was-added-to-playlist": "$sender, song $name was added to playlist",
@@ -1067,7 +1049,7 @@
     "user-is-warned-about-long-message": "Long messages are not allowed [$count warnings left]",
     "user-is-warned-about-caps": "No excessive caps usage [$count warnings left]",
     "user-is-warned-about-spam": "Spamming is not allowed [$count warnings left]",
-    "user-is-warned-about-color": "Colors and /me is not allowed [$count warnings left]",
+    "user-is-warned-about-color": "Italic and /me is not allowed [$count warnings left]",
     "user-is-warned-about-emotes": "No emotes spamming [$count warnings left]",
     "user-is-warned-about-forbidden-words": "No forbidden words [$count warnings left]",
     "user-have-timeout-for-links": "No links allowed, ask for !permit",
@@ -1075,7 +1057,7 @@
     "user-have-timeout-for-long-message": "Long message are not allowed",
     "user-have-timeout-for-caps": "No excessive caps usage",
     "user-have-timeout-for-spam": "Spamming is not allowed",
-    "user-have-timeout-for-color": "Colors and /me is not allowed",
+    "user-have-timeout-for-color": "Italic and /me is not allowed",
     "user-have-timeout-for-emotes": "No emotes spamming",
     "user-have-timeout-for-forbidden-words": "No forbidden words"
   },
@@ -1098,6 +1080,7 @@
       "none": "No users were found in queue"
     }
   },
+  "marker": "Stream marker has been created at $time.",
   "title": {
     "current": "$sender, title of stream is '$title'.",
     "change": {
@@ -1107,13 +1090,13 @@
   "game": {
     "current": "$sender, streamer is currently playing $game.",
     "change": {
-      "success": "$sender, game was set to: $game"
+      "success": "$sender, category was set to: $game"
     }
   },
   "cooldowns": {
     "cooldown-was-set": "$sender, $type cooldown for $command was set to $secondss",
     "cooldown-was-unset": "$sender, cooldown for $command was unset",
-    "cooldown-triggered": "$sender, you cannot use $command, remaining $secondss",
+    "cooldown-triggered": "$sender, '$command' is on cooldown, remaining $secondss",
     "cooldown-not-found": "$sender, cooldown for $command was not found",
     "cooldown-was-enabled": "$sender, cooldown for $command was enabled",
     "cooldown-was-disabled": "$sender, cooldown for $command was disabled",
@@ -1164,25 +1147,9 @@
       "trigger": "$sender is trying his luck and pulled a trigger",
       "alive": "$sender is alive! Nothing happened.",
       "dead": "$sender's brain was splashed on the wall!",
-      "mod": "$sender is incompement and completely missed his head!",
+      "mod": "$sender is incompetent and completely missed his head!",
       "broadcaster": "$sender is using blanks, boo!",
       "timeout": "Roulette timeout set to $values"
-    },
-    "seppuku": {
-      "text": "$sender has committed seppuku.",
-      "mod": "$sender tried to commit seppuku, but broke a sword.",
-      "broadcaster": "$sender tried to commit seppuku, but lost a sword.",
-      "timeout": "Seppuku timeout set to $values"
-    },
-    "fightme": {
-      "cannotFightWithYourself": "$sender, you cannot fight with yourself!",
-      "cooldown": "$sender, you cannot use $command for $cooldown $minutesName.",
-      "challenge": "(ง'̀-'́)ง $sender wants to fight you $username! If you accept, send $command $sender",
-      "winner": "٩(^ᴗ^)۶ $winner is proud winner and $loser is sore loser! Who's next?",
-      "notEnoughOptions": "$sender, you need to select user to fight.",
-      "broadcaster": "ψ(｀∇´)ψ $winner is a god among you. Beware $loser! This fight was decided even before it started.",
-      "bothModerators": "$challenger (*-`ω´- )人(*-`ω´- ) $sender, this fight will take milleniums to decide!",
-      "oneModerator": "¯\\_(ツ)_/¯ $winner is under divine protection. Sorry, $loser."
     },
     "gamble": {
       "chanceToWin": "$sender, chance to win !gamble set to $value%",
@@ -1196,6 +1163,7 @@
       "loseWithJackpot": "$sender, you LOST! You now have $points $pointsName. Jackpot increased to $jackpot $jackpotName",
       "lose": "$sender, you LOST! You now have $points $pointsName",
       "currentJackpot": "$sender, current jackpot for $command is $points $pointsName",
+      "winJackpotCount": "$sender, you won $count jackpots",
       "jackpotIsDisabled": "$sender, jackpot is disabled for $command."
     }
   },
@@ -1210,8 +1178,8 @@
   "whisper": {
     "settings": {
       "disablePermissionWhispers": {
-        "true": "Bot won't send permissions insufficient errors",
-        "false": "Bot will send permissions insufficient errors through whispers"
+        "true": "Bot won't send errors on insufficient permissions",
+        "false": "Bot won't send errors on insufficient permissions through whispers"
       },
       "disableCooldownWhispers": {
         "true": "Bot won't send cooldown notifications",
@@ -1219,12 +1187,9 @@
       }
     }
   },
-  "phillipsHue": {
-    "list": "$sender, List of Phillips Hue connected lights: "
-  },
-  "time": "Current streamers time in his timezone is $time",
+  "time": "Current time in streamer's timezone is $time",
   "subs": "$sender, there is currently $onlineSubCount online subscribers. Last sub/resub was $lastSubUsername $lastSubAgo",
-  "followers": "$sender, there is currently $onlineFollowersCount online followers. Last follow was $lastFollowUsername $lastFollowAgo",
+  "followers": "$sender, last follow was $lastFollowUsername $lastFollowAgo",
   "ignore": {
     "user": {
       "is": {

@@ -1,7 +1,6 @@
 {
   "widget": {
-    "subscribers-luck": "Glück der Abonnenten",
-    "followers-luck": "Glück der Follower"
+    "subscribers-luck": "Glück der Abonnenten"
   },
   "settings": {
     "enabled": "Status",
@@ -19,11 +18,11 @@
     },
     "allowOverTicketing": {
       "title": "Überschreitung der maximalen Tickets erlauben",
-      "help": "Erlaube dem Benutzer, mit mehr Tickets an der Verlosung teilzunehmen. Ein Benutzer hat z.B. 10 Tickets, kann aber mit !raffle 100 teilnehmen, wobei alle seine Tickets verwendet werden."
+      "help": "Allow user to join raffle by over ticketing their points. E.g. user has 10 points but can write !raffle 100 which will use all of their points."
     },
     "raffleAnnounceInterval": {
       "title": "Intervall ankündigen",
-      "help": "in Minuten"
+      "help": "Minuten"
     },
     "raffleAnnounceMessageInterval": {
       "title": "Nachrichtenintervall ankündigen",
@@ -31,10 +30,6 @@
     },
     "subscribersPercent": {
       "title": "Zusätzliches Glück der Abonnenten",
-      "help": "in Prozent"
-    },
-    "followersPercent": {
-      "title": "Zusätzliches Glück der Follower",
       "help": "in Prozent"
     }
   }

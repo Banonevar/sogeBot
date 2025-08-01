@@ -1,37 +1,37 @@
 /* global describe it beforeEach */
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const assert = require('assert');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import assert from 'assert';
 
-const { defaultPermissions,check } = require('../../../dest/helpers/permissions/');
-const { invalidateParserCache } = require('../../../dest/helpers/cache');
-const Parser = require('../../../dest/parser').default;
-const currency = require('../../../dest/currency').default;
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
+import { check } from '../../../dest/helpers/permissions/check.js';
+import { Parser } from '../../../dest/parser.js';
+const currency = (await import('../../../dest/currency.js')).default;
 
-const { getRepository } = require('typeorm');
-const { Permissions, PermissionCommands } = require('../../../dest/database/entity/permissions');
-const { User } = require('../../../dest/database/entity/user');
+import { Permissions, PermissionCommands } from '../../../dest/database/entity/permissions.js';
+import { User } from '../../../dest/database/entity/user.js';
+import { AppDataSource } from '../../../dest/database.js';
 
 const users = [
-  { username: '__viewer__', userId: String(6), id: 6 },
-  { username: '__excluded_viewer__', userId: String(7), id: 7 },
+  { userName: '__viewer__', userId: String(6), id: 6 },
+  { userName: '__excluded_viewer__', userId: String(7), id: 7 },
 ];
 
-describe('Permissions - https://community.sogebot.xyz/t/spotify-user-banlist/192 - exclude user from permission', () => {
+describe('Permissions - https://community.sogebot.xyz/t/spotify-user-banlist/192 - exclude user from permission - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
 
     for (const u of users) {
-      await getRepository(User).save(u);
+      await AppDataSource.getRepository(User).save(u);
     }
   });
 
   it('Add permission with excluded __excluded_viewer__', async () => {
-    await getRepository(Permissions).save({
+    await AppDataSource.getRepository(Permissions).save({
       id: 'bbaac669-923f-4063-99e3-f8004b34dac3',
       name: '__permission_with_excluded_user__',
       order: Object.keys(defaultPermissions).length + 1,
@@ -41,21 +41,22 @@ describe('Permissions - https://community.sogebot.xyz/t/spotify-user-banlist/192
       userIds: [],
       excludeUserIds: ['7'],
       filters: [],
+      scopes: [],
     });
   });
 
   for (let j = 0; j < users.length; j++) {
     const user = users[j];
     const pHash = 'bbaac669-923f-4063-99e3-f8004b34dac3';
-    if (user.username === '__viewer__') {
+    if (user.userName === '__viewer__') {
       // have access
-      it(`+++ ${users[j].username} should have access to __permission_with_excluded_user__`, async () => {
+      it(`+++ ${users[j].userName} should have access to __permission_with_excluded_user__`, async () => {
         const _check = await check(user.userId, pHash);
         assert.strictEqual(_check.access, true);
       });
     } else {
       // no access
-      it(`--- ${users[j].username} should NOT have access to __permission_with_excluded_user__`, async () => {
+      it(`--- ${users[j].userName} should NOT have access to __permission_with_excluded_user__`, async () => {
         const _check = await check(user.userId, pHash);
         assert.strictEqual(_check.access, false);
       });

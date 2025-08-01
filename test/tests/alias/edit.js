@@ -1,16 +1,12 @@
-/* global describe it beforeEach */
-require('../../general.js');
+import { db, message } from '../../general.js';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-
-const { defaultPermissions } = require('../../../dest/helpers/permissions/');
-const alias = (require('../../../dest/systems/alias')).default;
-const assert = require('assert');
-const { prepare } = (require('../../../dest/helpers/commons/prepare'));
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
+import alias from '../../../dest/systems/alias.js';
+import assert from 'assert';
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
 
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
 const parseFailedTests = [
   { permission: null, alias: null, command: null },
@@ -25,27 +21,27 @@ const notFoundTests = [
 const successTests = [
   {
     from: { permission: defaultPermissions.VIEWERS, alias: '!a', command: '!me' },
-    to: { permission: defaultPermissions.VIEWERS, alias: '!a', command: '!uptime' },
+    to:   { permission: defaultPermissions.VIEWERS, alias: '!a', command: '!uptime' },
   },
   {
     from: { permission: 'casters', alias: '!a', command: '!me' },
-    to: { permission: defaultPermissions.VIEWERS, alias: '!a', command: '!uptime' },
+    to:   { permission: defaultPermissions.VIEWERS, alias: '!a', command: '!uptime' },
   },
   {
     from: { permission: defaultPermissions.VIEWERS, alias: '!a', command: '!me' },
-    to: { permission: 'moderators', alias: '!a', command: '!uptime' },
+    to:   { permission: 'moderators', alias: '!a', command: '!uptime' },
   },
   {
     from: { permission: defaultPermissions.VIEWERS, alias: '!한국어', command: '!me' },
-    to: { permission: defaultPermissions.VIEWERS, alias: '!한국어', command: '!uptime' },
+    to:   { permission: defaultPermissions.VIEWERS, alias: '!한국어', command: '!uptime' },
   },
   {
     from: { permission: defaultPermissions.VIEWERS, alias: '!русский', command: '!me' },
-    to: { permission: defaultPermissions.VIEWERS, alias: '!русский', command: '!uptime' },
+    to:   { permission: defaultPermissions.VIEWERS, alias: '!русский', command: '!uptime' },
   },
   {
     from: { permission: defaultPermissions.VIEWERS, alias: '!a with spaces', command: '!me' },
-    to: { permission: defaultPermissions.VIEWERS, alias: '!a with spaces', command: '!uptime' },
+    to:   { permission: defaultPermissions.VIEWERS, alias: '!a with spaces', command: '!uptime' },
   },
 ];
 
@@ -56,7 +52,7 @@ function generateCommand(opts) {
   return [p, a, c].join(' ');
 }
 
-describe('Alias - edit()', () => {
+describe('Alias - @func1 - edit()', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();

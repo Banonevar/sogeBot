@@ -1,22 +1,19 @@
 /* global describe it before */
 
-const { v4: uuidv4 } = require('uuid');
+import _ from 'lodash-es';
+import { AppDataSource } from '../../../dest/database.js';
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const time = require('../../general.js').time;
-const user = require('../../general.js').user;
-const _ = require('lodash');
+import { Event } from '../../../dest/database/entity/event.js';
+import { User } from '../../../dest/database/entity/user.js';
+import events from '../../../dest/events.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import { time } from '../../general.js';
+import { user } from '../../general.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const { Event } = require('../../../dest/database/entity/event');
-
-const events = (require('../../../dest/events')).default;
-
-describe('Events - follow event', () => {
+describe('Events - follow event - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -25,41 +22,38 @@ describe('Events - follow event', () => {
 
   describe('#1370 - Second follow event didn\'t trigger event ', function () {
     before(async function () {
-      const event = {};
-      event.id = uuidv4();
-      event.name = 'follow';
-      event.givenName = 'Follow alert';
-      event.triggered = {};
-      event.definitions = {};
-      event.filter = '';
-      event.isEnabled = true;
-      event.operations = [{
-        name: 'emote-explosion',
-        definitions: {
-          emotesToExplode: 'purpleHeart <3',
-        },
+      const ev = new Event();
+      ev.event = {
+        definitions: {},
+        triggered:{},
+        name: 'follow',
+      };
+      ev.givenName = 'Follow alert';
+      ev.filter = '';
+      ev.isEnabled = true;
+      ev.operations = [{
+        name:        'emote-explosion',
+        definitions: { emotesToExplode: 'purpleHeart <3' },
       }, {
-        name: 'run-command',
+        name:        'run-command',
         definitions: {
-          commandToRun: '!duel',
+          commandToRun:   '!duel',
           isCommandQuiet: true,
         },
       }, {
-        name: 'send-chat-message',
-        definitions: {
-          messageToSend: 'Diky za follow, $username!',
-        },
+        name:        'send-chat-message',
+        definitions: { messageToSend: 'Diky za follow, $username!' },
       }];
-      await getRepository(Event).save(event);
+      await ev.save();
     });
 
     for (const follower of [user.viewer, user.viewer2, user.viewer3]) {
       it('trigger follow event', async () => {
-        await events.fire('follow', { username: follower.username, userId: follower.userId, webhooks: _.random(1) === 1 });
+        await events.fire('follow', { userName: follower.userName, userId: follower.userId });
       });
 
       it('message should be send', async () => {
-        await message.isSentRaw(`Diky za follow, @${follower.username}!`, { username: follower.username });
+        await message.isSentRaw(`Diky za follow, @${follower.userName}!`, { userName: follower.userName });
       });
 
       it('wait 5s', async () => {

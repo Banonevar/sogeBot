@@ -1,23 +1,22 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* global describe it before */
 
-const { v4: uuidv4 } = require('uuid');
+/* global  */
 
-require('../../general.js');
-const log = require('../../../dest/helpers/log');
+import assert from 'assert';
 
-const assert = require('assert');
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const time = require('../../general.js').time;
+import('../../general.js');
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const { Event } = require('../../../dest/database/entity/event');
+import { AppDataSource } from '../../../dest/database.js';
 
-const events = (require('../../../dest/events')).default;
+import { Event } from '../../../dest/database/entity/event.js';
+import { User } from '../../../dest/database/entity/user.js';
+import events from '../../../dest/events.js';
+import * as log from '../../../dest/helpers/log.js';
+import * as changelog from '../../../dest/helpers/user/changelog.js';
+import { time } from '../../general.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-describe('Events - tip event', () => {
+describe('Events - tip event - @func3', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -25,37 +24,40 @@ describe('Events - tip event', () => {
 
   describe('#2219 - Give points on tip not working', function () {
     before(async function () {
-      await getRepository(Event).save({
-        id: uuidv4(),
-        name: 'tip',
-        givenName: 'Tip alert',
-        triggered: {},
+      const ev = new Event();
+      ev.event = {
         definitions: {},
-        filter: '',
-        isEnabled: true,
-        operations: [{
-          name: 'run-command',
-          definitions: {
-            isCommandQuiet: true,
-            commandToRun: '!points add $username (math.$amount*10)',
-          },
-        }],
-      });
+        triggered:{},
+        name: 'tip',
+      };
+      ev.givenName = 'Tip alert';
+      ev.filter = '';
+      ev.isEnabled = true;
+      ev.operations = [{
+        name:        'run-command',
+        definitions: {
+          isCommandQuiet: true,
+          commandToRun:   '!points add $username (math.$amount*10)',
+        },
+      }];
+      await ev.save();
 
-      for (const user of ['losslezos', 'rigneir', 'mikasa_hraje', 'foufhs']) {
-        await getRepository(User).save({ username: user, userId: String(Math.floor(Math.random() * 100000)) });
+      for (const [idx, user] of ['losslezos', 'rigneir', 'mikasa_hraje', 'foufhs'].entries()) {
+        await AppDataSource.getRepository(User).save({ userName: user, userId: String(idx * 100000) });
       }
     });
 
-    for (const username of ['losslezos', 'rigneir', 'mikasa_hraje', 'foufhs']) {
+    for (const [idx, username] of ['losslezos', 'rigneir', 'mikasa_hraje', 'foufhs'].entries()) {
       describe(username + ' tip event', () => {
         it('trigger tip event for 10 EUR - ' + username, async () => {
           log.tip(`${username}, amount: 10.00EUR, message: Ahoj jak je`);
-          events.fire('tip', { userId: String(Math.floor(Math.random * 100000)), username: username, amount: 10.00, message: 'Ahoj jak je', currency: 'EUR' });
+          events.fire('tip', {
+            userId: String(idx * 100000), userName: username, amount: 10.00, message: 'Ahoj jak je', currency: 'EUR',
+          });
         });
 
         it('wait 1s', async () => {
-          await time.waitMs(1000);
+          await time.waitMs(5000);
         });
 
         it('we are not expecting any messages to be sent - quiet mode', async () => {
@@ -63,7 +65,8 @@ describe('Events - tip event', () => {
         });
 
         it('user should have 100 points', async () => {
-          const user = await getRepository(User).findOne({ username });
+          await changelog.flush();
+          const user = await AppDataSource.getRepository(User).findOneBy({ userName: username });
           assert.strict.equal(user.points, 100);
         });
       });

@@ -1,107 +1,100 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const chalk = require('chalk');
+import chalk from 'chalk';
 
-const { debug } = require('../../dest/helpers/log');
-const waitMs = require('./time').waitMs;
-const { getIsDbConnected, getIsBotStarted } = require('../../dest/helpers/database');
+// eslint-disable-next-line import/order
+import { debug } from '../../dest/helpers/log.js';
+// eslint-disable-next-line import/order
+import { waitMs } from './time.js';
 
-const { getManager, getRepository } = require('typeorm');
-const { Alias } = require('../../dest/database/entity/alias');
-const { Cooldown, CooldownViewer } = require('../../dest/database/entity/cooldown');
-const { Bets, BetsParticipations } = require('../../dest/database/entity/bets');
-const { Commands, CommandsCount, CommandsResponses } = require('../../dest/database/entity/commands');
-const { Keyword } = require('../../dest/database/entity/keyword');
-const { Quotes } = require('../../dest/database/entity/quotes');
-const { User, UserTip, UserBit } = require('../../dest/database/entity/user');
-const { ModerationPermit } = require('../../dest/database/entity/moderation');
-const { Raffle, RaffleParticipant } = require('../../dest/database/entity/raffle');
-const { Price } = require('../../dest/database/entity/price');
-const { Rank } = require('../../dest/database/entity/rank');
-const { Timer, TimerResponse } = require('../../dest/database/entity/timer');
-const { Poll, PollVote } = require('../../dest/database/entity/poll');
-const { PointsChangelog } = require('../../dest/database/entity/points');
-const { Duel } = require('../../dest/database/entity/duel');
-const { Variable, VariableHistory, VariableURL } = require('../../dest/database/entity/variable');
-const { Event, EventOperation } = require('../../dest/database/entity/event');
-const { PermissionCommands } = require('../../dest/database/entity/permissions');
-const { SongRequest } = require('../../dest/database/entity/song');
-const { EventList } = require('../../dest/database/entity/eventList');
-const { HeistUser } = require('../../dest/database/entity/heist')
+import { Alias, AliasGroup } from '../../dest/database/entity/alias.js';
+import { Commands, CommandsCount, CommandsGroup } from '../../dest/database/entity/commands.js';
+import { Cooldown } from '../../dest/database/entity/cooldown.js';
+import { DiscordLink } from '../../dest/database/entity/discord.js';
+import { Duel } from '../../dest/database/entity/duel.js';
+import { Event } from '../../dest/database/entity/event.js';
+import { EventList } from '../../dest/database/entity/eventList.js';
+import { HeistUser } from '../../dest/database/entity/heist.js';
+import { Keyword, KeywordGroup } from '../../dest/database/entity/keyword.js';
+import { ModerationPermit } from '../../dest/database/entity/moderation.js';
+import { PermissionCommands } from '../../dest/database/entity/permissions.js';
+import { PointsChangelog } from '../../dest/database/entity/points.js';
+import { Price } from '../../dest/database/entity/price.js';
+import { Quotes } from '../../dest/database/entity/quotes.js';
+import { Raffle, RaffleParticipant } from '../../dest/database/entity/raffle.js';
+import { Rank } from '../../dest/database/entity/rank.js';
+import { Settings } from '../../dest/database/entity/settings.js';
+import { SongRequest } from '../../dest/database/entity/song.js';
+import { Timer, TimerResponse } from '../../dest/database/entity/timer.js';
+import { User, UserTip, UserBit } from '../../dest/database/entity/user.js';
+import { Variable } from '../../dest/database/entity/variable.js';
+import { getIsDbConnected, getIsBotStarted } from '../../dest/helpers/database.js';
+import emitter from '../../dest/helpers/interfaceEmitter.js';
+import translation from '../../dest/translations.js';
+import { AppDataSource } from '../../dest/database.js';
 
-const { invalidateParserCache } = require('../../dest/helpers/cache');
-const translation = (require('../../dest/translate')).default;
+export const cleanup = async () => {
+  const waitForIt = async (resolve, reject) => {
+    if (!getIsBotStarted() || !translation.isLoaded || !getIsDbConnected()) {
+      debug('test', `Bot is not yet started, waiting 100ms, bot: ${getIsBotStarted()} | db: ${getIsDbConnected()} | translation: ${translation.isLoaded}`);
+      return setTimeout(() => waitForIt(resolve, reject), 100);
+    } else {
+      debug('test', `Bot is started`);
+    }
 
-let initialCleanup = true;
+    const permissions = (await import('../../dest/permissions.js')).default;
+    const changelog = (await import('../../dest/helpers/user/changelog.js'));
 
-module.exports = {
-  cleanup: async function () {
-    const waitForIt = async (resolve, reject) => {
-      if (!getIsBotStarted() || !translation.isLoaded || !getIsDbConnected()) {
-        debug('test', `Bot is not yet started, waiting 1s, bot: ${getIsBotStarted()} | db: ${getIsDbConnected()} | translation: ${translation.isLoaded}`);
-        return setTimeout(() => waitForIt(resolve, reject), 1000);
-      } else {
-        debug('test', `Bot is started`);
-        if (initialCleanup) {
-          await waitMs(30000);
-          console.log('=============== Initial 30s wait until tests are started. =============== ');
-          initialCleanup = false;
-        }
+    debug('test', chalk.bgRed('*** Cleaning up collections ***'));
+    await changelog.flush();
+    await waitMs(1000); // wait little bit for transactions to be done
+
+    const entities = [Settings, AliasGroup, CommandsGroup, KeywordGroup, HeistUser, EventList, PointsChangelog, SongRequest, RaffleParticipant, Rank, PermissionCommands, Event, Variable, Raffle, Duel, TimerResponse, Timer, UserTip, UserBit, User, ModerationPermit, Alias, Commands, CommandsCount, Quotes, Cooldown, Keyword, Price, DiscordLink];
+    if (['postgres', 'mysql'].includes(AppDataSource.options.type)) {
+      const metadatas = [];
+      for (const entity of entities) {
+        metadatas.push(AppDataSource.getMetadata(entity));
       }
 
-      const oauth = (require('../../dest/oauth')).default;
-      const tmi = (require('../../dest/tmi')).default;
-      const permissions = (require('../../dest/permissions')).default;
-
-      debug('test', chalk.bgRed('*** Cleaning up collections ***'));
-      await waitMs(400); // wait little bit for transactions to be done
-
-      const entities = [HeistUser, EventList, PointsChangelog, SongRequest, RaffleParticipant, Rank, PermissionCommands, Event, EventOperation, Variable, VariableHistory, VariableURL, Raffle, Duel, PollVote, Poll, TimerResponse, Timer, BetsParticipations, UserTip, UserBit, CommandsResponses, User, ModerationPermit, Alias, Bets, Commands, CommandsCount, Quotes, Cooldown, CooldownViewer, Keyword, Price];
-      if (['postgres', 'mysql'].includes((await getManager()).connection.options.type)) {
-        const metadatas = [];
-        for (const entity of entities) {
-          metadatas.push((await getManager()).connection.getMetadata(entity));
+      await AppDataSource.transaction(async transactionalEntityManager => {
+        if (['mysql'].includes(AppDataSource.options.type)) {
+          await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=0;');
         }
+        for (const metadata of metadatas) {
+          debug('test', chalk.bgRed(`*** Cleaning up ${metadata.tableName} ***`));
 
-        await getManager().transaction(async transactionalEntityManager => {
-          if (['mysql'].includes((await getManager()).connection.options.type)) {
-            await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=0;');
+          if (['mysql'].includes(AppDataSource.options.type)) {
+            await transactionalEntityManager.query(`DELETE FROM \`${metadata.tableName}\` WHERE 1=1`);
+          } else {
+            await transactionalEntityManager.query(`DELETE FROM "${metadata.tableName}" WHERE 1=1`);
           }
-          for (const metadata of metadatas) {
-            if (['mysql'].includes((await getManager()).connection.options.type)) {
-              await transactionalEntityManager.query(`TRUNCATE TABLE ${metadata.tableName}`);
-            } else {
-              await transactionalEntityManager.query(`TRUNCATE "${metadata.tableName}" CASCADE`);
-            }
-          }
-          if (['mysql'].includes((await getManager()).connection.options.type)) {
-            await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=1;');
-          }
-        });
-      } else {
-        for (const entity of entities) {
-          await getRepository(entity).clear();
         }
+        if (['mysql'].includes(AppDataSource.options.type)) {
+          await transactionalEntityManager.query('SET FOREIGN_KEY_CHECKS=1;');
+        }
+      });
+    } else {
+      for (const entity of entities) {
+        await AppDataSource.getRepository(entity).clear();
       }
+    }
 
-      debug('test', chalk.bgRed('*** Cleaned successfully ***'));
+    debug('test', chalk.bgRed('*** Cleaned successfully ***'));
 
-      await permissions.ensurePreservedPermissionsInDb(); // re-do core permissions
+    await permissions.ensurePreservedPermissionsInDb(); // re-do core permissions
 
-      oauth.generalChannel = '__broadcaster__';
-      oauth.generalOwners = ['__broadcaster__', '__owner__'];
-      oauth.broadcasterUsername = 'broadcaster';
-      oauth.botUsername = 'bot';
-      oauth.botId = '12345';
+    // set owner as broadcaster
+    emitter.emit('set', '/services/twitch', 'broadcasterUsername', '__broadcaster__');
+    emitter.emit('set', '/services/twitch', 'botUsername', '__bot__');
+    emitter.emit('set', '/services/twitch', 'botId', '12345');
+    emitter.emit('set', '/services/twitch', 'broadcasterId', '54321');
+    emitter.emit('set', '/services/twitch', 'generalOwners', ['__broadcaster__', '__owner__']);
+    emitter.emit('set', '/services/twitch', 'ignorelist', []);
+    emitter.emit('set', '/services/twitch', 'sendAsReply', true);
 
-      oauth.broadcasterId = '54321';
-      tmi.ignorelist = [];
+    resolve();
+  };
 
-      invalidateParserCache();
-      resolve();
-    };
-    return new Promise((resolve, reject) => {
-      debug('test', chalk.bgRed('cleanup init'));
-      waitForIt(resolve, reject);
-    });
-  },
-};
+  return new Promise((resolve, reject) => {
+    debug('test', chalk.bgRed('cleanup init'));
+    waitForIt(resolve, reject);
+  });
+}

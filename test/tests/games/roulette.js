@@ -1,29 +1,28 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* global describe it before */
 
-require('../../general.js');
+/* global */
 
-const assert = require('assert');
+import('../../general.js');
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
+import assert from 'assert';
 
-const { User } = require('../../../dest/database/entity/user');
-const roulette = (require('../../../dest/games/roulette')).default;
-const points = (require('../../../dest/systems/points')).default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
+import _ from 'lodash-es';
+import { AppDataSource } from '../../../dest/database.js';
+
+import { User } from '../../../dest/database/entity/user.js';
+import roulette from '../../../dest/games/roulette.js';
+import * as changelog from '../../../dest/helpers/user/changelog.js';
+import points from '../../../dest/systems/points.js';
+import { db, message, user } from '../../general.js';
 
 const tests = [
-  { user: { username: 'user1', userId: String(_.random(999999, false)) } },
+  { user: { userName: 'user1', userId: String(_.random(999999, false)) } },
   { user: user.owner },
   { user: user.mod },
 ];
 
-describe('game/roulette - !roulette', () => {
+describe('game/roulette - !roulette - @func3', () => {
   for (const test of tests) {
-    describe(`${test.user.username} uses !roulette`, async () => {
+    describe(`${test.user.userName} uses !roulette`, async () => {
       let r;
       before(async () => {
         await db.cleanup();
@@ -31,15 +30,15 @@ describe('game/roulette - !roulette', () => {
         await user.prepare();
       });
 
-      it(`${test.user.username} starts roulette`, async () => {
+      it(`${test.user.userName} starts roulette`, async () => {
         r = await roulette.main({ sender: test.user });
       });
 
-      if (user.mod.username === test.user.username) {
+      if (user.mod.userName === test.user.userName) {
         it('Expecting mod message', async () => {
-          assert(r[1].response === '$sender is incompement and completely missed his head!', JSON.stringify({ r }, null, 2));
+          assert(r[1].response === '$sender is incompetent and completely missed his head!', JSON.stringify({ r }, null, 2));
         });
-      } else if (user.owner.username === test.user.username) {
+      } else if (user.owner.userName === test.user.userName) {
         it('Expecting owner message', async () => {
           assert(r[1].response === '$sender is using blanks, boo!', JSON.stringify({ r }, null, 2));
         });
@@ -48,7 +47,7 @@ describe('game/roulette - !roulette', () => {
           const msg1 = '$sender is alive! Nothing happened.';
           const msg2 = '$sender\'s brain was splashed on the wall!';
           assert(r[1].response === msg1 || r[1].response === msg2, JSON.stringify({
-            r, msg1, msg2, 
+            r, msg1, msg2,
           }, null, 2));
         });
       }
@@ -59,7 +58,7 @@ describe('game/roulette - !roulette', () => {
     before(async () => {
       await db.cleanup();
       await message.prepare();
-      await getRepository(User).save(tests[0].user);
+      await AppDataSource.getRepository(User).save(tests[0].user);
     });
 
     it(`set lose value to 100`, () => {
@@ -78,7 +77,8 @@ describe('game/roulette - !roulette', () => {
     });
 
     it(`User should not have negative points`, async () => {
-      const user1 = await getRepository(User).findOne({ userId: tests[0].user.userId });
+      await changelog.flush();
+      const user1 = await AppDataSource.getRepository(User).findOneBy({ userId: tests[0].user.userId });
       assert.strictEqual(user1.points, 0);
     });
   });
@@ -95,7 +95,7 @@ describe('game/roulette - !roulette', () => {
         roulette.winnerWillGet = 0;
       });
 
-      it(`${user.viewer.username} starts roulettes and we wait for win`, async () => {
+      it(`${user.viewer.userName} starts roulettes and we wait for win`, async () => {
         let r = '';
         while (r !== '$sender is alive! Nothing happened.') {
           const responses = await roulette.main({ sender: user.viewer });
@@ -114,15 +114,15 @@ describe('game/roulette - !roulette', () => {
         await message.prepare();
         await user.prepare();
         roulette.loserWillLose = 100;
-        await getRepository(User).save({
-          userId: user.viewer.userId, username: user.viewer.username, points: 100, 
+        await AppDataSource.getRepository(User).save({
+          userId: user.viewer.userId, userName: user.viewer.userName, points: 100,
         });
       });
       after(() => {
         roulette.loserWillLose = 0;
       });
 
-      it(`${user.viewer.username} starts roulettes and we wait for lose`, async () => {
+      it(`${user.viewer.userName} starts roulettes and we wait for lose`, async () => {
         let r = '';
         while (r !== '$sender\'s brain was splashed on the wall!') {
           const responses = await roulette.main({ sender: user.viewer });

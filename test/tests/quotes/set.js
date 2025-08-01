@@ -1,20 +1,20 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const assert = require('assert');
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
+import { message } from '../../general.js';
 
-const { getManager } = require('typeorm');
-const { Quotes } = require('../../../dest/database/entity/quotes');
+import { Quotes } from '../../../dest/database/entity/quotes.js';
 
-const quotes = (require('../../../dest/systems/quotes')).default;
+import quotes from '../../../dest/systems/quotes.js'
 
 // users
-const owner = { username: '__broadcaster__', userId: 1 };
+const owner = { userName: '__broadcaster__', userId: 1 };
 
 const tests = [
   { sender: owner, parameters: '', shouldFail: true },
@@ -28,7 +28,8 @@ const tests = [
   { sender: owner, parameters: '-tag ipsum, dolor -id 99999', id: 99999, tags: 'ipsum, dolor', shouldFail: false, exist: false },
 ];
 
-describe('Quotes - set()', () => {
+let id;
+describe('Quotes - set() - @func3', () => {
   for (const test of tests) {
     describe(test.parameters, async () => {
       before(async () => {
@@ -56,7 +57,7 @@ describe('Quotes - set()', () => {
             assert.strictEqual(responses[0].response, `$sender, quote ${id} tags were set. (tags: ${test.tags})`);
           });
           it('Tags should be changed', async () => {
-            const item = await getManager()
+            const item = await AppDataSource
               .createQueryBuilder()
               .select('quote')
               .from(Quotes, 'quote')
@@ -69,13 +70,13 @@ describe('Quotes - set()', () => {
             assert.strictEqual(responses[0].response, `$sender, quote ${test.id} was not found.`);
           });
           it('Quote should not be created', async () => {
-            const item = await getManager()
+            const item = await AppDataSource
               .createQueryBuilder()
               .select('quote')
               .from(Quotes, 'quote')
               .where('id = :id', { id: test.id })
               .getOne();
-            assert(typeof item === 'undefined');
+            assert(item === null);
           });
         }
       }

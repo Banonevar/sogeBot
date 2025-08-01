@@ -1,9 +1,10 @@
+.commit
 node_modules
+package-lock.json
 heap
 heap-*.csv
 logs/*
 dest/*
-yarn.lock
 *.zip
 db/
 *.db
@@ -23,3 +24,5 @@ public/*.html
 sogeBot-master/
 coverage/
 .nyc_output
+
+src/.cache/

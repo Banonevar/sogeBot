@@ -1,8 +1,8 @@
 {
   "addGoalGroup": "Aggiungi Gruppo Obiettivi",
   "addGoal": "Aggiungi Obiettivo",
-  "newGoal": "nuovo Obiettivo",
-  "newGoalGroup": "nuovo Gruppo Obiettivo",
+  "newGoal": "New Goal",
+  "newGoalGroup": "New Goal Group",
   "goals": "Obiettivi",
   "general": "Generale",
   "display": "Visualizza",
@@ -49,13 +49,10 @@
       "title": "Tipo"
     },
     "nameGroup": {
-      "title": "Nome di questo gruppo di obiettivi",
-      "placeholder": "Imposta il nome di questo gruppo di obiettivi",
-      "help": "Se mantenuto vuoto, il nome verrà generato in modo casuale"
+      "title": "Nome di questo gruppo di obiettivi"
     },
     "name": {
-      "title": "Nome di questo gruppo di obiettivi",
-      "placeholder": "Imposta il nome di questo gruppo di obiettivi"
+      "title": "Nome di questo gruppo di obiettivi"
     },
     "displayAs": {
       "title": "Visualizza come",
@@ -75,6 +72,9 @@
       "title": "Durata animazione in uscita",
       "help": "Questo valore è in millisecondi",
       "placeholder": "Imposta durata dell'animazione in uscita"
+    },
+    "interval": {
+      "title": "Quale intervallo contare"
     },
     "spaceBetweenGoalsInPx": {
       "title": "Spazio tra gli obiettivi",

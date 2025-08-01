@@ -1,21 +1,18 @@
-/* global describe it before */
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js'
 
-const assert = require('assert');
+import { User } from '../../../dest/database/entity/user.js';
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import eventlist from '../../../dest/overlays/eventlist.js';
+import twitch from '../../../dest/services/twitch.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
+import { time } from '../../general.js';
+import { user } from '../../general.js';
 
-const { getRepository } = require('typeorm');
+import('../../general.js');
 
-const { User } = require('../../../dest/database/entity/user');
-const { prepare } = require('../../../dest/helpers/commons/prepare');
-const eventlist = (require('../../../dest/overlays/eventlist')).default;
-const twitch = (require('../../../dest/twitch')).default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const time = require('../../general.js').time;
-const user = require('../../general.js').user;
-
-require('../../general.js');
-
-describe('lib/twitch - followers()', () => {
+describe('lib/twitch - followers() - @func1', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -24,8 +21,8 @@ describe('lib/twitch - followers()', () => {
 
   it('Set user.viewer, user.viewer2, user.viewer3 as followers', async () => {
     for (const u of [user.viewer, user.viewer2, user.viewer3]) {
-      await getRepository(User).save({
-        userId: u.userId, username: u.username, isFollower: true, 
+      await AppDataSource.getRepository(User).save({
+        userId: u.userId, userName: u.userName,
       });
     }
   });
@@ -49,9 +46,8 @@ describe('lib/twitch - followers()', () => {
   it('!followers should return user.viewer2', async () => {
     const r = await twitch.followers({ sender: user.viewer });
     assert.strictEqual(r[0].response, prepare('followers', {
-      lastFollowAgo:        'a few seconds ago',
-      lastFollowUsername:   user.viewer2.username,
-      onlineFollowersCount: 0,
+      lastFollowAgo:      'a few seconds ago',
+      lastFollowUsername: user.viewer2.userName,
     }));
   });
 
@@ -66,22 +62,8 @@ describe('lib/twitch - followers()', () => {
   it('!followers should return user.viewer3', async () => {
     const r = await twitch.followers({ sender: user.viewer });
     assert.strictEqual(r[0].response, prepare('followers', {
-      lastFollowAgo:        'a few seconds ago',
-      lastFollowUsername:   user.viewer3.username,
-      onlineFollowersCount: 0,
-    }));
-  });
-
-  it('Add user.viewer, user.viewer2, user.viewer3 to online users', async () => {
-    await getRepository(User).update({}, { isOnline: true });
-  });
-
-  it('!followers should return user.viewer3 and 3 online followers', async () => {
-    const r = await twitch.followers({ sender: user.viewer });
-    assert.strictEqual(r[0].response, prepare('followers', {
-      lastFollowAgo:        'a few seconds ago',
-      lastFollowUsername:   user.viewer3.username,
-      onlineFollowersCount: 3,
+      lastFollowAgo:      'a few seconds ago',
+      lastFollowUsername: user.viewer3.userName,
     }));
   });
 });

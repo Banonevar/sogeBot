@@ -1,15 +1,15 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message, url } from '../../general.js';
 
-const cooldown = (require('../../../dest/systems/cooldown')).default;
-const assert = require('assert');
+import cooldown from '../../../dest/systems/cooldown.js'
+import assert from 'assert';
 // users
-const owner = { username: '__broadcaster__' };
+const owner = { userName: '__broadcaster__' };
 
-describe('Cooldowns - set()', () => {
+describe('Cooldowns - set() - @func3', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
@@ -17,17 +17,17 @@ describe('Cooldowns - set()', () => {
 
   it('', async () => {
     const r = await cooldown.main({ sender: owner, parameters: '' });
-    assert.strictEqual(r[0].response, 'Usage => http://sogehige.github.io/sogeBot/#/_master/systems/cooldown');
+    assert.strictEqual(r[0].response, 'Usage => ' + url + '/systems/cooldowns');
   });
 
   it('!alias', async () => {
     const r = await cooldown.main({ sender: owner, parameters: '!alias' });
-    assert.strictEqual(r[0].response, 'Usage => http://sogehige.github.io/sogeBot/#/_master/systems/cooldown');
+    assert.strictEqual(r[0].response, 'Usage => ' + url + '/systems/cooldowns');
   });
 
   it('alias', async () => {
     const r = await cooldown.main({ sender: owner, parameters: 'alias' });
-    assert.strictEqual(r[0].response, 'Usage => http://sogehige.github.io/sogeBot/#/_master/systems/cooldown');
+    assert.strictEqual(r[0].response, 'Usage => ' + url + '/systems/cooldowns');
   });
 
   it('test global 20', async () => {
@@ -117,6 +117,6 @@ describe('Cooldowns - set()', () => {
 
   it('unset without param', async () => {
     const r = await cooldown.unset({ sender: owner, parameters: '' });
-    assert.strictEqual(r[0].response, 'Usage => http://sogehige.github.io/sogeBot/#/_master/systems/cooldown');
+    assert.strictEqual(r[0].response, 'Usage => ' + url + '/systems/cooldowns');
   });
 });

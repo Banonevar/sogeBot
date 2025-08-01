@@ -1,20 +1,20 @@
 /* global describe it beforeEach */
-require('../../general.js');
+import('../../general.js');
 
-const _ = require('lodash');
-const assert = require('assert');
+import _ from 'lodash-es'
+import assert from 'assert';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const customcommands = (require('../../../dest/systems/customcommands')).default;
-const { defaultPermissions } = require('../../../dest/helpers/permissions/');
+import customcommands from '../../../dest/systems/customcommands.js';
+import { defaultPermissions } from '../../../dest/helpers/permissions/defaultPermissions.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
+import { User } from '../../../dest/database/entity/user.js';
+import { AppDataSource } from '../../../dest/database.js';
 
 // users
-const owner = { username: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
+const owner = { userName: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
 
 const parseFailedTests = [
   { permission: null, command: null, rid: null, response: null },
@@ -51,12 +51,12 @@ function generateCommand(opts) {
   return [p, c, r, rid].join(' ');
 }
 
-describe('Custom Commands - edit()', () => {
+describe('Custom Commands - @func1 - edit()', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(User).save({ username: owner.username, userId: owner.userId });
+    await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId });
   });
 
   describe('Expected parsed fail', () => {

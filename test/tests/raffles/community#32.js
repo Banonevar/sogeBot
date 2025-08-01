@@ -1,26 +1,27 @@
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const assert = require('assert');
+import assert from 'assert';
 
-const _ = require('lodash');
-const { getRepository } = require('typeorm');
+import _ from 'lodash-es';
+import { IsNull } from 'typeorm';
+import { AppDataSource } from '../../../dest/database.js';
 
-const { Raffle } = require('../../../dest/database/entity/raffle');
-const { User } = require('../../../dest/database/entity/user');
-const { getOwnerAsSender } = require('../../../dest/helpers/commons/getOwnerAsSender');
-const raffles = (require('../../../dest/systems/raffles')).default;
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
+import { Raffle } from '../../../dest/database/entity/raffle.js';
+import { User } from '../../../dest/database/entity/user.js';
+import { getOwnerAsSender } from '../../../dest/helpers/commons/getOwnerAsSender.js';
+import raffles from '../../../dest/systems/raffles.js';
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
 const max = Math.floor(Number.MAX_SAFE_INTEGER / 10000000);
 
-const owner = { username: '__broadcaster__', userId: String(_.random(999999, false)) };
-const testuser = { username: 'testuser', userId: String(_.random(999999, false)) };
-const testuser2 = { username: 'testuser2', userId: String(_.random(999999, false)) };
+const owner = { userName: '__broadcaster__', userId: String(_.random(999999, false)) };
+const testuser = { userName: 'testuser', userId: String(_.random(999999, false)) };
+const testuser2 = { userName: 'testuser2', userId: String(_.random(999999, false)) };
 
-describe('/t/raffle-owner-can-join-raffle-more-then-1-time/32', () => {
+describe('/t/raffle-owner-can-join-raffle-more-then-1-time/32 - @func2', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
@@ -28,7 +29,7 @@ describe('/t/raffle-owner-can-join-raffle-more-then-1-time/32', () => {
 
   it('create normal raffle', async () => {
     raffles.open({ sender: owner, parameters: '!winme' });
-    await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme". Raffle is opened for everyone.', { username: 'bot' });
+    await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme". Raffle is opened for everyone.', { userName: '__bot__' });
   });
 
   it('loop through owner participations', async () => {
@@ -39,9 +40,9 @@ describe('/t/raffle-owner-can-join-raffle-more-then-1-time/32', () => {
   });
 
   it('expecting only one participator', async () => {
-    const raffle = await getRepository(Raffle).findOne({
+    const raffle = await AppDataSource.getRepository(Raffle).findOne({
       relations: ['participants'],
-      where:     { winner: null, isClosed: false },
+      where:     { winner: IsNull(), isClosed: false },
     });
     assert(raffle.participants.length === 1);
   });

@@ -1,22 +1,20 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+
 /* global describe it before */
 
-require('../../general.js');
+import('../../general.js');
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
-const commons = require('../../../dest/commons');
+import { db, message, user } from '../../general.js';
+import * as commons from '../../../dest/commons.js'
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const { Raffle } = require('../../../dest/database/entity/raffle');
+import { User } from '../../../dest/database/entity/user.js';
+import { Raffle } from '../../../dest/database/entity/raffle.js';
 
-const raffles = (require('../../../dest/systems/raffles')).default;
+import raffles from '../../../dest/systems/raffles.js';
 
-const assert = require('assert');
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-describe('Raffles - allowOverTicketing', () => {
+describe('Raffles - allowOverTicketing - @func1', () => {
   describe('Disabled allowOverTicketing', () => {
     before(async () => {
       await db.cleanup();
@@ -27,11 +25,11 @@ describe('Raffles - allowOverTicketing', () => {
 
     it('create ticket raffle', async () => {
       raffles.open({ sender: user.owner, parameters: '!winme -min 0 -max 500' });
-      await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme <1-500>". Raffle is opened for everyone.', { username: 'bot' });
+      await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme <1-500>". Raffle is opened for everyone.', { userName: '__bot__' });
     });
 
     it('Update viewer to have 10 points', async () => {
-      await getRepository(User).save({ username: user.viewer.username, userId: user.viewer.userId, points: 10 });
+      await AppDataSource.getRepository(User).save({ userName: user.viewer.userName, userId: user.viewer.userId, points: 10 });
     });
 
     it('Viewer bets over 10 points', async () => {
@@ -40,7 +38,7 @@ describe('Raffles - allowOverTicketing', () => {
     });
 
     it('expecting 0 participant', async () => {
-      const raffle = await getRepository(Raffle).findOne({
+      const raffle = await AppDataSource.getRepository(Raffle).findOne({
         relations: ['participants'],
         where: { winner: null, isClosed: false },
       });
@@ -53,7 +51,7 @@ describe('Raffles - allowOverTicketing', () => {
     });
 
     it('expecting 1 participant', async () => {
-      const raffle = await getRepository(Raffle).findOne({
+      const raffle = await AppDataSource.getRepository(Raffle).findOne({
         relations: ['participants'],
         where: { winner: null, isClosed: false },
       });
@@ -61,7 +59,7 @@ describe('Raffles - allowOverTicketing', () => {
     });
 
     it('Participant bet 10 points', async () => {
-      const raffle = await getRepository(Raffle).findOne({
+      const raffle = await AppDataSource.getRepository(Raffle).findOne({
         relations: ['participants'],
         where: { winner: null, isClosed: false },
       });
@@ -83,11 +81,11 @@ describe('Raffles - allowOverTicketing', () => {
 
     it('create ticket raffle', async () => {
       raffles.open({ sender: user.owner, parameters: '!winme -min 0 -max 500' });
-      await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme <1-500>". Raffle is opened for everyone.', { username: 'bot' });
+      await message.isSentRaw('Raffle is running (0 entries). To enter type "!winme <1-500>". Raffle is opened for everyone.', { userName: '__bot__' });
     });
 
     it('Update viewer to have 10 points', async () => {
-      await getRepository(User).save({ username: user.viewer.username, userId: user.viewer.userId, points: 10 });
+      await AppDataSource.getRepository(User).save({ userName: user.viewer.userName, userId: user.viewer.userId, points: 10 });
     });
 
     it('Viewer bets over 10 points', async () => {
@@ -96,7 +94,7 @@ describe('Raffles - allowOverTicketing', () => {
     });
 
     it('expecting 1 participant', async () => {
-      const raffle = await getRepository(Raffle).findOne({
+      const raffle = await AppDataSource.getRepository(Raffle).findOne({
         relations: ['participants'],
         where: { winner: null, isClosed: false },
       });
@@ -104,7 +102,7 @@ describe('Raffles - allowOverTicketing', () => {
     });
 
     it('Participant bet 10 points', async () => {
-      const raffle = await getRepository(Raffle).findOne({
+      const raffle = await AppDataSource.getRepository(Raffle).findOne({
         relations: ['participants'],
         where: { winner: null, isClosed: false },
       });
@@ -117,7 +115,7 @@ describe('Raffles - allowOverTicketing', () => {
     });
 
     it('expecting 1 participant', async () => {
-      const raffle = await getRepository(Raffle).findOne({
+      const raffle = await AppDataSource.getRepository(Raffle).findOne({
         relations: ['participants'],
         where: { winner: null, isClosed: false },
       });
@@ -125,7 +123,7 @@ describe('Raffles - allowOverTicketing', () => {
     });
 
     it('Participant bet 10 points', async () => {
-      const raffle = await getRepository(Raffle).findOne({
+      const raffle = await AppDataSource.getRepository(Raffle).findOne({
         relations: ['participants'],
         where: { winner: null, isClosed: false },
       });

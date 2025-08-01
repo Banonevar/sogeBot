@@ -24,7 +24,7 @@
     "help": "Název proměnné musí být jedinečný, například $_wins, $_loses, $_top3",
     "placeholder": "Zadejte jedinečný název proměnné",
     "error": {
-      "isNotUnique": "Proměnná musí mít <strong>jedinečný</strong> název.",
+      "isNotUnique": "Proměnná musí mít jedinečný název.",
       "isEmpty": "Název proměnné nesmí být prázdný."
     }
   },
@@ -73,11 +73,7 @@
     "eval": "Skript"
   },
   "runEvery": {
-    "isUsed": "Při použití proměnné",
-    "seconds": "Vteřiny",
-    "minutes": "Minuty",
-    "hours": "Hodiny",
-    "days": "Dny"
+    "isUsed": "Při použití proměnné"
   }
 }
 

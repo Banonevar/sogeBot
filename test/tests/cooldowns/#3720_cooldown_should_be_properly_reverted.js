@@ -1,31 +1,22 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* global describe it before */
+import('../../general.js');
 
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js';
 
-require('../../general.js');
+import { Cooldown } from '../../../dest/database/entity/cooldown.js';
+import { Price } from '../../../dest/database/entity/price.js';
+import { User } from '../../../dest/database/entity/user.js';
+import { Parser } from '../../../dest/parser.js';
+import cooldown from '../../../dest/systems/cooldown.js'
+import { db, message, user, time } from '../../general.js';
 
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const { Cooldown } = require('../../../dest/database/entity/cooldown');
-const Parser = require('../../../dest/parser').default;
-const { Price } = require('../../../dest/database/entity/price');
-
-const assert = require('assert');
-
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-const user = require('../../general.js').user;
-const time = require('../../general.js').time;
-
-const cooldown = (require('../../../dest/systems/cooldown')).default;
-
-describe('Cooldowns - #3720 - global cooldown should be properly reverted', () => {
+describe('Cooldowns - @func3 - #3720 - global cooldown should be properly reverted', () => {
   before(async () => {
     await db.cleanup();
     await message.prepare();
     await user.prepare();
 
-    await getRepository(User).save({...user.viewer2, points: 100});
+    await AppDataSource.getRepository(User).save({ ...user.viewer2, points: 100 });
   });
 
   it('create cooldown on !me [global 60]', async () => {
@@ -35,7 +26,7 @@ describe('Cooldowns - #3720 - global cooldown should be properly reverted', () =
   });
 
   it('check if cooldown is created', async () => {
-    const item = await getRepository(Cooldown).findOne({ where: { name: '!me' } });
+    const item = await AppDataSource.getRepository(Cooldown).findOne({ where: { name: '!me' } });
     assert(item);
     timestamp = item.timestamp;
   });
@@ -46,13 +37,13 @@ describe('Cooldowns - #3720 - global cooldown should be properly reverted', () =
   });
 
   it('save timestamp', async () => {
-    const item = await getRepository(Cooldown).findOne({ where: { name: '!me' } });
+    const item = await AppDataSource.getRepository(Cooldown).findOne({ where: { name: '!me' } });
     assert(item);
     timestamp = item.timestamp;
   });
 
   it('add price for !me', async () => {
-    await getRepository(Price).save({ command: '!me', price: '100' });
+    await AppDataSource.getRepository(Price).save({ command: '!me', price: '100' });
   });
 
   it('wait 6s to cool off cooldown', async() => {
@@ -65,8 +56,8 @@ describe('Cooldowns - #3720 - global cooldown should be properly reverted', () =
   });
 
   it('cooldown should be reverted', async () => {
-    const item = await getRepository(Cooldown).findOne({ where: { name: '!me' } });
-    assert.strictEqual(item.timestamp, 0);
+    const item = await AppDataSource.getRepository(Cooldown).findOne({ where: { name: '!me' } });
+    assert.strictEqual(item.timestamp, new Date(0).toISOString());
   });
 
   it('testuser2 should have enough points', async () => {
@@ -76,9 +67,9 @@ describe('Cooldowns - #3720 - global cooldown should be properly reverted', () =
 
   let timestamp = 0;
   it('cooldown should be changed', async () => {
-    const item = await getRepository(Cooldown).findOne({ where: { name: '!me' } });
+    const item = await AppDataSource.getRepository(Cooldown).findOne({ where: { name: '!me' } });
     timestamp = item.timestamp;
-    assert(item.timestamp > 0);
+    assert(new Date(item.timestamp).getTime() > 0);
   });
 
   it('testuser2 should not have enough points', async () => {
@@ -87,7 +78,7 @@ describe('Cooldowns - #3720 - global cooldown should be properly reverted', () =
   });
 
   it('cooldown should be not changed (still on cooldown period)', async () => {
-    const item = await getRepository(Cooldown).findOne({ where: { name: '!me' } });
+    const item = await AppDataSource.getRepository(Cooldown).findOne({ where: { name: '!me' } });
     assert.strictEqual(item.timestamp, timestamp);
   });
 
@@ -101,7 +92,7 @@ describe('Cooldowns - #3720 - global cooldown should be properly reverted', () =
   });
 
   it('cooldown should be reverted', async () => {
-    const item = await getRepository(Cooldown).findOne({ where: { name: '!me' } });
-    assert.strictEqual(item.timestamp, 0);
+    const item = await AppDataSource.getRepository(Cooldown).findOne({ where: { name: '!me' } });
+    assert.strictEqual(item.timestamp, new Date(0).toISOString());
   });
 });

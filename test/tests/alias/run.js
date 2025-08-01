@@ -1,31 +1,30 @@
 /* global describe it beforeEach afterEach */
 
+import assert from 'assert';
+import { AppDataSource } from '../../../dest/database.js'
+import { prepare } from '../../../dest/helpers/commons/prepare.js';
+import('../../general.js');
 
-const assert = require('assert');
-const { prepare } = (require('../../../dest/helpers/commons/prepare'));
-require('../../general.js');
+import { db } from '../../general.js';
+import { message } from '../../general.js';
 
-const db = require('../../general.js').db;
-const message = require('../../general.js').message;
-
-const { getRepository } = require('typeorm');
-const { User } = require('../../../dest/database/entity/user');
-const alias = (require('../../../dest/systems/alias')).default;
-const duel = (require('../../../dest/games/duel')).default;
-const gamble = (require('../../../dest/games/gamble')).default;
-const customCommands = (require('../../../dest/systems/customcommands')).default;
+import { User } from '../../../dest/database/entity/user.js';
+import alias from '../../../dest/systems/alias.js';
+import duel from '../../../dest/games/duel.js'
+import gamble from '../../../dest/games/gamble.js'
+import customCommands from '../../../dest/systems/customcommands.js'
 
 // users
-const owner = { username: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
-const user = { username: 'user', userId: String(Math.floor(Math.random() * 100000)) };
+const owner = { userName: '__broadcaster__', userId: String(Math.floor(Math.random() * 100000)) };
+const user = { userName: 'user', userId: String(Math.floor(Math.random() * 100000)) };
 
-describe('Alias - run()', () => {
+describe('Alias - @func1 - run()', () => {
   beforeEach(async () => {
     await db.cleanup();
     await message.prepare();
 
-    await getRepository(User).save({ username: owner.username, userId: owner.userId });
-    await getRepository(User).save({ username: user.username, userId: user.userId });
+    await AppDataSource.getRepository(User).save({ userName: owner.userName, userId: owner.userId });
+    await AppDataSource.getRepository(User).save({ userName: user.userName, userId: user.userId });
 
     duel.enabled = true;
     gamble.enabled = true;

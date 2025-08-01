@@ -7,7 +7,7 @@
     },
     "percentage": "Procentsats forskel i statistik",
     "shortennumbers": "Kort format for numre",
-    "stickystats": "Sæt stats fast i toppen",
-    "showdiff": "Vis forskel"
+    "showdiff": "Vis forskel",
+    "enablePublicPage": "Enable public page"
   }
 }

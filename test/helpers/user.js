@@ -1,92 +1,98 @@
-const { getRepository } = require('typeorm');
+import { AppDataSource } from '../../dest/database.js'
+import { User } from '../../dest/database/entity/user.js'
+import * as changelog from '../../dest/helpers/user/changelog.js'
+import emitter from '../../dest/helpers/interfaceEmitter.js'
 
-const { User } = require('../../dest/database/entity/user');
-const { generalOwners } = require('../../dest/helpers/oauth/generalOwners');
-
-const viewer = {
+export const viewer = {
+  points:   0,
   userId:   '1',
-  username: '__viewer__',
+  userName: '__viewer__',
   badges:   {},
   emotes:   [],
 };
 
-const viewer2 = {
+export const viewer2 = {
+  points:   0,
   userId:   '3',
-  username: '__viewer2__',
+  userName: '__viewer2__',
   badges:   {},
   emotes:   [],
 };
 
-const viewer3 = {
+export const viewer3 = {
+  points:   0,
   userId:   '5',
-  username: '__viewer3__',
+  userName: '__viewer3__',
   badges:   {},
   emotes:   [],
 };
 
-const viewer4 = {
+export const viewer4 = {
+  points:   0,
   userId:   '50',
-  username: '__viewer4__',
+  userName: '__viewer4__',
   badges:   {},
   emotes:   [],
 };
 
-const viewer5 = {
+export const viewer5 = {
+  points:   0,
   userId:   '55',
-  username: '__viewer5__',
+  userName: '__viewer5__',
   badges:   {},
   emotes:   [],
 };
 
-const viewer6 = {
+export const viewer6 = {
+  points:   0,
   userId:   '56',
-  username: '__viewer6__',
+  userName: '__viewer6__',
   badges:   {},
   emotes:   [],
 };
 
-const viewer7 = {
+export const viewer7 = {
+  points:   0,
   userId:   '57',
-  username: '__viewer7__',
+  userName: '__viewer7__',
   badges:   {},
   emotes:   [],
 };
 
-const owner = {
+export const owner = {
+  points:   0,
   userId:   '2',
-  username: '__broadcaster__',
+  userName: '__broadcaster__',
   badges:   {},
   emotes:   [],
 };
 
-const mod = {
+export const mod = {
+  points:      0,
   userId:      '4',
-  username:    '__mod__',
+  userName:    '__mod__',
   badges:      {},
   emotes:      [],
   isModerator: true,
+  isMod:       true,
 };
 
-module.exports = {
-  prepare: async () => {
-    const { default: oauth } = require('../../dest/oauth');
-
-    await getRepository(User).save(viewer);
-    await getRepository(User).save(viewer2);
-    await getRepository(User).save(viewer3);
-    await getRepository(User).save(viewer4);
-    await getRepository(User).save(viewer5);
-    await getRepository(User).save(viewer6);
-    await getRepository(User).save(viewer7);
-    await getRepository(User).save(owner);
-    await getRepository(User).save(mod);
-    // set owner as broadcaster
-    oauth.broadcasterUsername = owner.username;
-    generalOwners.value = [owner.username];
-  },
-  viewer,
-  viewer2,
-  viewer3,
-  owner,
-  mod,
-};
+export const prepare = async () => {
+  await changelog.flush();
+  await AppDataSource.getRepository(User).save(viewer);
+  await AppDataSource.getRepository(User).save(viewer2);
+  await AppDataSource.getRepository(User).save(viewer3);
+  await AppDataSource.getRepository(User).save(viewer4);
+  await AppDataSource.getRepository(User).save(viewer5);
+  await AppDataSource.getRepository(User).save(viewer6);
+  await AppDataSource.getRepository(User).save(viewer7);
+  await AppDataSource.getRepository(User).save(owner);
+  await AppDataSource.getRepository(User).save(mod);
+  emitter.emit('set', '/services/twitch', 'broadcasterUsername', owner.userName);
+  emitter.emit('set', '/services/twitch', 'broadcasterId', owner.userId);
+  await new Promise((resolve => {
+    setTimeout(() =>{
+      resolve();
+    }, 1000);
+  }));
+}

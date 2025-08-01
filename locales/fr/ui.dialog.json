@@ -1,70 +1,70 @@
 {
   "title": {
-    "edit": "Edit",
-    "add": "Add"
+    "edit": "Éditer",
+    "add": "Ajouter"
   },
   "position": {
-    "settings": "Position settings",
-    "anchorX": "Anchor X position",
-    "anchorY": "Anchor Y position",
-    "left": "Left",
-    "right": "Right",
-    "middle": "Middle",
-    "top": "Top",
-    "bottom": "Bottom",
+    "settings": "Paramètres de positionnement",
+    "anchorX": "Ancrer la position X",
+    "anchorY": "Ancrer la position Y",
+    "left": "Gauche",
+    "right": "Droite",
+    "middle": "Milieu",
+    "top": "Haut",
+    "bottom": "Bas",
     "x": "X",
     "y": "Y"
   },
   "font": {
-    "shadowShiftRight": "Shift Right",
-    "shadowShiftDown": "Shift Down",
-    "shadowBlur": "Blur",
-    "shadowOpacity": "Opacity",
-    "color": "Color"
+    "shadowShiftRight": "Déplacer à droite",
+    "shadowShiftDown": "Déplacer vers le bas",
+    "shadowBlur": "Flouter",
+    "shadowOpacity": "Opacité",
+    "color": "Couleur"
   },
   "errors": {
-    "required": "This input cannot be empty.",
-    "minValue": "Lowest value of this input is $value."
+    "required": "Cette valeur ne peut pas être vide.",
+    "minValue": "La valeur la plus basse de cette entrée est $value."
   },
   "buttons": {
-    "reorder": "Reorder",
+    "reorder": "Réordonner",
     "upload": {
-      "idle": "Upload",
-      "progress": "Uploading",
-      "done": "Uploaded"
+      "idle": "Télécharger",
+      "progress": "En cours de téléchargement",
+      "done": "Téléchargé"
     },
-    "cancel": "Cancel",
-    "close": "Close",
+    "cancel": "Annuler",
+    "close": "Fermer",
     "test": {
       "idle": "Test",
-      "progress": "Testing in progress",
-      "done": "Testing done"
+      "progress": "Test en cours",
+      "done": "Test effectué"
     },
     "saveChanges": {
-      "idle": "Save changes",
-      "invalid": "Cannot save changes",
-      "progress": "Saving changes",
-      "done": "Changes saved"
+      "idle": "Enregistrer les modifications",
+      "invalid": "Impossible d'enregistrer les changements",
+      "progress": "Enregistrement des modifications",
+      "done": "Modifications enregistrées"
     },
-    "something-went-wrong": "Something went wrong",
-    "mark-to-delete": "Mark to delete",
-    "disable": "Disable",
-    "enable": "Enable",
-    "disabled": "Disabled",
-    "enabled": "Enabled",
-    "edit": "Edit",
-    "delete": "Delete",
+    "something-went-wrong": "Une erreur s'est produite",
+    "mark-to-delete": "Sélectionner pour suppression",
+    "disable": "Désactiver",
+    "enable": "Activer",
+    "disabled": "Désactivé",
+    "enabled": "Activé",
+    "edit": "Éditer",
+    "delete": "Supprimer",
     "play": "Play",
-    "stop": "Stop",
-    "hold-to-delete": "Hold to delete",
-    "yes": "Yes",
-    "no": "No",
+    "stop": "Arrêt",
+    "hold-to-delete": "Maintenir pour supprimer",
+    "yes": "Oui",
+    "no": "Non",
     "permission": "Permission",
-    "group": "Group",
-    "visibility": "Visibility",
-    "reset": "Reset "
+    "group": "Groupe",
+    "visibility": "Visibilité",
+    "reset": "Réinitialiser "
   },
-  "changesPending": "Your changes was not saved.",
-  "formNotValid": "Form is invalid.",
-  "nothingToShow": "Nothing to show here."
+  "changesPending": "Your changes were not saved.",
+  "formNotValid": "Formulaire non valide.",
+  "nothingToShow": "Il n'y a rien à voir ici !"
 }
